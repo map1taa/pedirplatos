@@ -44,9 +44,10 @@ export default function DishManagement() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/dishes"] });
+      const wasEditing = editingDish !== null;
       toast({
-        title: editingDish ? "商品を更新しました" : "商品を追加しました",
-        description: editingDish ? "商品が正常に更新されました。" : "新しい商品が正常に追加されました。",
+        title: wasEditing ? "商品を更新しました" : "商品を追加しました",
+        description: wasEditing ? "商品が正常に更新されました。" : "新しい商品が正常に追加されました。",
       });
       setIsAddDishOpen(false);
       setEditingDish(null);
@@ -359,12 +360,51 @@ export default function DishManagement() {
                         categoryDishes.map((dish) => (
                           <tr key={dish.id} className="border-b border-slate-100 hover:bg-slate-50">
                             <td className="px-3 py-2">
-                              <div className="w-12 h-12 rounded overflow-hidden">
-                                <img
-                                  src={dish.imageUrl || "https://images.unsplash.com/photo-1578662996442-48f60103fc96"}
-                                  alt={dish.name}
-                                  className="w-full h-full object-cover"
-                                />
+                              <div 
+                                className={`w-12 h-12 rounded overflow-hidden relative group cursor-pointer ${
+                                  !dish.imageUrl ? 'border-2 border-dashed border-slate-300' : ''
+                                }`}
+                                onDragOver={(e) => { 
+                                  e.preventDefault(); 
+                                  e.currentTarget.classList.add('border-orange-500'); 
+                                }}
+                                onDragLeave={(e) => { 
+                                  e.preventDefault(); 
+                                  e.currentTarget.classList.remove('border-orange-500'); 
+                                }}
+                                onDrop={(e) => {
+                                  e.preventDefault();
+                                  e.currentTarget.classList.remove('border-orange-500');
+                                  const file = e.dataTransfer.files[0];
+                                  if (file && file.type.startsWith('image/')) {
+                                    // Set editing dish to trigger update mode
+                                    setEditingDish(dish);
+                                    // Update dish with new image
+                                    createDishMutation.mutate({
+                                      name: dish.name,
+                                      price: dish.price,
+                                      image: file,
+                                      categoryId: dish.categoryId,
+                                    });
+                                  }
+                                }}
+                              >
+                                {dish.imageUrl ? (
+                                  <>
+                                    <img
+                                      src={dish.imageUrl}
+                                      alt={dish.name}
+                                      className="w-full h-full object-cover"
+                                    />
+                                    <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                      <Upload className="h-3 w-3 text-white" />
+                                    </div>
+                                  </>
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center bg-slate-100">
+                                    <Upload className="h-3 w-3 text-slate-400" />
+                                  </div>
+                                )}
                               </div>
                             </td>
                             <td className="px-3 py-2">
