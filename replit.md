@@ -102,3 +102,5 @@ The architecture prioritizes developer experience with TypeScript throughout, mo
 - Updated product grid to display items in horizontal rectangular list format
 - Removed grid/list view toggle in favor of consistent horizontal layout
 - Enhanced visual design with larger product cards and improved spacing
+- Added quantity selector controls (+/- buttons and number input) before adding items to cart
+- Items can now be added in specified quantities (1-99) with visual feedback

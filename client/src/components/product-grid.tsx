@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { ShoppingCartIcon } from "lucide-react";
+import { ShoppingCartIcon, Plus, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -15,6 +16,7 @@ interface ProductGridProps {
 
 export default function ProductGrid({ dishes, isLoading }: ProductGridProps) {
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [quantities, setQuantities] = useState<Record<string, number>>({});
   const { addToCart } = useCart();
   const { toast } = useToast();
 
@@ -23,12 +25,25 @@ export default function ProductGrid({ dishes, isLoading }: ProductGridProps) {
     ? dishes 
     : dishes.filter(dish => dish.category === selectedCategory);
 
+  const getQuantity = (dishId: string) => quantities[dishId] || 1;
+
+  const updateQuantity = (dishId: string, quantity: number) => {
+    if (quantity < 1) quantity = 1;
+    if (quantity > 99) quantity = 99;
+    setQuantities(prev => ({ ...prev, [dishId]: quantity }));
+  };
+
   const handleAddToCart = (dish: Dish) => {
-    addToCart(dish);
+    const quantity = getQuantity(dish.id);
+    for (let i = 0; i < quantity; i++) {
+      addToCart(dish);
+    }
     toast({
       title: "カートに追加しました",
-      description: `${dish.name}をカートに追加しました。`,
+      description: `${dish.name} × ${quantity}個をカートに追加しました。`,
     });
+    // リセットオプション: 追加後に数量を1に戻す
+    setQuantities(prev => ({ ...prev, [dish.id]: 1 }));
   };
 
   if (isLoading) {
@@ -40,18 +55,22 @@ export default function ProductGrid({ dishes, isLoading }: ProductGridProps) {
         </div>
         <div className="space-y-4">
           {Array.from({ length: 6 }).map((_, i) => (
-            <Card key={i} className="overflow-hidden">
-              <CardContent className="p-4 flex items-center space-x-4">
-                <Skeleton className="w-20 h-20 rounded-lg flex-shrink-0" />
+            <Card key={i} className="overflow-hidden border border-slate-200">
+              <CardContent className="p-6 flex items-center space-x-6">
+                <Skeleton className="w-24 h-24 rounded-lg flex-shrink-0" />
                 <div className="flex-1 space-y-2">
-                  <Skeleton className="h-5 w-3/4" />
+                  <Skeleton className="h-6 w-3/4" />
                   <Skeleton className="h-4 w-1/2" />
-                  <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-6">
+                    <Skeleton className="h-6 w-20" />
                     <Skeleton className="h-5 w-16" />
                     <Skeleton className="h-5 w-12" />
                   </div>
                 </div>
-                <Skeleton className="h-10 w-24" />
+                <div className="flex items-center space-x-4">
+                  <Skeleton className="h-10 w-32" />
+                  <Skeleton className="h-10 w-32" />
+                </div>
               </CardContent>
             </Card>
           ))}
@@ -111,7 +130,36 @@ export default function ProductGrid({ dishes, isLoading }: ProductGridProps) {
                   </span>
                 </div>
               </div>
-              <div className="flex-shrink-0">
+              <div className="flex-shrink-0 flex items-center space-x-4">
+                {/* 数量選択 */}
+                <div className="flex items-center space-x-2 bg-slate-50 rounded-lg p-2">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="w-8 h-8"
+                    onClick={() => updateQuantity(dish.id, getQuantity(dish.id) - 1)}
+                  >
+                    <Minus className="h-3 w-3" />
+                  </Button>
+                  <Input
+                    type="number"
+                    value={getQuantity(dish.id)}
+                    onChange={(e) => updateQuantity(dish.id, parseInt(e.target.value) || 1)}
+                    className="w-16 h-8 text-center text-sm"
+                    min="1"
+                    max="99"
+                  />
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="w-8 h-8"
+                    onClick={() => updateQuantity(dish.id, getQuantity(dish.id) + 1)}
+                  >
+                    <Plus className="h-3 w-3" />
+                  </Button>
+                </div>
+                
+                {/* カートに追加ボタン */}
                 <Button 
                   size="lg"
                   className="bg-brand-blue hover:bg-blue-700 px-6 py-3"
