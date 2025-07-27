@@ -124,7 +124,7 @@ export default function ShoppingCartSidebar({ isOpen, onClose, onCheckout }: Sho
                 onClick={onCheckout}
               >
                 <CreditCard className="mr-1 h-3 w-3" />
-                決定・注文確定
+                発注する
               </Button>
               <Button 
                 variant="secondary" 
