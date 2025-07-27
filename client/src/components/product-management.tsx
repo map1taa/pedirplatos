@@ -224,7 +224,7 @@ export default function ProductManagement() {
   const onSubmit = (data: FormValues) => {
     createDishMutation.mutate({
       ...data,
-      categoryId: data.categoryId === "none" ? null : data.categoryId,
+      categoryId: data.categoryId === "none" ? undefined : data.categoryId,
       image: selectedFile || undefined,
     });
   };

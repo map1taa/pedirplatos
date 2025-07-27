@@ -129,3 +129,10 @@ The architecture prioritizes developer experience with TypeScript throughout, mo
   - All form validation messages and toast notifications in Japanese
   - Currency display changed from € to ¥ throughout the application
   - Email notifications remain in Spanish as per customer requirements
+- **Management Interface Redesign**: Complete overhaul to match product page layout
+  - Categories displayed with door images same as customer-facing view
+  - Products grouped under each category with table layout
+  - Direct add/edit/delete buttons for each category and product
+  - Simple modal dialogs for product and category creation/editing
+  - Removed complex 3-tab interface in favor of unified category-based view
+  - Category management integrated into main view with inline controls
