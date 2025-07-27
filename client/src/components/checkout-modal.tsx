@@ -13,8 +13,8 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 
 const formSchema = z.object({
-  customerName: z.string().min(1, "担当者名を入力してください"),
-  customerEmail: z.string().email("有効なメールアドレスを入力してください").min(1, "メールアドレスを入力してください"),
+  customerName: z.string().min(1, "Ingrese el nombre del responsable"),
+  customerEmail: z.string().email("Ingrese una dirección de correo válida").min(1, "Ingrese su dirección de correo"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -74,14 +74,14 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
       onClose();
       setIsConfirmationOpen(true);
       toast({
-        title: "発注が完了しました",
-        description: "発注内容をメールで送信しました。",
+        title: "Pedido completado",
+        description: "El contenido del pedido se envió por correo.",
       });
     },
     onError: (error) => {
       toast({
-        title: "エラー",
-        description: "発注の処理に失敗しました。",
+        title: "Error",
+        description: "Error al procesar el pedido.",
         variant: "destructive",
       });
     },
@@ -99,17 +99,17 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
           <DialogHeader className="pb-3">
             <DialogTitle className="font-bold text-slate-900 flex items-center">
               <ClipboardCheck className="mr-1 text-brand-blue h-4 w-4" />
-              発注確認
+              Confirmación de Pedido
             </DialogTitle>
             <DialogDescription>
-              発注を確定するために必要事項を入力してください。
+              Ingrese los datos necesarios para confirmar el pedido.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
             {/* Order Summary */}
             <div className="bg-slate-50 rounded-lg p-3">
-              <h3 className="font-semibold text-slate-900 mb-2">発注内容</h3>
+              <h3 className="font-semibold text-slate-900 mb-2">Contenido del Pedido</h3>
               <div className="space-y-2">
                 {cartItems.map((item) => (
                   <div key={item.dish.id} className="flex justify-between items-center">
@@ -124,7 +124,7 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                 ))}
                 <div className="border-t border-slate-300 pt-2 mt-2">
                   <div className="flex justify-between items-center">
-                    <span className="font-bold text-slate-900">合計</span>
+                    <span className="font-bold text-slate-900">Total</span>
                     <span className="font-bold text-brand-blue">¥{total.toLocaleString()}</span>
                   </div>
                 </div>
@@ -139,9 +139,9 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                   name="customerName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="font-semibold text-slate-700">担当者名</FormLabel>
+                      <FormLabel className="font-semibold text-slate-700">Nombre del Responsable</FormLabel>
                       <FormControl>
-                        <Input placeholder="山田太郎" className="h-8" {...field} />
+                        <Input placeholder="Juan Pérez" className="h-8" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -152,9 +152,9 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                   name="customerEmail"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="font-semibold text-slate-700">メールアドレス</FormLabel>
+                      <FormLabel className="font-semibold text-slate-700">Dirección de Correo</FormLabel>
                       <FormControl>
-                        <Input type="email" placeholder="yamada@company.com" className="h-8" {...field} />
+                        <Input type="email" placeholder="juan@empresa.com" className="h-8" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -169,7 +169,7 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                     className="flex-1 h-8" 
                     onClick={onClose}
                   >
-                    キャンセル
+                    Cancelar
                   </Button>
                   <Button 
                     type="submit" 
@@ -178,7 +178,7 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                     disabled={createOrderMutation.isPending}
                   >
                     <NotebookPen className="mr-1 h-3 w-3" />
-                    {createOrderMutation.isPending ? "処理中..." : "発注する"}
+                    {createOrderMutation.isPending ? "Procesando..." : "Realizar Pedido"}
                   </Button>
                 </div>
               </form>
@@ -191,9 +191,9 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
       <Dialog open={isConfirmationOpen} onOpenChange={setIsConfirmationOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle className="sr-only">発注完了</DialogTitle>
+            <DialogTitle className="sr-only">Pedido Completado</DialogTitle>
             <DialogDescription>
-              発注が正常に完了しました。
+              El pedido se completó exitosamente.
             </DialogDescription>
           </DialogHeader>
           <div className="text-center space-y-4">
@@ -201,9 +201,9 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
               <Check className="h-6 w-6 text-green-600" />
             </div>
             <div>
-              <h2 className="font-bold text-slate-900 mb-1">発注完了</h2>
+              <h2 className="font-bold text-slate-900 mb-1">Pedido Completado</h2>
               <p className="text-slate-600">
-                発注内容を指定のメールアドレスに送信しました。
+                El contenido del pedido se envió a la dirección de correo especificada.
               </p>
             </div>
             <Button 

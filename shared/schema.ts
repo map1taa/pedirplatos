@@ -56,6 +56,9 @@ export const dishesRelations = relations(dishes, ({ many }) => ({
 
 export const insertDishSchema = createInsertSchema(dishes).omit({
   id: true,
+}).extend({
+  name: z.string().min(1, "Ingrese el nombre del producto"),
+  price: z.string().min(1, "Ingrese el precio del producto"),
 });
 
 export const insertOrderSchema = createInsertSchema(orders).omit({

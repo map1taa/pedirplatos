@@ -218,9 +218,9 @@ export default function ProductManagement() {
     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
       <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger value="add" className="text-xs">
-          {editingDish ? "商品編集" : "商品追加"}
+          {editingDish ? "Editar Producto" : "Agregar Producto"}
         </TabsTrigger>
-        <TabsTrigger value="list" className="text-xs">商品一覧</TabsTrigger>
+        <TabsTrigger value="list" className="text-xs">Lista de Productos</TabsTrigger>
       </TabsList>
       
       <TabsContent value="add" className="mt-3">
@@ -231,12 +231,12 @@ export default function ProductManagement() {
                 {editingDish ? (
                   <>
                     <Edit className="mr-1 text-brand-blue h-4 w-4" />
-                    商品を編集
+                    Editar Producto
                   </>
                 ) : (
                   <>
                     <PlusCircle className="mr-1 text-brand-blue h-4 w-4" />
-                    新しいお皿を追加
+                    Agregar Nuevo Plato
                   </>
                 )}
               </CardTitle>
@@ -246,7 +246,7 @@ export default function ProductManagement() {
                   size="sm"
                   onClick={handleCancelEdit}
                 >
-                  キャンセル
+                  Cancelar
                 </Button>
               )}
             </div>
@@ -257,7 +257,7 @@ export default function ProductManagement() {
                 {/* Image Upload */}
                 <div className="md:col-span-2">
                   <FormLabel className="block font-semibold text-slate-700 mb-2">
-                    商品画像
+                    Imagen del Producto
                   </FormLabel>
                   <div 
                     className="border-2 border-dashed border-slate-300 rounded-lg p-4 text-center hover:border-brand-blue transition-colors"
@@ -282,14 +282,14 @@ export default function ProductManagement() {
                             setPreviewUrl(null);
                           }}
                         >
-                          画像を削除
+                          Eliminar Imagen
                         </Button>
                       </div>
                     ) : (
                       <>
                         <CloudUpload className="mx-auto h-8 w-8 text-slate-400 mb-2" />
                         <p className="text-slate-600 mb-2">
-                          画像をドラッグ&ドロップまたはクリックして選択
+                          Arrastre y suelte la imagen o haga clic para seleccionar
                         </p>
                       </>
                     )}
@@ -302,7 +302,7 @@ export default function ProductManagement() {
                     />
                     <label htmlFor="image-upload">
                       <Button type="button" asChild size="sm" className="cursor-pointer">
-                        <span>ファイルを選択</span>
+                        <span>Seleccionar Archivo</span>
                       </Button>
                     </label>
                   </div>
@@ -314,9 +314,9 @@ export default function ProductManagement() {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="font-semibold text-slate-700">商品名</FormLabel>
+                      <FormLabel className="font-semibold text-slate-700">Nombre del Producto</FormLabel>
                       <FormControl>
-                        <Input placeholder="例：和風陶器プレート" className="h-8" {...field} />
+                        <Input placeholder="Ej: Plato de Cerámica Japonesa" className="h-8" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -328,7 +328,7 @@ export default function ProductManagement() {
                   name="price"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="font-semibold text-slate-700">価格（円）</FormLabel>
+                      <FormLabel className="font-semibold text-slate-700">Precio (¥)</FormLabel>
                       <FormControl>
                         <Input type="number" placeholder="2500" className="h-8" {...field} />
                       </FormControl>
@@ -345,8 +345,8 @@ export default function ProductManagement() {
                     className="w-full bg-brand-blue hover:bg-blue-700"
                   >
                     {createDishMutation.isPending 
-                      ? (editingDish ? "更新中..." : "追加中...") 
-                      : (editingDish ? "商品を更新" : "お皿を追加")
+                      ? (editingDish ? "Actualizando..." : "Agregando...") 
+                      : (editingDish ? "Actualizar Producto" : "Agregar Plato")
                     }
                   </Button>
                 </div>
@@ -362,7 +362,7 @@ export default function ProductManagement() {
             <div className="flex justify-between items-center">
               <CardTitle className="font-bold text-slate-900 flex items-center">
                 <Eye className="mr-1 text-brand-blue h-4 w-4" />
-                商品一覧 ({dishes.length}個)
+                Lista de Productos ({dishes.length})
               </CardTitle>
               {selectedDishes.size > 0 && (
                 <Button
@@ -372,7 +372,7 @@ export default function ProductManagement() {
                   disabled={deleteDishesMutation.isPending}
                 >
                   <Trash2 className="mr-1 h-3 w-3" />
-                  選択削除 ({selectedDishes.size})
+                  Eliminar Seleccionados ({selectedDishes.size})
                 </Button>
               )}
             </div>
@@ -380,11 +380,11 @@ export default function ProductManagement() {
           <CardContent>
             {isLoading ? (
               <div className="text-center py-4">
-                <p className="text-slate-600">読み込み中...</p>
+                <p className="text-slate-600">Cargando...</p>
               </div>
             ) : dishes.length === 0 ? (
               <div className="text-center py-8">
-                <p className="text-slate-600">登録された商品がありません</p>
+                <p className="text-slate-600">No hay productos registrados</p>
               </div>
             ) : (
               <div className="space-y-2">
@@ -394,10 +394,10 @@ export default function ProductManagement() {
                     checked={selectedDishes.size === dishes.length && dishes.length > 0}
                     onCheckedChange={handleSelectAll}
                   />
-                  <div className="w-12">画像</div>
-                  <div className="flex-1">商品名</div>
-                  <div className="w-20 text-right">価格</div>
-                  <div className="w-16 text-center">編集</div>
+                  <div className="w-12">Imagen</div>
+                  <div className="flex-1">Nombre del Producto</div>
+                  <div className="w-20 text-right">Precio</div>
+                  <div className="w-16 text-center">Editar</div>
                 </div>
                 
                 {/* Product rows */}

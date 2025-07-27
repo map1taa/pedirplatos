@@ -29,8 +29,8 @@ export default function ProductGrid({ dishes, isLoading }: ProductGridProps) {
     const quantity = getQuantity(dish.id);
     if (quantity <= 0) {
       toast({
-        title: "数量を選択してください",
-        description: "カートに追加するには1個以上を選択してください。",
+        title: "Seleccione una cantidad",
+        description: "Debe seleccionar 1 o más para agregar al carrito.",
         variant: "destructive",
       });
       return;
@@ -41,8 +41,8 @@ export default function ProductGrid({ dishes, isLoading }: ProductGridProps) {
     updateCartQuantity(dish.id, quantity);
     
     toast({
-      title: "カートに追加しました",
-      description: `${dish.name} × ${quantity}個をカートに追加しました。`,
+      title: "Agregado al carrito",
+      description: `${dish.name} × ${quantity} agregado al carrito.`,
     });
     setQuantities(prev => ({ ...prev, [dish.id]: 0 }));
   };
@@ -57,11 +57,11 @@ export default function ProductGrid({ dishes, isLoading }: ProductGridProps) {
           <table className="w-full">
             <thead className="bg-slate-50 border-b border-slate-200">
               <tr>
-                <th className="px-3 py-2 text-left">画像</th>
-                <th className="px-3 py-2 text-left">商品名</th>
-                <th className="px-3 py-2 text-right">価格</th>
-                <th className="px-3 py-2 text-center">数量</th>
-                <th className="px-3 py-2 text-center">操作</th>
+                <th className="px-3 py-2 text-left">Imagen</th>
+                <th className="px-3 py-2 text-left">Nombre del Producto</th>
+                <th className="px-3 py-2 text-right">Precio</th>
+                <th className="px-3 py-2 text-center">Cantidad</th>
+                <th className="px-3 py-2 text-center">Acción</th>
               </tr>
             </thead>
             <tbody>
@@ -94,18 +94,18 @@ export default function ProductGrid({ dishes, isLoading }: ProductGridProps) {
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="font-bold text-slate-900">商品一覧</h2>
+        <h2 className="font-bold text-slate-900">Lista de Productos</h2>
       </div>
 
       <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
         <table className="w-full">
           <thead className="bg-slate-50 border-b border-slate-200">
             <tr>
-              <th className="px-3 py-2 text-left font-semibold text-slate-700">画像</th>
-              <th className="px-3 py-2 text-left font-semibold text-slate-700">商品名</th>
-              <th className="px-3 py-2 text-right font-semibold text-slate-700">価格</th>
-              <th className="px-3 py-2 text-center font-semibold text-slate-700">数量</th>
-              <th className="px-3 py-2 text-center font-semibold text-slate-700">操作</th>
+              <th className="px-3 py-2 text-left font-semibold text-slate-700">Imagen</th>
+              <th className="px-3 py-2 text-left font-semibold text-slate-700">Nombre del Producto</th>
+              <th className="px-3 py-2 text-right font-semibold text-slate-700">Precio</th>
+              <th className="px-3 py-2 text-center font-semibold text-slate-700">Cantidad</th>
+              <th className="px-3 py-2 text-center font-semibold text-slate-700">Acción</th>
             </tr>
           </thead>
           <tbody>
@@ -163,7 +163,7 @@ export default function ProductGrid({ dishes, isLoading }: ProductGridProps) {
                     onClick={() => handleAddToCart(dish)}
                   >
                     <ShoppingCartIcon className="mr-1 h-3 w-3" />
-                    追加
+                    Agregar
                   </Button>
                 </td>
               </tr>

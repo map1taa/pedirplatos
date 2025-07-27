@@ -34,7 +34,7 @@ export default function Home() {
             <div className="flex items-center">
               <h1 className="font-bold text-brand-blue">
                 <Utensils className="inline mr-1 h-4 w-4" />
-                お皿オーダー
+                Pedidos de Platos
               </h1>
             </div>
             
@@ -42,7 +42,7 @@ export default function Home() {
               <Link href="/management">
                 <Button variant="ghost" size="sm" className="text-slate-700 hover:text-brand-blue">
                   <Settings className="mr-1 h-3 w-3" />
-                  管理
+                  Gestión
                 </Button>
               </Link>
             </nav>

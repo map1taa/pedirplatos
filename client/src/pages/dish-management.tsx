@@ -14,12 +14,12 @@ export default function DishManagement() {
               <Link href="/">
                 <Button variant="ghost" size="sm" className="mr-2">
                   <ArrowLeft className="h-3 w-3 mr-1" />
-                  戻る
+                  Volver
                 </Button>
               </Link>
               <h1 className="font-bold text-slate-900 flex items-center">
                 <Settings className="mr-1 text-brand-blue h-4 w-4" />
-                お皿管理
+                Gestión de Platos
               </h1>
             </div>
           </div>
