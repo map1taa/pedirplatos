@@ -31,7 +31,7 @@ export default function ProductManagement() {
   const queryClient = useQueryClient();
 
   // Fetch dishes for the product list
-  const { data: dishes = [], isLoading } = useQuery({
+  const { data: dishes = [], isLoading } = useQuery<Dish[]>({
     queryKey: ["/api/dishes"],
   });
 
@@ -99,12 +99,13 @@ export default function ProductManagement() {
         dishIds.map(id => apiRequest("DELETE", `/api/dishes/${id}`))
       );
     },
-    onSuccess: () => {
+    onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["/api/dishes"] });
+      const deletedCount = variables.length;
       setSelectedDishes(new Set());
       toast({
         title: "商品を削除しました",
-        description: `${selectedDishes.size}個の商品を削除しました。`,
+        description: `${deletedCount}個の商品を削除しました。`,
       });
     },
     onError: (error) => {
@@ -119,9 +120,46 @@ export default function ProductManagement() {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      processFile(file);
+    }
+  };
+
+  const processFile = (file: File) => {
+    if (file.type.startsWith('image/')) {
       setSelectedFile(file);
       const url = URL.createObjectURL(file);
       setPreviewUrl(url);
+    } else {
+      toast({
+        title: "エラー",
+        description: "画像ファイルを選択してください。",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
+  const handleDragEnter = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
+  const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    const files = event.dataTransfer.files;
+    if (files.length > 0) {
+      processFile(files[0]);
     }
   };
 
@@ -146,7 +184,7 @@ export default function ProductManagement() {
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelectedDishes(new Set(dishes.map((dish: Dish) => dish.id)));
+      setSelectedDishes(new Set(dishes.map(dish => dish.id)));
     } else {
       setSelectedDishes(new Set());
     }
@@ -221,7 +259,13 @@ export default function ProductManagement() {
                   <FormLabel className="block font-semibold text-slate-700 mb-2">
                     商品画像
                   </FormLabel>
-                  <div className="border-2 border-dashed border-slate-300 rounded-lg p-4 text-center hover:border-brand-blue transition-colors">
+                  <div 
+                    className="border-2 border-dashed border-slate-300 rounded-lg p-4 text-center hover:border-brand-blue transition-colors"
+                    onDragOver={handleDragOver}
+                    onDragEnter={handleDragEnter}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                  >
                     {previewUrl ? (
                       <div className="space-y-2">
                         <img 
@@ -357,7 +401,7 @@ export default function ProductManagement() {
                 </div>
                 
                 {/* Product rows */}
-                {dishes.map((dish: Dish) => (
+                {dishes.map(dish => (
                   <div key={dish.id} className="flex items-center gap-3 p-2 border border-slate-200 rounded hover:bg-slate-50">
                     <Checkbox
                       checked={selectedDishes.has(dish.id)}
