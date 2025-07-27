@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { PlusCircle, CloudUpload, Trash2, Eye, EyeOff } from "lucide-react";
+import { PlusCircle, CloudUpload, Trash2, Eye, EyeOff, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,14 +25,14 @@ export default function ProductManagement() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedDishes, setSelectedDishes] = useState<Set<string>>(new Set());
-  const [showProductList, setShowProductList] = useState(false);
+  const [editingDish, setEditingDish] = useState<Dish | null>(null);
+  const [activeTab, setActiveTab] = useState("add");
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   // Fetch dishes for the product list
   const { data: dishes = [], isLoading } = useQuery({
     queryKey: ["/api/dishes"],
-    enabled: showProductList,
   });
 
   const form = useForm<FormValues>({
@@ -42,6 +42,21 @@ export default function ProductManagement() {
       price: "",
     },
   });
+
+  // Reset form when editingDish changes
+  useEffect(() => {
+    if (editingDish) {
+      form.reset({
+        name: editingDish.name,
+        price: editingDish.price,
+      });
+    } else {
+      form.reset({
+        name: "",
+        price: "",
+      });
+    }
+  }, [editingDish, form]);
 
   const createDishMutation = useMutation({
     mutationFn: async (data: FormValues & { image?: File }) => {
@@ -55,22 +70,24 @@ export default function ProductManagement() {
         formData.append('image', data.image);
       }
 
-      return apiRequest("POST", "/api/dishes", formData);
+      if (editingDish) {
+        return apiRequest("PATCH", `/api/dishes/${editingDish.id}`, formData);
+      } else {
+        return apiRequest("POST", "/api/dishes", formData);
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/dishes"] });
       toast({
-        title: "商品を追加しました",
-        description: "新しい商品が正常に追加されました。",
+        title: editingDish ? "商品を更新しました" : "商品を追加しました",
+        description: editingDish ? "商品が正常に更新されました。" : "新しい商品が正常に追加されました。",
       });
-      form.reset();
-      setSelectedFile(null);
-      setPreviewUrl(null);
+      handleCancelEdit();
     },
     onError: (error) => {
       toast({
         title: "エラー",
-        description: "商品の追加に失敗しました。",
+        description: editingDish ? "商品の更新に失敗しました。" : "商品の追加に失敗しました。",
         variant: "destructive",
       });
     },
@@ -142,20 +159,59 @@ export default function ProductManagement() {
     }
   };
 
+  const handleEditDish = (dish: Dish) => {
+    setEditingDish(dish);
+    if (dish.imageUrl) {
+      setPreviewUrl(dish.imageUrl);
+    } else {
+      setPreviewUrl(null);
+    }
+    setSelectedFile(null);
+    setActiveTab("add"); // Switch to add/edit tab
+  };
+
+  const handleCancelEdit = () => {
+    setEditingDish(null);
+    setSelectedFile(null);
+    setPreviewUrl(null);
+  };
+
   return (
-    <Tabs defaultValue="add" className="w-full">
+    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
       <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="add" className="text-xs">商品追加</TabsTrigger>
+        <TabsTrigger value="add" className="text-xs">
+          {editingDish ? "商品編集" : "商品追加"}
+        </TabsTrigger>
         <TabsTrigger value="list" className="text-xs">商品一覧</TabsTrigger>
       </TabsList>
       
       <TabsContent value="add" className="mt-3">
         <Card className="border border-slate-200">
           <CardHeader className="pb-4">
-            <CardTitle className="font-bold text-slate-900 flex items-center">
-              <PlusCircle className="mr-1 text-brand-blue h-4 w-4" />
-              新しいお皿を追加
-            </CardTitle>
+            <div className="flex justify-between items-center">
+              <CardTitle className="font-bold text-slate-900 flex items-center">
+                {editingDish ? (
+                  <>
+                    <Edit className="mr-1 text-brand-blue h-4 w-4" />
+                    商品を編集
+                  </>
+                ) : (
+                  <>
+                    <PlusCircle className="mr-1 text-brand-blue h-4 w-4" />
+                    新しいお皿を追加
+                  </>
+                )}
+              </CardTitle>
+              {editingDish && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCancelEdit}
+                >
+                  キャンセル
+                </Button>
+              )}
+            </div>
           </CardHeader>
           <CardContent>
             <Form {...form}>
@@ -244,7 +300,10 @@ export default function ProductManagement() {
                     disabled={createDishMutation.isPending}
                     className="w-full bg-brand-blue hover:bg-blue-700"
                   >
-                    {createDishMutation.isPending ? "追加中..." : "お皿を追加"}
+                    {createDishMutation.isPending 
+                      ? (editingDish ? "更新中..." : "追加中...") 
+                      : (editingDish ? "商品を更新" : "お皿を追加")
+                    }
                   </Button>
                 </div>
               </form>
@@ -294,6 +353,7 @@ export default function ProductManagement() {
                   <div className="w-12">画像</div>
                   <div className="flex-1">商品名</div>
                   <div className="w-20 text-right">価格</div>
+                  <div className="w-16 text-center">編集</div>
                 </div>
                 
                 {/* Product rows */}
@@ -321,6 +381,16 @@ export default function ProductManagement() {
                     </div>
                     <div className="w-20 text-right">
                       <span className="font-medium text-slate-900">¥{parseInt(dish.price).toLocaleString()}</span>
+                    </div>
+                    <div className="w-16 flex justify-center">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleEditDish(dish)}
+                        className="h-6 w-6 p-0"
+                      >
+                        <Edit className="h-3 w-3" />
+                      </Button>
                     </div>
                   </div>
                 ))}
