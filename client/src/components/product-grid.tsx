@@ -141,7 +141,7 @@ export default function ProductGrid({ dishes, isLoading }: ProductGridProps) {
                 <img
                   src={category.doorImageUrl}
                   alt={`${category.name} - グループ ${chunkIndex + 1}`}
-                  className="w-full h-32 object-cover rounded-lg shadow-sm"
+                  className="w-full h-48 object-cover rounded-lg shadow-sm"
                 />
                 <div className="text-center mt-2">
                   <h3 className="font-bold text-slate-800 text-sm">

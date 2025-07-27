@@ -264,7 +264,7 @@ export default function DishManagement() {
                 {/* Category header with door image */}
                 <div className="relative">
                   <div 
-                    className={`w-full h-32 rounded-lg overflow-hidden mb-2 relative group ${!category.doorImageUrl ? 'border-2 border-dashed border-slate-300' : ''}`}
+                    className={`w-full h-48 rounded-lg overflow-hidden mb-2 relative group ${!category.doorImageUrl ? 'border-2 border-dashed border-slate-300' : ''}`}
                     onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add('border-orange-500'); }}
                     onDragLeave={(e) => { e.preventDefault(); e.currentTarget.classList.remove('border-orange-500'); }}
                     onDrop={(e) => {
