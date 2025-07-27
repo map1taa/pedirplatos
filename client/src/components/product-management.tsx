@@ -1,15 +1,18 @@
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { PlusCircle, CloudUpload } from "lucide-react";
+import { PlusCircle, CloudUpload, Trash2, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import type { Dish } from "@shared/schema";
 
 const formSchema = z.object({
   name: z.string().min(1, "商品名は必須です"),
@@ -21,8 +24,16 @@ type FormValues = z.infer<typeof formSchema>;
 export default function ProductManagement() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [selectedDishes, setSelectedDishes] = useState<Set<string>>(new Set());
+  const [showProductList, setShowProductList] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Fetch dishes for the product list
+  const { data: dishes = [], isLoading } = useQuery({
+    queryKey: ["/api/dishes"],
+    enabled: showProductList,
+  });
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -65,6 +76,29 @@ export default function ProductManagement() {
     },
   });
 
+  const deleteDishesMutation = useMutation({
+    mutationFn: async (dishIds: string[]) => {
+      await Promise.all(
+        dishIds.map(id => apiRequest("DELETE", `/api/dishes/${id}`))
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/dishes"] });
+      setSelectedDishes(new Set());
+      toast({
+        title: "商品を削除しました",
+        description: `${selectedDishes.size}個の商品を削除しました。`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "エラー",
+        description: "商品の削除に失敗しました。",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -81,107 +115,220 @@ export default function ProductManagement() {
     });
   };
 
+  const handleSelectDish = (dishId: string, checked: boolean) => {
+    setSelectedDishes(prev => {
+      const newSet = new Set(prev);
+      if (checked) {
+        newSet.add(dishId);
+      } else {
+        newSet.delete(dishId);
+      }
+      return newSet;
+    });
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedDishes(new Set(dishes.map((dish: Dish) => dish.id)));
+    } else {
+      setSelectedDishes(new Set());
+    }
+  };
+
+  const handleDeleteSelected = () => {
+    if (selectedDishes.size === 0) return;
+    if (confirm(`${selectedDishes.size}個の商品を削除しますか？`)) {
+      deleteDishesMutation.mutate(Array.from(selectedDishes));
+    }
+  };
+
   return (
-    <Card className="border border-slate-200">
-      <CardHeader className="pb-4">
-        <CardTitle className="font-bold text-slate-900 flex items-center">
-          <PlusCircle className="mr-1 text-brand-blue h-4 w-4" />
-          新しいお皿を追加
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Image Upload */}
-            <div className="md:col-span-2">
-              <FormLabel className="block font-semibold text-slate-700 mb-2">
-                商品画像
-              </FormLabel>
-              <div className="border-2 border-dashed border-slate-300 rounded-lg p-4 text-center hover:border-brand-blue transition-colors">
-                {previewUrl ? (
-                  <div className="space-y-2">
-                    <img 
-                      src={previewUrl} 
-                      alt="Preview" 
-                      className="mx-auto max-h-32 rounded-lg object-cover"
+    <Tabs defaultValue="add" className="w-full">
+      <TabsList className="grid w-full grid-cols-2">
+        <TabsTrigger value="add" className="text-xs">商品追加</TabsTrigger>
+        <TabsTrigger value="list" className="text-xs">商品一覧</TabsTrigger>
+      </TabsList>
+      
+      <TabsContent value="add" className="mt-3">
+        <Card className="border border-slate-200">
+          <CardHeader className="pb-4">
+            <CardTitle className="font-bold text-slate-900 flex items-center">
+              <PlusCircle className="mr-1 text-brand-blue h-4 w-4" />
+              新しいお皿を追加
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Image Upload */}
+                <div className="md:col-span-2">
+                  <FormLabel className="block font-semibold text-slate-700 mb-2">
+                    商品画像
+                  </FormLabel>
+                  <div className="border-2 border-dashed border-slate-300 rounded-lg p-4 text-center hover:border-brand-blue transition-colors">
+                    {previewUrl ? (
+                      <div className="space-y-2">
+                        <img 
+                          src={previewUrl} 
+                          alt="Preview" 
+                          className="mx-auto max-h-32 rounded-lg object-cover"
+                        />
+                        <Button 
+                          type="button" 
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedFile(null);
+                            setPreviewUrl(null);
+                          }}
+                        >
+                          画像を削除
+                        </Button>
+                      </div>
+                    ) : (
+                      <>
+                        <CloudUpload className="mx-auto h-8 w-8 text-slate-400 mb-2" />
+                        <p className="text-slate-600 mb-2">
+                          画像をドラッグ&ドロップまたはクリックして選択
+                        </p>
+                      </>
+                    )}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      className="hidden"
+                      id="image-upload"
                     />
-                    <Button 
-                      type="button" 
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setSelectedFile(null);
-                        setPreviewUrl(null);
-                      }}
-                    >
-                      画像を削除
-                    </Button>
+                    <label htmlFor="image-upload">
+                      <Button type="button" asChild size="sm" className="cursor-pointer">
+                        <span>ファイルを選択</span>
+                      </Button>
+                    </label>
                   </div>
-                ) : (
-                  <>
-                    <CloudUpload className="mx-auto h-8 w-8 text-slate-400 mb-2" />
-                    <p className="text-slate-600 mb-2">
-                      画像をドラッグ&ドロップまたはクリックして選択
-                    </p>
-                  </>
-                )}
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  className="hidden"
-                  id="image-upload"
+                </div>
+
+                {/* Product Details */}
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="font-semibold text-slate-700">商品名</FormLabel>
+                      <FormControl>
+                        <Input placeholder="例：和風陶器プレート" className="h-8" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-                <label htmlFor="image-upload">
-                  <Button type="button" asChild size="sm" className="cursor-pointer">
-                    <span>ファイルを選択</span>
+
+                <FormField
+                  control={form.control}
+                  name="price"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="font-semibold text-slate-700">価格（円）</FormLabel>
+                      <FormControl>
+                        <Input type="number" placeholder="2500" className="h-8" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="md:col-span-2">
+                  <Button 
+                    type="submit" 
+                    size="sm"
+                    disabled={createDishMutation.isPending}
+                    className="w-full bg-brand-blue hover:bg-blue-700"
+                  >
+                    {createDishMutation.isPending ? "追加中..." : "お皿を追加"}
                   </Button>
-                </label>
+                </div>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+      </TabsContent>
+
+      <TabsContent value="list" className="mt-3">
+        <Card className="border border-slate-200">
+          <CardHeader className="pb-3">
+            <div className="flex justify-between items-center">
+              <CardTitle className="font-bold text-slate-900 flex items-center">
+                <Eye className="mr-1 text-brand-blue h-4 w-4" />
+                商品一覧 ({dishes.length}個)
+              </CardTitle>
+              {selectedDishes.size > 0 && (
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={handleDeleteSelected}
+                  disabled={deleteDishesMutation.isPending}
+                >
+                  <Trash2 className="mr-1 h-3 w-3" />
+                  選択削除 ({selectedDishes.size})
+                </Button>
+              )}
+            </div>
+          </CardHeader>
+          <CardContent>
+            {isLoading ? (
+              <div className="text-center py-4">
+                <p className="text-slate-600">読み込み中...</p>
               </div>
-            </div>
-
-            {/* Product Details */}
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="font-semibold text-slate-700">商品名</FormLabel>
-                  <FormControl>
-                    <Input placeholder="例：和風陶器プレート" className="h-8" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="price"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="font-semibold text-slate-700">価格（円）</FormLabel>
-                  <FormControl>
-                    <Input type="number" placeholder="2500" className="h-8" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="md:col-span-2">
-              <Button 
-                type="submit" 
-                size="sm"
-                disabled={createDishMutation.isPending}
-                className="w-full bg-brand-blue hover:bg-blue-700"
-              >
-                {createDishMutation.isPending ? "追加中..." : "お皿を追加"}
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+            ) : dishes.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-slate-600">登録された商品がありません</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {/* Header row with select all */}
+                <div className="flex items-center gap-3 p-2 bg-slate-50 rounded text-xs font-medium">
+                  <Checkbox
+                    checked={selectedDishes.size === dishes.length && dishes.length > 0}
+                    onCheckedChange={handleSelectAll}
+                  />
+                  <div className="w-12">画像</div>
+                  <div className="flex-1">商品名</div>
+                  <div className="w-20 text-right">価格</div>
+                </div>
+                
+                {/* Product rows */}
+                {dishes.map((dish: Dish) => (
+                  <div key={dish.id} className="flex items-center gap-3 p-2 border border-slate-200 rounded hover:bg-slate-50">
+                    <Checkbox
+                      checked={selectedDishes.has(dish.id)}
+                      onCheckedChange={(checked) => handleSelectDish(dish.id, checked as boolean)}
+                    />
+                    <div className="w-12 h-12 flex-shrink-0">
+                      {dish.imageUrl ? (
+                        <img 
+                          src={dish.imageUrl} 
+                          alt={dish.name}
+                          className="w-full h-full object-cover rounded border"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-slate-100 rounded border flex items-center justify-center">
+                          <EyeOff className="h-4 w-4 text-slate-400" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-slate-900 truncate">{dish.name}</p>
+                    </div>
+                    <div className="w-20 text-right">
+                      <span className="font-medium text-slate-900">¥{parseInt(dish.price).toLocaleString()}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </TabsContent>
+    </Tabs>
   );
 }
