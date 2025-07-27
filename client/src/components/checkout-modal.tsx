@@ -178,9 +178,12 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
       {/* Order Confirmation Modal */}
       <Dialog open={isConfirmationOpen} onOpenChange={setIsConfirmationOpen}>
         <DialogContent className="max-w-md">
-          <DialogDescription>
-            発注が正常に完了しました。
-          </DialogDescription>
+          <DialogHeader>
+            <DialogTitle className="sr-only">発注完了</DialogTitle>
+            <DialogDescription>
+              発注が正常に完了しました。
+            </DialogDescription>
+          </DialogHeader>
           <div className="text-center space-y-4">
             <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto">
               <Check className="h-6 w-6 text-green-600" />

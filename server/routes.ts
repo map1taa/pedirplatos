@@ -25,7 +25,7 @@ const upload = multer({
     if (file.mimetype.startsWith('image/')) {
       cb(null, true);
     } else {
-      cb(new Error('Only image files are allowed'), false);
+      cb(null, false);
     }
   },
   limits: {
@@ -192,26 +192,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
 }
 
 async function sendOrderNotification(order: any) {
-  const adminEmail = process.env.ADMIN_EMAIL || "admin@dishorder.com";
+  const adminEmail = "yuukatsuchiya002@gmail.com";
   
   const itemsList = order.items.map((item: any) => 
-    `- ${item.dish.name} (${item.dish.size}) × ${item.quantity} = ¥${(parseFloat(item.price) * item.quantity).toLocaleString()}`
+    `- ${item.dish.name} × ${item.quantity} = ¥${(parseFloat(item.price) * item.quantity).toLocaleString()}`
   ).join('\n');
 
   const emailContent = `
-新しい注文が入りました
+新しい発注が入りました
 
-注文番号: ${order.id}
-注文日時: ${new Date(order.createdAt).toLocaleString('ja-JP')}
+発注番号: ${order.id}
+発注日時: ${new Date(order.createdAt).toLocaleString('ja-JP')}
 
-【お客様情報】
-お名前: ${order.customerName}
-メールアドレス: ${order.customerEmail}
-電話番号: ${order.customerPhone}
-配送先住所: ${order.customerAddress}
-${order.notes ? `備考: ${order.notes}` : ''}
+【発注者情報】
+担当者名: ${order.customerName}
 
-【注文内容】
+【発注内容】
 ${itemsList}
 
 【金額】
@@ -219,8 +215,6 @@ ${itemsList}
 送料: ¥${parseFloat(order.shipping).toLocaleString()}
 税込: ¥${parseFloat(order.tax).toLocaleString()}
 合計: ¥${parseFloat(order.total).toLocaleString()}
-
-支払い方法: ${order.paymentMethod}
 
 ---
 お皿オーダーサイト
