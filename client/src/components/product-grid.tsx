@@ -15,26 +15,29 @@ interface ProductGridProps {
 }
 
 export default function ProductGrid({ dishes, isLoading }: ProductGridProps) {
-  const [selectedCategory, setSelectedCategory] = useState("all");
   const [quantities, setQuantities] = useState<Record<string, number>>({});
   const { addToCart } = useCart();
   const { toast } = useToast();
 
-  const categories = Array.from(new Set(dishes.map(dish => dish.category)));
-  const filteredDishes = selectedCategory === "all" 
-    ? dishes 
-    : dishes.filter(dish => dish.category === selectedCategory);
-
-  const getQuantity = (dishId: string) => quantities[dishId] || 1;
+  const getQuantity = (dishId: string) => quantities[dishId] || 0;
 
   const updateQuantity = (dishId: string, quantity: number) => {
-    if (quantity < 1) quantity = 1;
+    if (quantity < 0) quantity = 0;
     if (quantity > 99) quantity = 99;
     setQuantities(prev => ({ ...prev, [dishId]: quantity }));
   };
 
   const handleAddToCart = (dish: Dish) => {
     const quantity = getQuantity(dish.id);
+    if (quantity <= 0) {
+      toast({
+        title: "数量を選択してください",
+        description: "カートに追加するには1個以上を選択してください。",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     for (let i = 0; i < quantity; i++) {
       addToCart(dish);
     }
@@ -42,8 +45,8 @@ export default function ProductGrid({ dishes, isLoading }: ProductGridProps) {
       title: "カートに追加しました",
       description: `${dish.name} × ${quantity}個をカートに追加しました。`,
     });
-    // リセットオプション: 追加後に数量を1に戻す
-    setQuantities(prev => ({ ...prev, [dish.id]: 1 }));
+    // リセットオプション: 追加後に数量を0に戻す
+    setQuantities(prev => ({ ...prev, [dish.id]: 0 }));
   };
 
   if (isLoading) {
@@ -84,26 +87,11 @@ export default function ProductGrid({ dishes, isLoading }: ProductGridProps) {
       {/* Header */}
       <div className="flex justify-between items-center">
         <h2 className="text-3xl font-bold text-slate-900">商品一覧</h2>
-        <div className="flex items-center">
-          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-            <SelectTrigger className="w-48">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">すべてのカテゴリー</SelectItem>
-              {categories.map(category => (
-                <SelectItem key={category} value={category}>
-                  {category}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
       </div>
 
       {/* Product List */}
       <div className="space-y-4">
-        {filteredDishes.map((dish) => (
+        {dishes.map((dish) => (
           <Card key={dish.id} className="overflow-hidden hover:shadow-md transition-shadow border border-slate-200">
             <CardContent className="p-6 flex items-center space-x-6">
               <div className="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0 shadow-sm">
@@ -115,18 +103,9 @@ export default function ProductGrid({ dishes, isLoading }: ProductGridProps) {
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="text-xl font-bold text-slate-900 mb-2">{dish.name}</h3>
-                {dish.description && (
-                  <p className="text-sm text-slate-600 mb-3 line-clamp-2">{dish.description}</p>
-                )}
                 <div className="flex items-center space-x-6">
                   <span className="text-2xl font-bold text-brand-blue">
                     ¥{parseFloat(dish.price).toLocaleString()}
-                  </span>
-                  <span className="text-sm text-slate-600 bg-slate-100 px-3 py-1 rounded-full font-medium">
-                    {dish.size}
-                  </span>
-                  <span className="text-sm text-slate-500 bg-slate-50 px-3 py-1 rounded-full">
-                    {dish.category}
                   </span>
                 </div>
               </div>
@@ -144,9 +123,9 @@ export default function ProductGrid({ dishes, isLoading }: ProductGridProps) {
                   <Input
                     type="number"
                     value={getQuantity(dish.id)}
-                    onChange={(e) => updateQuantity(dish.id, parseInt(e.target.value) || 1)}
+                    onChange={(e) => updateQuantity(dish.id, parseInt(e.target.value) || 0)}
                     className="w-16 h-8 text-center text-sm"
-                    min="1"
+                    min="0"
                     max="99"
                   />
                   <Button
@@ -174,9 +153,9 @@ export default function ProductGrid({ dishes, isLoading }: ProductGridProps) {
         ))}
       </div>
 
-      {filteredDishes.length === 0 && (
+      {dishes.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-slate-600">選択されたカテゴリーに商品がありません。</p>
+          <p className="text-slate-600">商品がありません。</p>
         </div>
       )}
     </div>

@@ -6,10 +6,7 @@ import { z } from "zod";
 export const dishes = pgTable("dishes", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   name: text("name").notNull(),
-  description: text("description"),
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
-  size: text("size").notNull(),
-  category: text("category").notNull(),
   imageUrl: text("image_url"),
 });
 

@@ -6,8 +6,6 @@ import { z } from "zod";
 import { PlusCircle, CloudUpload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
@@ -15,10 +13,7 @@ import { apiRequest } from "@/lib/queryClient";
 
 const formSchema = z.object({
   name: z.string().min(1, "商品名は必須です"),
-  description: z.string().optional(),
   price: z.string().min(1, "価格は必須です").regex(/^\d+(\.\d{1,2})?$/, "有効な価格を入力してください"),
-  size: z.string().min(1, "サイズは必須です"),
-  category: z.string().min(1, "カテゴリーは必須です"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -33,10 +28,7 @@ export default function ProductManagement() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      description: "",
       price: "",
-      size: "",
-      category: "",
     },
   });
 
@@ -176,80 +168,14 @@ export default function ProductManagement() {
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="size"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm font-semibold text-slate-700">サイズ</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="サイズを選択" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="Sサイズ (直径18cm)">Sサイズ (直径18cm)</SelectItem>
-                      <SelectItem value="Mサイズ (直径22cm)">Mサイズ (直径22cm)</SelectItem>
-                      <SelectItem value="Lサイズ (直径26cm)">Lサイズ (直径26cm)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="category"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm font-semibold text-slate-700">カテゴリー</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="カテゴリーを選択" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="和食器">和食器</SelectItem>
-                      <SelectItem value="洋食器">洋食器</SelectItem>
-                      <SelectItem value="デザート皿">デザート皿</SelectItem>
-                      <SelectItem value="前菜皿">前菜皿</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="md:col-span-2">
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm font-semibold text-slate-700">商品説明</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="商品の詳細説明を入力してください"
-                        rows={3}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
             <div className="md:col-span-2">
               <Button 
                 type="submit" 
-                className="bg-brand-blue hover:bg-blue-700"
+                size="lg" 
                 disabled={createDishMutation.isPending}
+                className="w-full bg-brand-blue hover:bg-blue-700"
               >
-                {createDishMutation.isPending ? "追加中..." : "商品を追加"}
+                {createDishMutation.isPending ? "追加中..." : "お皿を追加"}
               </Button>
             </div>
           </form>
