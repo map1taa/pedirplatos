@@ -83,31 +83,32 @@ export default function ProductManagement() {
 
   return (
     <Card className="border border-slate-200">
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold text-slate-900 flex items-center">
-          <PlusCircle className="mr-2 text-brand-blue" />
+      <CardHeader className="pb-4">
+        <CardTitle className="font-bold text-slate-900 flex items-center">
+          <PlusCircle className="mr-1 text-brand-blue h-4 w-4" />
           新しいお皿を追加
         </CardTitle>
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Image Upload */}
             <div className="md:col-span-2">
-              <FormLabel className="block text-sm font-semibold text-slate-700 mb-2">
+              <FormLabel className="block font-semibold text-slate-700 mb-2">
                 商品画像
               </FormLabel>
-              <div className="border-2 border-dashed border-slate-300 rounded-lg p-8 text-center hover:border-brand-blue transition-colors">
+              <div className="border-2 border-dashed border-slate-300 rounded-lg p-4 text-center hover:border-brand-blue transition-colors">
                 {previewUrl ? (
-                  <div className="space-y-4">
+                  <div className="space-y-2">
                     <img 
                       src={previewUrl} 
                       alt="Preview" 
-                      className="mx-auto max-h-48 rounded-lg object-cover"
+                      className="mx-auto max-h-32 rounded-lg object-cover"
                     />
                     <Button 
                       type="button" 
-                      variant="outline" 
+                      variant="outline"
+                      size="sm"
                       onClick={() => {
                         setSelectedFile(null);
                         setPreviewUrl(null);
@@ -118,7 +119,7 @@ export default function ProductManagement() {
                   </div>
                 ) : (
                   <>
-                    <CloudUpload className="mx-auto h-12 w-12 text-slate-400 mb-4" />
+                    <CloudUpload className="mx-auto h-8 w-8 text-slate-400 mb-2" />
                     <p className="text-slate-600 mb-2">
                       画像をドラッグ&ドロップまたはクリックして選択
                     </p>
@@ -132,7 +133,7 @@ export default function ProductManagement() {
                   id="image-upload"
                 />
                 <label htmlFor="image-upload">
-                  <Button type="button" asChild className="cursor-pointer">
+                  <Button type="button" asChild size="sm" className="cursor-pointer">
                     <span>ファイルを選択</span>
                   </Button>
                 </label>
@@ -145,9 +146,9 @@ export default function ProductManagement() {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-semibold text-slate-700">商品名</FormLabel>
+                  <FormLabel className="font-semibold text-slate-700">商品名</FormLabel>
                   <FormControl>
-                    <Input placeholder="例：和風陶器プレート" {...field} />
+                    <Input placeholder="例：和風陶器プレート" className="h-8" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -159,9 +160,9 @@ export default function ProductManagement() {
               name="price"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-semibold text-slate-700">価格（円）</FormLabel>
+                  <FormLabel className="font-semibold text-slate-700">価格（円）</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="2500" {...field} />
+                    <Input type="number" placeholder="2500" className="h-8" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -171,7 +172,7 @@ export default function ProductManagement() {
             <div className="md:col-span-2">
               <Button 
                 type="submit" 
-                size="lg" 
+                size="sm"
                 disabled={createDishMutation.isPending}
                 className="w-full bg-brand-blue hover:bg-blue-700"
               >

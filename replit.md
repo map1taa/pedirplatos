@@ -98,12 +98,15 @@ The architecture prioritizes developer experience with TypeScript throughout, mo
 ## Recent Changes
 
 ### January 27, 2025
-- Separated dish management from product listing into dedicated pages
-- Created new `/management` route for dish administration
-- Updated product grid to display items in horizontal rectangular list format
-- Removed grid/list view toggle in favor of consistent horizontal layout
-- Enhanced visual design with larger product cards and improved spacing
-- Added quantity selector controls (+/- buttons and number input) before adding items to cart
-- Items can now be added in specified quantities (1-99) with visual feedback
-- Migrated from in-memory storage to PostgreSQL database with Drizzle ORM
-- Added database relations and automatic seeding with sample data
+- **Simplified Database Schema**: Removed size, category, and description fields from dishes table
+- **Compact B2B UI Design**: Implemented 11pt font size globally for maximum information density
+- **Product Display Optimization**: Converted from horizontal cards to dense table layout for B2B efficiency
+  - Smaller product images (48x48px thumbnails)
+  - Compact table rows with minimal padding
+  - Streamlined quantity controls with smaller buttons
+- **Header and Navigation Updates**: Reduced header height and button sizes for space efficiency
+- **Shopping Cart Redesign**: Compact sidebar with reduced spacing and smaller UI elements
+- **Form Optimization**: Reduced form field sizes and spacing in product management
+- **Default Quantity Behavior**: Items start at 0 quantity with validation preventing empty cart additions
+- **Database Migration**: Successfully migrated from in-memory storage to PostgreSQL with simplified schema
+- **User Interface Language**: Complete Japanese language interface throughout the application

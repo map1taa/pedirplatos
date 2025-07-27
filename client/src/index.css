@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Global font size override to 11pt */
+* {
+  font-size: 11pt !important;
+}
+
 :root {
   --background: hsl(0, 0%, 100%);
   --foreground: hsl(222.2, 84%, 4.9%);
