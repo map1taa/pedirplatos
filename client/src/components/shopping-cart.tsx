@@ -12,8 +12,6 @@ export default function ShoppingCartSidebar({ isOpen, onClose, onCheckout }: Sho
   const { cartItems, updateQuantity, removeFromCart, getCartTotal, getCartSubtotal } = useCart();
 
   const subtotal = getCartSubtotal();
-  const shipping = 500;
-  const tax = Math.round(subtotal * 0.1);
   const total = getCartTotal();
 
   return (
@@ -95,25 +93,11 @@ export default function ShoppingCartSidebar({ isOpen, onClose, onCheckout }: Sho
         {cartItems.length > 0 && (
           <div className="border-t border-slate-200 p-3 bg-slate-50">
             <div className="space-y-2 mb-4">
-              <div className="flex justify-between">
-                <span className="text-slate-600">
-                  小計 ({cartItems.reduce((sum, item) => sum + item.quantity, 0)}点)
+              <div className="flex justify-between font-bold">
+                <span className="text-slate-900">
+                  合計 ({cartItems.reduce((sum, item) => sum + item.quantity, 0)}点)
                 </span>
-                <span className="font-medium">¥{subtotal.toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-600">送料</span>
-                <span className="font-medium">¥{shipping.toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-600">税込</span>
-                <span className="font-medium">¥{tax.toLocaleString()}</span>
-              </div>
-              <div className="border-t border-slate-300 pt-2">
-                <div className="flex justify-between font-bold">
-                  <span className="text-slate-900">合計</span>
-                  <span className="text-brand-blue">¥{total.toLocaleString()}</span>
-                </div>
+                <span className="text-brand-blue">¥{total.toLocaleString()}</span>
               </div>
             </div>
             
