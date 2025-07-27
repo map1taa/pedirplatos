@@ -235,13 +235,14 @@ ${itemsList}
 
   try {
     console.log(`Attempting to send email to: ${adminEmail}`);
+    console.log(`From customer email: ${order.customerEmail}`);
     console.log(`SMTP User configured: ${process.env.SMTP_USER ? 'Yes' : 'No'}`);
     console.log(`SMTP Pass configured: ${process.env.SMTP_PASS ? 'Yes' : 'No'}`);
     
     const mailOptions = {
-      from: order.customerEmail,
+      from: `${order.customerName} <${process.env.SMTP_USER}>`,
       to: adminEmail,
-      subject: "新しい発注通知",
+      subject: `【発注】${order.customerName}様からの新しい発注`,
       text: emailContent,
       replyTo: order.customerEmail,
     };
