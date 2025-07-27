@@ -122,3 +122,10 @@ The architecture prioritizes developer experience with TypeScript throughout, mo
   - Door image upload functionality for category visual grouping
   - Categories tab with creation form and existing categories list
   - Full integration between products and categories for organized display
+- **Japanese Localization Update**: Complete Japanese translation of all interfaces
+  - Management interface fully translated to Japanese (商品管理, カテゴリ管理)
+  - Shopping cart and checkout modal in Japanese
+  - Product grid with Japanese headers and actions
+  - All form validation messages and toast notifications in Japanese
+  - Currency display changed from € to ¥ throughout the application
+  - Email notifications remain in Spanish as per customer requirements

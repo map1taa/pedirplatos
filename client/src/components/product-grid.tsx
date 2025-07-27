@@ -140,12 +140,12 @@ export default function ProductGrid({ dishes, isLoading }: ProductGridProps) {
               <div className="w-full">
                 <img
                   src={category.doorImageUrl}
-                  alt={`${category.name} - Grupo ${chunkIndex + 1}`}
+                  alt={`${category.name} - グループ ${chunkIndex + 1}`}
                   className="w-full h-32 object-cover rounded-lg shadow-sm"
                 />
                 <div className="text-center mt-2">
                   <h3 className="font-bold text-slate-800 text-sm">
-                    {category.name} - Grupo {chunkIndex + 1}
+                    {category.name} - グループ {chunkIndex + 1}
                   </h3>
                 </div>
               </div>
@@ -156,11 +156,11 @@ export default function ProductGrid({ dishes, isLoading }: ProductGridProps) {
               <table className="w-full">
                 <thead className="bg-slate-50 border-b border-slate-200">
                   <tr>
-                    <th className="px-3 py-2 text-left font-semibold text-slate-700">Imagen</th>
-                    <th className="px-3 py-2 text-left font-semibold text-slate-700">Nombre del Producto</th>
-                    <th className="px-3 py-2 text-right font-semibold text-slate-700">Precio</th>
-                    <th className="px-3 py-2 text-center font-semibold text-slate-700">Cantidad</th>
-                    <th className="px-3 py-2 text-center font-semibold text-slate-700">Acción</th>
+                    <th className="px-3 py-2 text-left font-semibold text-slate-700">画像</th>
+                    <th className="px-3 py-2 text-left font-semibold text-slate-700">商品名</th>
+                    <th className="px-3 py-2 text-right font-semibold text-slate-700">価格</th>
+                    <th className="px-3 py-2 text-center font-semibold text-slate-700">数量</th>
+                    <th className="px-3 py-2 text-center font-semibold text-slate-700">アクション</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -180,7 +180,7 @@ export default function ProductGrid({ dishes, isLoading }: ProductGridProps) {
                       </td>
                       <td className="px-3 py-2 text-right">
                         <span className="font-bold text-orange-600">
-                          €{parseFloat(dish.price).toLocaleString()}
+                          ¥{parseFloat(dish.price).toLocaleString()}
                         </span>
                       </td>
                       <td className="px-3 py-2">
@@ -217,7 +217,7 @@ export default function ProductGrid({ dishes, isLoading }: ProductGridProps) {
                           onClick={() => handleAddToCart(dish)}
                           className="bg-orange-600 hover:bg-orange-700 text-white border-orange-600 hover:border-orange-700"
                         >
-                          Añadir
+                          追加
                         </Button>
                       </td>
                     </tr>
