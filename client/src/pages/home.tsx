@@ -42,7 +42,7 @@ export default function Home() {
               <Link href="/management">
                 <Button variant="ghost" size="sm" className="text-slate-700 hover:text-brand-blue">
                   <Settings className="mr-1 h-3 w-3" />
-                  Gestión
+                  Gestion
                 </Button>
               </Link>
             </nav>

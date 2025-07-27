@@ -103,7 +103,7 @@ export default function ShoppingCartSidebar({ isOpen, onClose, onCheckout }: Sho
             
             <div className="space-y-2">
               <Button 
-                className="w-full bg-brand-blue hover:bg-blue-700 h-8"
+                className="w-full bg-brand-blue hover:bg-orange-700 h-8"
                 size="sm"
                 onClick={onCheckout}
               >

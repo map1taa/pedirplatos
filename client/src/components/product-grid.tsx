@@ -159,11 +159,11 @@ export default function ProductGrid({ dishes, isLoading }: ProductGridProps) {
                 <td className="px-3 py-2">
                   <Button 
                     size="sm"
-                    className="bg-brand-blue hover:bg-blue-700 px-3 py-1"
+                    className="bg-brand-blue hover:bg-orange-700 px-3 py-1"
                     onClick={() => handleAddToCart(dish)}
                   >
                     <ShoppingCartIcon className="mr-1 h-3 w-3" />
-                    Agregar
+                    Añadir
                   </Button>
                 </td>
               </tr>

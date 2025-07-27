@@ -218,7 +218,7 @@ export default function ProductManagement() {
     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
       <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger value="add" className="text-xs">
-          {editingDish ? "Editar Producto" : "Agregar Producto"}
+          {editingDish ? "Editar Producto" : "Añadir Producto"}
         </TabsTrigger>
         <TabsTrigger value="list" className="text-xs">Lista de Productos</TabsTrigger>
       </TabsList>
@@ -236,7 +236,7 @@ export default function ProductManagement() {
                 ) : (
                   <>
                     <PlusCircle className="mr-1 text-brand-blue h-4 w-4" />
-                    Agregar Nuevo Plato
+                    Añadir Nuevo Plato
                   </>
                 )}
               </CardTitle>
@@ -342,11 +342,11 @@ export default function ProductManagement() {
                     type="submit" 
                     size="sm"
                     disabled={createDishMutation.isPending}
-                    className="w-full bg-brand-blue hover:bg-blue-700"
+                    className="w-full bg-brand-blue hover:bg-orange-700"
                   >
                     {createDishMutation.isPending 
-                      ? (editingDish ? "Actualizando..." : "Agregando...") 
-                      : (editingDish ? "Actualizar Producto" : "Agregar Plato")
+                      ? (editingDish ? "Actualizando..." : "Añadiendo...") 
+                      : (editingDish ? "Actualizar Producto" : "Añadir Plato")
                     }
                   </Button>
                 </div>

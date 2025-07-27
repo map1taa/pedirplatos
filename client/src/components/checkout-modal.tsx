@@ -174,7 +174,7 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                   <Button 
                     type="submit" 
                     size="sm"
-                    className="flex-1 bg-brand-blue hover:bg-blue-700 h-8"
+                    className="flex-1 bg-brand-blue hover:bg-orange-700 h-8"
                     disabled={createOrderMutation.isPending}
                   >
                     <NotebookPen className="mr-1 h-3 w-3" />
@@ -208,7 +208,7 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
             </div>
             <Button 
               onClick={() => setIsConfirmationOpen(false)}
-              className="w-full bg-brand-blue hover:bg-blue-700 h-8"
+              className="w-full bg-brand-blue hover:bg-orange-700 h-8"
               size="sm"
             >
               OK
