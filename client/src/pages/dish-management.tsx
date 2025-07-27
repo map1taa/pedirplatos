@@ -263,15 +263,48 @@ export default function DishManagement() {
               <div key={category.id} className="space-y-3">
                 {/* Category header with door image */}
                 <div className="relative">
-                  {category.doorImageUrl && (
-                    <div className="w-full h-32 rounded-lg overflow-hidden mb-2">
-                      <img
-                        src={category.doorImageUrl}
-                        alt={category.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )}
+                  <div 
+                    className={`w-full h-32 rounded-lg overflow-hidden mb-2 relative group ${!category.doorImageUrl ? 'border-2 border-dashed border-slate-300' : ''}`}
+                    onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add('border-orange-500'); }}
+                    onDragLeave={(e) => { e.preventDefault(); e.currentTarget.classList.remove('border-orange-500'); }}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      e.currentTarget.classList.remove('border-orange-500');
+                      const file = e.dataTransfer.files[0];
+                      if (file && file.type.startsWith('image/')) {
+                        const formData = new FormData();
+                        formData.append("name", category.name);
+                        formData.append("sortOrder", category.sortOrder?.toString() || "0");
+                        formData.append("doorImage", file);
+                        createCategoryMutation.mutate({
+                          name: category.name,
+                          sortOrder: category.sortOrder || 0,
+                          doorImage: file,
+                        });
+                        setEditingCategory(category);
+                      }
+                    }}
+                  >
+                    {category.doorImageUrl ? (
+                      <>
+                        <img
+                          src={category.doorImageUrl}
+                          alt={category.name}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <p className="text-white text-sm font-medium">画像をドロップして変更</p>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-slate-100">
+                        <div className="text-center">
+                          <Upload className="mx-auto h-8 w-8 text-slate-400 mb-2" />
+                          <p className="text-sm text-slate-600">画像をドロップ</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                   <div className="flex items-center justify-between">
                     <h2 className="font-bold text-slate-800">{category.name}</h2>
                     <div className="flex items-center space-x-2">

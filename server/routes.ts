@@ -94,7 +94,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/categories", upload.single("doorImage"), async (req: Request, res: Response) => {
     try {
-      const validatedData = insertCategorySchema.parse(req.body);
+      // Parse sortOrder as number if it exists
+      const bodyData = { ...req.body };
+      if (bodyData.sortOrder !== undefined) {
+        bodyData.sortOrder = parseInt(bodyData.sortOrder);
+      }
+      
+      const validatedData = insertCategorySchema.parse(bodyData);
       
       let doorImageUrl = validatedData.doorImageUrl;
       if (req.file) {
@@ -115,9 +121,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/categories/:id", upload.single("doorImage"), async (req: Request, res: Response) => {
+  app.patch("/api/categories/:id", upload.single("doorImage"), async (req: Request, res: Response) => {
     try {
-      const validatedData = insertCategorySchema.partial().parse(req.body);
+      // Parse sortOrder as number if it exists
+      const bodyData = { ...req.body };
+      if (bodyData.sortOrder !== undefined) {
+        bodyData.sortOrder = parseInt(bodyData.sortOrder);
+      }
+      
+      const validatedData = insertCategorySchema.partial().parse(bodyData);
       
       let updateData = { ...validatedData };
       if (req.file) {
@@ -131,6 +143,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(category);
     } catch (error) {
       console.error("Error updating category:", error);
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Validation error", details: error.errors });
+      }
       res.status(500).json({ error: "Internal server error" });
     }
   });
