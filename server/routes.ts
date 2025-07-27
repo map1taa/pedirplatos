@@ -1,11 +1,12 @@
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertDishSchema, insertOrderSchema, insertOrderItemSchema } from "@shared/schema";
+import { insertDishSchema, insertOrderSchema, insertOrderItemSchema, insertCategorySchema } from "@shared/schema";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
 import nodemailer from "nodemailer";
+import { z } from "zod";
 
 // Configure multer for file uploads
 const uploadDir = path.join(process.cwd(), "server", "uploads");
@@ -64,6 +65,86 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.sendFile(filePath);
     } else {
       res.status(404).json({ message: "File not found" });
+    }
+  });
+
+  // Categories endpoints
+  app.get("/api/categories", async (req: Request, res: Response) => {
+    try {
+      const categories = await storage.getCategories();
+      res.json(categories);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.get("/api/categories/:id", async (req: Request, res: Response) => {
+    try {
+      const category = await storage.getCategory(req.params.id);
+      if (!category) {
+        return res.status(404).json({ error: "Category not found" });
+      }
+      res.json(category);
+    } catch (error) {
+      console.error("Error fetching category:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.post("/api/categories", upload.single("doorImage"), async (req: Request, res: Response) => {
+    try {
+      const validatedData = insertCategorySchema.parse(req.body);
+      
+      let doorImageUrl = validatedData.doorImageUrl;
+      if (req.file) {
+        doorImageUrl = `/uploads/${req.file.filename}`;
+      }
+
+      const category = await storage.createCategory({
+        ...validatedData,
+        doorImageUrl,
+      });
+      res.status(201).json(category);
+    } catch (error) {
+      console.error("Error creating category:", error);
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Validation error", details: error.errors });
+      }
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.put("/api/categories/:id", upload.single("doorImage"), async (req: Request, res: Response) => {
+    try {
+      const validatedData = insertCategorySchema.partial().parse(req.body);
+      
+      let updateData = { ...validatedData };
+      if (req.file) {
+        updateData.doorImageUrl = `/uploads/${req.file.filename}`;
+      }
+
+      const category = await storage.updateCategory(req.params.id, updateData);
+      if (!category) {
+        return res.status(404).json({ error: "Category not found" });
+      }
+      res.json(category);
+    } catch (error) {
+      console.error("Error updating category:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.delete("/api/categories/:id", async (req: Request, res: Response) => {
+    try {
+      const success = await storage.deleteCategory(req.params.id);
+      if (!success) {
+        return res.status(404).json({ error: "Category not found" });
+      }
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting category:", error);
+      res.status(500).json({ error: "Internal server error" });
     }
   });
 

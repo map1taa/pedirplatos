@@ -3,11 +3,20 @@ import { pgTable, text, varchar, integer, decimal } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
+export const categories = pgTable("categories", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  doorImageUrl: text("door_image_url"),
+  sortOrder: integer("sort_order").default(0),
+});
+
 export const dishes = pgTable("dishes", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   name: text("name").notNull(),
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
   imageUrl: text("image_url"),
+  categoryId: varchar("category_id"),
+  sortOrder: integer("sort_order").default(0),
 });
 
 export const orders = pgTable("orders", {
@@ -50,9 +59,21 @@ export const orderItemsRelations = relations(orderItems, ({ one }) => ({
   }),
 }));
 
-export const dishesRelations = relations(dishes, ({ many }) => ({
-  orderItems: many(orderItems),
+export const categoriesRelations = relations(categories, ({ many }) => ({
+  dishes: many(dishes),
 }));
+
+export const dishesRelations = relations(dishes, ({ many, one }) => ({
+  orderItems: many(orderItems),
+  category: one(categories, {
+    fields: [dishes.categoryId],
+    references: [categories.id],
+  }),
+}));
+
+export const insertCategorySchema = createInsertSchema(categories).omit({
+  id: true,
+});
 
 export const insertDishSchema = createInsertSchema(dishes).omit({
   id: true,
@@ -69,6 +90,9 @@ export const insertOrderSchema = createInsertSchema(orders).omit({
 export const insertOrderItemSchema = createInsertSchema(orderItems).omit({
   id: true,
 });
+
+export type InsertCategory = z.infer<typeof insertCategorySchema>;
+export type Category = typeof categories.$inferSelect;
 
 export type InsertDish = z.infer<typeof insertDishSchema>;
 export type Dish = typeof dishes.$inferSelect;
