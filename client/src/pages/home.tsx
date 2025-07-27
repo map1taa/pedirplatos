@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ShoppingCart, Menu, Utensils } from "lucide-react";
+import { ShoppingCart, Menu, Utensils, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import ProductManagement from "@/components/product-management";
+import { Link } from "wouter";
 import ProductGrid from "@/components/product-grid";
 import ShoppingCartSidebar from "@/components/shopping-cart";
 import CheckoutModal from "@/components/checkout-modal";
@@ -39,12 +39,12 @@ export default function Home() {
             </div>
             
             <nav className="hidden md:flex space-x-8">
-              <a href="#products" className="text-slate-700 hover:text-brand-blue transition-colors font-medium">
-                商品一覧
-              </a>
-              <a href="#management" className="text-slate-700 hover:text-brand-blue transition-colors font-medium">
-                商品管理
-              </a>
+              <Link href="/management">
+                <Button variant="ghost" className="text-slate-700 hover:text-brand-blue">
+                  <Settings className="mr-2 h-4 w-4" />
+                  お皿管理
+                </Button>
+              </Link>
             </nav>
 
             <div className="flex items-center space-x-4">
@@ -71,11 +71,6 @@ export default function Home() {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Product Management Section */}
-        <section id="management" className="mb-12">
-          <ProductManagement />
-        </section>
-
         {/* Product Grid Section */}
         <section id="products">
           <ProductGrid dishes={dishes} isLoading={isLoading} />

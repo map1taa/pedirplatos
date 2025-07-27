@@ -7,6 +7,7 @@ This is a full-stack web application for a Japanese restaurant dish ordering sys
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+Layout preferences: Separate pages for dish management and product listing, with product list displayed in horizontal rectangular rows.
 
 ## System Architecture
 
@@ -92,3 +93,12 @@ The application follows a modern full-stack architecture with clear separation b
 4. Database migrations applied via Drizzle Kit
 
 The architecture prioritizes developer experience with TypeScript throughout, modern tooling, and clear separation of concerns while maintaining simplicity for a restaurant ordering system.
+
+## Recent Changes
+
+### January 27, 2025
+- Separated dish management from product listing into dedicated pages
+- Created new `/management` route for dish administration
+- Updated product grid to display items in horizontal rectangular list format
+- Removed grid/list view toggle in favor of consistent horizontal layout
+- Enhanced visual design with larger product cards and improved spacing
