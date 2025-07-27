@@ -35,16 +35,28 @@ const upload = multer({
 
 // Configure nodemailer
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || "smtp.gmail.com",
-  port: parseInt(process.env.SMTP_PORT || "587"),
-  secure: false,
+  service: 'gmail',
   auth: {
-    user: process.env.SMTP_USER || process.env.EMAIL_USER,
-    pass: process.env.SMTP_PASS || process.env.EMAIL_PASS,
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
   },
 });
 
+// Test SMTP connection
+async function testEmailConnection() {
+  try {
+    await transporter.verify();
+    console.log('SMTP connection verified successfully');
+    return true;
+  } catch (error) {
+    console.error('SMTP connection failed:', error);
+    return false;
+  }
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Test email connection on startup
+  testEmailConnection();
   // Serve uploaded images
   app.use('/uploads', (req, res, next) => {
     const filePath = path.join(uploadDir, req.path);
@@ -221,13 +233,23 @@ ${itemsList}
   `;
 
   try {
-    await transporter.sendMail({
-      from: process.env.SMTP_USER || process.env.EMAIL_USER,
+    console.log(`Attempting to send email to: ${adminEmail}`);
+    console.log(`SMTP User configured: ${process.env.SMTP_USER ? 'Yes' : 'No'}`);
+    console.log(`SMTP Pass configured: ${process.env.SMTP_PASS ? 'Yes' : 'No'}`);
+    
+    const mailOptions = {
+      from: process.env.SMTP_USER,
       to: adminEmail,
-      subject: `新規注文 - ${order.id}`,
+      subject: "新しい発注通知",
       text: emailContent,
-    });
+    };
+    
+    const result = await transporter.sendMail(mailOptions);
+    console.log(`Email sent successfully to ${adminEmail}:`, result.messageId);
   } catch (error) {
-    console.error('Failed to send email notification:', error);
+    console.error("Failed to send email notification:", error);
+    if (error instanceof Error) {
+      console.error("Error details:", error.message);
+    }
   }
 }
