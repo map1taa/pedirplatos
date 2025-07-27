@@ -40,9 +40,7 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   });
 
   const subtotal = getCartSubtotal();
-  const shipping = 500;
-  const tax = Math.round(subtotal * 0.1);
-  const total = getCartTotal();
+  const total = subtotal;
 
   const createOrderMutation = useMutation({
     mutationFn: async (data: FormValues) => {
@@ -54,8 +52,8 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
           notes: "",
           paymentMethod: "bank",
           subtotal: subtotal.toString(),
-          shipping: shipping.toString(),
-          tax: tax.toString(),
+          shipping: "0",
+          tax: "0",
           total: total.toString(),
           status: "pending",
         },

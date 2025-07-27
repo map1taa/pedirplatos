@@ -14,7 +14,7 @@ interface ProductGridProps {
 
 export default function ProductGrid({ dishes, isLoading }: ProductGridProps) {
   const [quantities, setQuantities] = useState<Record<string, number>>({});
-  const { addToCart } = useCart();
+  const { addToCart, updateQuantity: updateCartQuantity } = useCart();
   const { toast } = useToast();
 
   const getQuantity = (dishId: string) => quantities[dishId] || 0;
@@ -36,9 +36,10 @@ export default function ProductGrid({ dishes, isLoading }: ProductGridProps) {
       return;
     }
     
-    for (let i = 0; i < quantity; i++) {
-      addToCart(dish);
-    }
+    // Add dish to cart first, then update quantity
+    addToCart(dish);
+    updateCartQuantity(dish.id, quantity);
+    
     toast({
       title: "カートに追加しました",
       description: `${dish.name} × ${quantity}個をカートに追加しました。`,

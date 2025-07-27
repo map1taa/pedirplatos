@@ -40,13 +40,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
       return;
     }
     
-    setCartItems(prev =>
-      prev.map(item =>
-        item.dish.id === dishId
-          ? { ...item, quantity }
-          : item
-      )
-    );
+    setCartItems(prev => {
+      const existingItem = prev.find(item => item.dish.id === dishId);
+      if (existingItem) {
+        return prev.map(item =>
+          item.dish.id === dishId
+            ? { ...item, quantity }
+            : item
+        );
+      }
+      // If item doesn't exist in cart, can't update quantity without dish object
+      return prev;
+    });
   };
 
   const clearCart = () => {
@@ -60,10 +65,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const getCartTotal = () => {
-    const subtotal = getCartSubtotal();
-    const shipping = 500;
-    const tax = Math.round(subtotal * 0.1);
-    return subtotal + shipping + tax;
+    return getCartSubtotal();
   };
 
   return (

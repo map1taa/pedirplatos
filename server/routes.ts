@@ -224,9 +224,6 @@ async function sendOrderNotification(order: any) {
 ${itemsList}
 
 【金額】
-小計: ¥${parseFloat(order.subtotal).toLocaleString()}
-送料: ¥${parseFloat(order.shipping).toLocaleString()}
-税込: ¥${parseFloat(order.tax).toLocaleString()}
 合計: ¥${parseFloat(order.total).toLocaleString()}
 
 ---
