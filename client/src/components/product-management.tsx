@@ -53,7 +53,7 @@ export default function ProductManagement() {
     defaultValues: {
       name: "",
       price: "",
-      categoryId: "",
+      categoryId: "none",
     },
   });
 
@@ -71,13 +71,13 @@ export default function ProductManagement() {
       form.reset({
         name: editingDish.name,
         price: editingDish.price,
-        categoryId: editingDish.categoryId || "",
+        categoryId: editingDish.categoryId || "none",
       });
     } else {
       form.reset({
         name: "",
         price: "",
-        categoryId: "",
+        categoryId: "none",
       });
     }
   }, [editingDish, form]);
@@ -86,7 +86,7 @@ export default function ProductManagement() {
     mutationFn: async (data: FormValues & { image?: File }) => {
       const formData = new FormData();
       Object.entries(data).forEach(([key, value]) => {
-        if (key !== 'image' && value) {
+        if (key !== 'image' && value !== null && value !== undefined) {
           formData.append(key, value);
         }
       });
@@ -224,6 +224,7 @@ export default function ProductManagement() {
   const onSubmit = (data: FormValues) => {
     createDishMutation.mutate({
       ...data,
+      categoryId: data.categoryId === "none" ? null : data.categoryId,
       image: selectedFile || undefined,
     });
   };
@@ -387,7 +388,7 @@ export default function ProductManagement() {
                   name="price"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="font-semibold text-slate-700">Precio (¥)</FormLabel>
+                      <FormLabel className="font-semibold text-slate-700">価格 (¥)</FormLabel>
                       <FormControl>
                         <Input type="number" placeholder="2500" className="h-8" {...field} />
                       </FormControl>
@@ -409,7 +410,7 @@ export default function ProductManagement() {
                               <SelectValue placeholder="カテゴリを選択" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="">カテゴリなし</SelectItem>
+                              <SelectItem value="none">カテゴリなし</SelectItem>
                               {categories.map(category => (
                                 <SelectItem key={category.id} value={category.id}>
                                   {category.name}
