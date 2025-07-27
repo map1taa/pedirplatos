@@ -14,6 +14,7 @@ import { apiRequest } from "@/lib/queryClient";
 
 const formSchema = z.object({
   customerName: z.string().min(1, "担当者名を入力してください"),
+  customerEmail: z.string().email("有効なメールアドレスを入力してください").min(1, "メールアドレスを入力してください"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -34,6 +35,7 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       customerName: "",
+      customerEmail: "",
     },
   });
 
@@ -47,7 +49,6 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
       const orderData = {
         order: {
           ...data,
-          customerEmail: "default@company.com", // Default for B2B
           customerPhone: "",
           customerAddress: "",
           notes: "",
@@ -103,7 +104,7 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
               発注確認
             </DialogTitle>
             <DialogDescription>
-              発注を確定するために担当者名を入力してください。
+              発注を確定するために必要事項を入力してください。
             </DialogDescription>
           </DialogHeader>
 
@@ -143,6 +144,19 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                       <FormLabel className="font-semibold text-slate-700">担当者名</FormLabel>
                       <FormControl>
                         <Input placeholder="山田太郎" className="h-8" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="customerEmail"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="font-semibold text-slate-700">メールアドレス</FormLabel>
+                      <FormControl>
+                        <Input type="email" placeholder="yamada@company.com" className="h-8" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

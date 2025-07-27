@@ -218,6 +218,7 @@ async function sendOrderNotification(order: any) {
 
 【発注者情報】
 担当者名: ${order.customerName}
+メールアドレス: ${order.customerEmail}
 
 【発注内容】
 ${itemsList}
@@ -238,10 +239,11 @@ ${itemsList}
     console.log(`SMTP Pass configured: ${process.env.SMTP_PASS ? 'Yes' : 'No'}`);
     
     const mailOptions = {
-      from: process.env.SMTP_USER,
+      from: order.customerEmail,
       to: adminEmail,
       subject: "新しい発注通知",
       text: emailContent,
+      replyTo: order.customerEmail,
     };
     
     const result = await transporter.sendMail(mailOptions);
