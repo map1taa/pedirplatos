@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { sql, relations } from "drizzle-orm";
 import { pgTable, text, varchar, integer, decimal } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -36,6 +36,26 @@ export const orderItems = pgTable("order_items", {
   quantity: integer("quantity").notNull(),
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
 });
+
+// Relations
+export const ordersRelations = relations(orders, ({ many }) => ({
+  items: many(orderItems),
+}));
+
+export const orderItemsRelations = relations(orderItems, ({ one }) => ({
+  order: one(orders, {
+    fields: [orderItems.orderId],
+    references: [orders.id],
+  }),
+  dish: one(dishes, {
+    fields: [orderItems.dishId],
+    references: [dishes.id],
+  }),
+}));
+
+export const dishesRelations = relations(dishes, ({ many }) => ({
+  orderItems: many(orderItems),
+}));
 
 export const insertDishSchema = createInsertSchema(dishes).omit({
   id: true,

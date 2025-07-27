@@ -23,7 +23,7 @@ The application follows a modern full-stack architecture with clear separation b
 ### Backend Architecture
 - **Runtime**: Node.js with Express.js
 - **Language**: TypeScript with ES modules
-- **Database ORM**: Drizzle ORM with PostgreSQL
+- **Database**: PostgreSQL with Drizzle ORM (DatabaseStorage implementation)
 - **File Handling**: Multer for image uploads
 - **Email**: Nodemailer for order notifications
 
@@ -36,10 +36,11 @@ The application follows a modern full-stack architecture with clear separation b
 4. **Checkout Modal**: Order form with customer details and payment options
 
 ### Backend Services
-1. **Storage Layer**: Abstract storage interface with in-memory implementation for development
+1. **Storage Layer**: Abstract storage interface with PostgreSQL database implementation
 2. **Route Handlers**: RESTful API endpoints for dishes and orders
 3. **File Upload**: Image handling with validation and storage
 4. **Email Service**: Order confirmation emails
+5. **Database Seeding**: Automatic sample data population on startup
 
 ### Shared Schema
 - Centralized TypeScript types and Zod validation schemas
@@ -77,7 +78,7 @@ The application follows a modern full-stack architecture with clear separation b
 ### Development
 - Vite dev server for frontend with proxy to Express backend
 - Hot module replacement for rapid development
-- In-memory storage for quick iteration
+- PostgreSQL database with automatic seeding
 
 ### Production
 - **Frontend**: Static build served by Express
@@ -104,3 +105,5 @@ The architecture prioritizes developer experience with TypeScript throughout, mo
 - Enhanced visual design with larger product cards and improved spacing
 - Added quantity selector controls (+/- buttons and number input) before adding items to cart
 - Items can now be added in specified quantities (1-99) with visual feedback
+- Migrated from in-memory storage to PostgreSQL database with Drizzle ORM
+- Added database relations and automatic seeding with sample data
