@@ -46,8 +46,8 @@ export default function DishManagement() {
       queryClient.invalidateQueries({ queryKey: ["/api/dishes"] });
       const wasEditing = editingDish !== null;
       toast({
-        title: wasEditing ? "商品を更新しました" : "商品を追加しました",
-        description: wasEditing ? "商品が正常に更新されました。" : "新しい商品が正常に追加されました。",
+        title: wasEditing ? "Producto actualizado" : "Producto añadido",
+        description: wasEditing ? "El producto se actualizó correctamente." : "El nuevo producto se añadió correctamente.",
       });
       setIsAddDishOpen(false);
       setEditingDish(null);
@@ -55,8 +55,8 @@ export default function DishManagement() {
     },
     onError: () => {
       toast({
-        title: "エラー",
-        description: "操作に失敗しました。",
+        title: "Error",
+        description: "La operación falló.",
         variant: "destructive",
       });
     },
@@ -69,8 +69,8 @@ export default function DishManagement() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/dishes"] });
       toast({
-        title: "商品を削除しました",
-        description: "商品が正常に削除されました。",
+        title: "Producto eliminado",
+        description: "El producto se eliminó correctamente.",
       });
     },
   });
@@ -168,10 +168,10 @@ export default function DishManagement() {
               <Link href="/">
                 <Button variant="ghost" size="sm" className="mr-4">
                   <ArrowLeft className="mr-1 h-3 w-3" />
-                  戻る
+                  Volver
                 </Button>
               </Link>
-              <h1 className="font-bold text-brand-blue">商品管理</h1>
+              <h1 className="font-bold text-brand-blue">Gestión de Productos</h1>
             </div>
             <Button 
               size="sm" 
@@ -179,7 +179,7 @@ export default function DishManagement() {
               className="bg-orange-600 hover:bg-orange-700"
             >
               <Plus className="mr-1 h-3 w-3" />
-              カテゴリ追加
+              Añadir Categoría
             </Button>
           </div>
         </div>
@@ -191,24 +191,24 @@ export default function DishManagement() {
           {uncategorizedDishes.length > 0 && (
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <h2 className="font-bold text-slate-800">カテゴリなし</h2>
+                <h2 className="font-bold text-slate-800">Sin Categoría</h2>
                 <Button 
                   size="sm" 
                   variant="outline"
                   onClick={() => handleAddDish(null)}
                 >
                   <Plus className="mr-1 h-3 w-3" />
-                  商品追加
+                  Añadir Producto
                 </Button>
               </div>
               <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
                 <table className="w-full">
                   <thead className="bg-slate-50 border-b border-slate-200">
                     <tr>
-                      <th className="px-3 py-2 text-left font-semibold text-slate-700">画像</th>
-                      <th className="px-3 py-2 text-left font-semibold text-slate-700">商品名</th>
-                      <th className="px-3 py-2 text-right font-semibold text-slate-700">価格</th>
-                      <th className="px-3 py-2 text-center font-semibold text-slate-700">アクション</th>
+                      <th className="px-3 py-2 text-left font-semibold text-slate-700">Imagen</th>
+                      <th className="px-3 py-2 text-left font-semibold text-slate-700">Producto</th>
+                      <th className="px-3 py-2 text-right font-semibold text-slate-700">Precio</th>
+                      <th className="px-3 py-2 text-center font-semibold text-slate-700">Acción</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -227,7 +227,7 @@ export default function DishManagement() {
                           <span className="font-medium text-slate-900">{dish.name}</span>
                         </td>
                         <td className="px-3 py-2 text-right">
-                          <span className="font-bold text-orange-600">¥{parseFloat(dish.price).toLocaleString()}</span>
+                          <span className="font-bold text-orange-600">€{parseFloat(dish.price).toLocaleString()}</span>
                         </td>
                         <td className="px-3 py-2">
                           <div className="flex items-center justify-center space-x-1">

@@ -23,7 +23,7 @@ export default function ShoppingCartSidebar({ isOpen, onClose, onCheckout }: Sho
         <div className="flex items-center justify-between p-4 border-b border-slate-200">
           <h2 className="font-bold text-slate-900 flex items-center">
             <ShoppingCart className="mr-1 text-brand-blue h-4 w-4" />
-            ショッピングカート
+            Carrito de Compras
           </h2>
           <Button variant="ghost" size="sm" onClick={onClose}>
             <X className="h-4 w-4" />
@@ -35,7 +35,7 @@ export default function ShoppingCartSidebar({ isOpen, onClose, onCheckout }: Sho
           {cartItems.length === 0 ? (
             <div className="text-center py-8">
               <ShoppingCart className="mx-auto h-8 w-8 text-slate-400 mb-2" />
-              <p className="text-slate-600">カートは空です</p>
+              <p className="text-slate-600">El carrito está vacío</p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -51,7 +51,7 @@ export default function ShoppingCartSidebar({ isOpen, onClose, onCheckout }: Sho
                   <div className="flex-1 min-w-0">
                     <h3 className="font-medium text-slate-900 truncate">{item.dish.name}</h3>
                     <p className="font-semibold text-brand-blue">
-                      ¥{parseFloat(item.dish.price).toLocaleString()}
+                      €{parseFloat(item.dish.price).toLocaleString()}
                     </p>
                   </div>
                   <div className="flex flex-col items-center space-y-1">
@@ -80,7 +80,7 @@ export default function ShoppingCartSidebar({ isOpen, onClose, onCheckout }: Sho
                       className="text-red-600 hover:text-red-700 px-1 py-0 h-5"
                       onClick={() => removeFromCart(item.dish.id)}
                     >
-                      削除
+                      Eliminar
                     </Button>
                   </div>
                 </div>
@@ -95,9 +95,9 @@ export default function ShoppingCartSidebar({ isOpen, onClose, onCheckout }: Sho
             <div className="space-y-2 mb-4">
               <div className="flex justify-between font-bold">
                 <span className="text-slate-900">
-                  合計 ({cartItems.reduce((sum, item) => sum + item.quantity, 0)} 商品)
+                  Total ({cartItems.reduce((sum, item) => sum + item.quantity, 0)} productos)
                 </span>
-                <span className="text-brand-blue">¥{total.toLocaleString()}</span>
+                <span className="text-brand-blue">€{total.toLocaleString()}</span>
               </div>
             </div>
             
@@ -108,7 +108,7 @@ export default function ShoppingCartSidebar({ isOpen, onClose, onCheckout }: Sho
                 onClick={onCheckout}
               >
                 <CreditCard className="mr-1 h-3 w-3" />
-                注文する
+                Realizar Pedido
               </Button>
               <Button 
                 variant="secondary" 
@@ -116,7 +116,7 @@ export default function ShoppingCartSidebar({ isOpen, onClose, onCheckout }: Sho
                 size="sm"
                 onClick={onClose}
               >
-                買い物を続ける
+                Seguir Comprando
               </Button>
             </div>
           </div>

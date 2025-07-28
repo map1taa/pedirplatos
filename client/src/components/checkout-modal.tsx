@@ -74,14 +74,14 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
       onClose();
       setIsConfirmationOpen(true);
       toast({
-        title: "注文完了",
-        description: "注文内容がメールで送信されました。",
+        title: "Pedido Completado",
+        description: "Los detalles del pedido han sido enviados por correo.",
       });
     },
     onError: (error) => {
       toast({
-        title: "エラー",
-        description: "注文の処理中にエラーが発生しました。",
+        title: "Error",
+        description: "Ocurrió un error al procesar el pedido.",
         variant: "destructive",
       });
     },
@@ -99,17 +99,17 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
           <DialogHeader className="pb-3">
             <DialogTitle className="font-bold text-slate-900 flex items-center">
               <ClipboardCheck className="mr-1 text-brand-blue h-4 w-4" />
-              注文確認
+              Confirmación de Pedido
             </DialogTitle>
             <DialogDescription>
-              注文を確認するために必要な情報を入力してください。
+              Ingrese la información necesaria para confirmar su pedido.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
             {/* Order Summary */}
             <div className="bg-slate-50 rounded-lg p-3">
-              <h3 className="font-semibold text-slate-900 mb-2">注文内容</h3>
+              <h3 className="font-semibold text-slate-900 mb-2">Resumen del Pedido</h3>
               <div className="space-y-2">
                 {cartItems.map((item) => (
                   <div key={item.dish.id} className="flex justify-between items-center">
@@ -118,14 +118,14 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                       <span className="text-slate-600 ml-2">×{item.quantity}</span>
                     </div>
                     <span className="font-semibold text-brand-blue">
-                      ¥{(parseFloat(item.dish.price) * item.quantity).toLocaleString()}
+                      €{(parseFloat(item.dish.price) * item.quantity).toLocaleString()}
                     </span>
                   </div>
                 ))}
                 <div className="border-t border-slate-300 pt-2 mt-2">
                   <div className="flex justify-between items-center">
-                    <span className="font-bold text-slate-900">合計</span>
-                    <span className="font-bold text-brand-blue">¥{total.toLocaleString()}</span>
+                    <span className="font-bold text-slate-900">Total</span>
+                    <span className="font-bold text-brand-blue">€{total.toLocaleString()}</span>
                   </div>
                 </div>
               </div>
@@ -139,9 +139,9 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                   name="customerName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="font-semibold text-slate-700">担当者名</FormLabel>
+                      <FormLabel className="font-semibold text-slate-700">Nombre del Responsable</FormLabel>
                       <FormControl>
-                        <Input placeholder="山田太郎" className="h-8" {...field} />
+                        <Input placeholder="Juan Pérez" className="h-8" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -152,9 +152,9 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                   name="customerEmail"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="font-semibold text-slate-700">メールアドレス</FormLabel>
+                      <FormLabel className="font-semibold text-slate-700">Correo Electrónico</FormLabel>
                       <FormControl>
-                        <Input type="email" placeholder="yamada@company.com" className="h-8" {...field} />
+                        <Input type="email" placeholder="juan@empresa.com" className="h-8" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -169,7 +169,7 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                     className="flex-1 h-8" 
                     onClick={onClose}
                   >
-                    キャンセル
+                    Cancelar
                   </Button>
                   <Button 
                     type="submit" 
@@ -178,7 +178,7 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                     disabled={createOrderMutation.isPending}
                   >
                     <NotebookPen className="mr-1 h-3 w-3" />
-                    {createOrderMutation.isPending ? "処理中..." : "注文する"}
+                    {createOrderMutation.isPending ? "Procesando..." : "Realizar Pedido"}
                   </Button>
                 </div>
               </form>
@@ -201,9 +201,9 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
               <Check className="h-6 w-6 text-green-600" />
             </div>
             <div>
-              <h2 className="font-bold text-slate-900 mb-1">注文完了</h2>
+              <h2 className="font-bold text-slate-900 mb-1">Pedido Completado</h2>
               <p className="text-slate-600">
-                注文内容が指定されたメールアドレスに送信されました。
+                Los detalles del pedido han sido enviados al correo especificado.
               </p>
             </div>
             <Button 
