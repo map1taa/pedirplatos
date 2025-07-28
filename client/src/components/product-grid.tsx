@@ -180,7 +180,7 @@ export default function ProductGrid({ dishes, isLoading }: ProductGridProps) {
                       </td>
                       <td className="px-3 py-2 text-right">
                         <span className="font-bold text-orange-600">
-                          €{parseFloat(dish.price).toLocaleString()}
+                          ¥{parseFloat(dish.price).toLocaleString()}
                         </span>
                       </td>
                       <td className="px-3 py-2">

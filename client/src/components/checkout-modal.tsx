@@ -118,14 +118,14 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                       <span className="text-slate-600 ml-2">×{item.quantity}</span>
                     </div>
                     <span className="font-semibold text-brand-blue">
-                      €{(parseFloat(item.dish.price) * item.quantity).toLocaleString()}
+                      ¥{(parseFloat(item.dish.price) * item.quantity).toLocaleString()}
                     </span>
                   </div>
                 ))}
                 <div className="border-t border-slate-300 pt-2 mt-2">
                   <div className="flex justify-between items-center">
                     <span className="font-bold text-slate-900">Total</span>
-                    <span className="font-bold text-brand-blue">€{total.toLocaleString()}</span>
+                    <span className="font-bold text-brand-blue">¥{total.toLocaleString()}</span>
                   </div>
                 </div>
               </div>

@@ -227,7 +227,7 @@ export default function DishManagement() {
                           <span className="font-medium text-slate-900">{dish.name}</span>
                         </td>
                         <td className="px-3 py-2 text-right">
-                          <span className="font-bold text-orange-600">€{parseFloat(dish.price).toLocaleString()}</span>
+                          <span className="font-bold text-orange-600">¥{parseFloat(dish.price).toLocaleString()}</span>
                         </td>
                         <td className="px-3 py-2">
                           <div className="flex items-center justify-center space-x-1">

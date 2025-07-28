@@ -51,7 +51,7 @@ export default function ShoppingCartSidebar({ isOpen, onClose, onCheckout }: Sho
                   <div className="flex-1 min-w-0">
                     <h3 className="font-medium text-slate-900 truncate">{item.dish.name}</h3>
                     <p className="font-semibold text-brand-blue">
-                      €{parseFloat(item.dish.price).toLocaleString()}
+                      ¥{parseFloat(item.dish.price).toLocaleString()}
                     </p>
                   </div>
                   <div className="flex flex-col items-center space-y-1">
@@ -97,7 +97,7 @@ export default function ShoppingCartSidebar({ isOpen, onClose, onCheckout }: Sho
                 <span className="text-slate-900">
                   Total ({cartItems.reduce((sum, item) => sum + item.quantity, 0)} productos)
                 </span>
-                <span className="text-brand-blue">€{total.toLocaleString()}</span>
+                <span className="text-brand-blue">¥{total.toLocaleString()}</span>
               </div>
             </div>
             
