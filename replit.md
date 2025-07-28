@@ -136,3 +136,15 @@ The architecture prioritizes developer experience with TypeScript throughout, mo
   - Simple modal dialogs for product and category creation/editing
   - Removed complex 3-tab interface in favor of unified category-based view
   - Category management integrated into main view with inline controls
+- **Direct Image Upload Enhancement**: Implemented drag-and-drop functionality
+  - Door images can be updated by dragging images directly onto the image area
+  - Product images support direct drag-and-drop upload in management interface
+  - Visual feedback with hover effects and upload indicators
+  - No form fields required - images update immediately upon drop
+  - Door image height increased to 256px (2x original) for better visibility
+- **Static HTML Version**: Created standalone HTML version for easy deployment
+  - Complete static HTML/CSS/JavaScript implementation
+  - No database or server dependencies required
+  - All core functionality preserved (product display, cart, checkout)
+  - Sample data embedded for immediate functionality
+  - Compatible with any static hosting service (GitHub Pages, Netlify, etc.)
