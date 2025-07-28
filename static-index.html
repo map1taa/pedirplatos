@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>お皿オーダー - 日本料理器具注文システム</title>
+    <title>Sistema de Pedidos de Vajilla - Platos Japoneses</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <style>
@@ -127,14 +127,14 @@
                 <div class="flex items-center">
                     <h1 class="font-bold brand-blue">
                         <i data-lucide="utensils" class="inline mr-1 h-4 w-4"></i>
-                        お皿オーダー
+                        Pedidos de Vajilla
                     </h1>
                 </div>
                 
                 <nav class="hidden md:flex space-x-4">
                     <button onclick="showManagement()" class="text-slate-700 hover:text-brand-blue px-3 py-1 rounded">
                         <i data-lucide="settings" class="mr-1 h-3 w-3 inline"></i>
-                        管理
+                        Gestión
                     </button>
                 </nav>
 
@@ -162,7 +162,7 @@
     <div id="cart-sidebar" class="cart-sidebar">
         <div class="p-4 border-b border-slate-200">
             <div class="flex items-center justify-between">
-                <h2 class="font-bold text-slate-800">ショッピングカート</h2>
+                <h2 class="font-bold text-slate-800">Carrito de Compras</h2>
                 <button onclick="toggleCart()" class="text-slate-500 hover:text-slate-700">
                     <i data-lucide="x" class="h-4 w-4"></i>
                 </button>
@@ -176,24 +176,24 @@
         <div class="border-t border-slate-200 p-4">
             <div class="space-y-2 mb-4">
                 <div class="flex justify-between">
-                    <span>小計:</span>
-                    <span id="cart-subtotal">¥0</span>
+                    <span>Subtotal:</span>
+                    <span id="cart-subtotal">€0</span>
                 </div>
                 <div class="flex justify-between">
-                    <span>配送料:</span>
-                    <span>¥500</span>
+                    <span>Envío:</span>
+                    <span>€5</span>
                 </div>
                 <div class="flex justify-between">
-                    <span>税金:</span>
-                    <span id="cart-tax">¥0</span>
+                    <span>IVA:</span>
+                    <span id="cart-tax">€0</span>
                 </div>
                 <div class="flex justify-between font-bold text-lg">
-                    <span>合計:</span>
-                    <span id="cart-total">¥500</span>
+                    <span>Total:</span>
+                    <span id="cart-total">€5</span>
                 </div>
             </div>
             <button onclick="showCheckout()" class="w-full bg-orange-600 hover:bg-orange-700 text-white py-2 px-4 rounded font-medium">
-                注文確定
+                Realizar Pedido
             </button>
         </div>
     </div>
@@ -205,7 +205,7 @@
     <div id="checkout-modal" class="checkout-modal">
         <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
             <div class="flex items-center justify-between mb-4">
-                <h2 class="font-bold text-xl">注文情報</h2>
+                <h2 class="font-bold text-xl">Información del Pedido</h2>
                 <button onclick="hideCheckout()" class="text-slate-500 hover:text-slate-700">
                     <i data-lucide="x" class="h-5 w-5"></i>
                 </button>
@@ -213,55 +213,55 @@
             
             <form id="checkout-form" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium mb-1">お名前</label>
+                    <label class="block text-sm font-medium mb-1">Nombre Completo</label>
                     <input type="text" name="customerName" required 
                            class="w-full p-2 border border-slate-300 rounded focus:border-orange-500 focus:ring-orange-500">
                 </div>
                 
                 <div>
-                    <label class="block text-sm font-medium mb-1">メールアドレス</label>
+                    <label class="block text-sm font-medium mb-1">Correo Electrónico</label>
                     <input type="email" name="customerEmail" required 
                            class="w-full p-2 border border-slate-300 rounded focus:border-orange-500 focus:ring-orange-500">
                 </div>
                 
                 <div>
-                    <label class="block text-sm font-medium mb-1">電話番号</label>
+                    <label class="block text-sm font-medium mb-1">Teléfono</label>
                     <input type="tel" name="customerPhone" required 
                            class="w-full p-2 border border-slate-300 rounded focus:border-orange-500 focus:ring-orange-500">
                 </div>
                 
                 <div>
-                    <label class="block text-sm font-medium mb-1">住所</label>
+                    <label class="block text-sm font-medium mb-1">Dirección de Envío</label>
                     <textarea name="customerAddress" required rows="3"
                               class="w-full p-2 border border-slate-300 rounded focus:border-orange-500 focus:ring-orange-500"></textarea>
                 </div>
                 
                 <div>
-                    <label class="block text-sm font-medium mb-1">備考</label>
+                    <label class="block text-sm font-medium mb-1">Notas del Pedido</label>
                     <textarea name="notes" rows="2"
                               class="w-full p-2 border border-slate-300 rounded focus:border-orange-500 focus:ring-orange-500"></textarea>
                 </div>
                 
                 <div>
-                    <label class="block text-sm font-medium mb-1">支払い方法</label>
+                    <label class="block text-sm font-medium mb-1">Método de Pago</label>
                     <select name="paymentMethod" required 
                             class="w-full p-2 border border-slate-300 rounded focus:border-orange-500 focus:ring-orange-500">
-                        <option value="">選択してください</option>
-                        <option value="credit">クレジットカード</option>
-                        <option value="bank">銀行振込</option>
-                        <option value="cod">代金引換</option>
+                        <option value="">Seleccionar método</option>
+                        <option value="credit">Tarjeta de Crédito</option>
+                        <option value="bank">Transferencia Bancaria</option>
+                        <option value="paypal">PayPal</option>
                     </select>
                 </div>
                 
                 <div class="border-t pt-4">
                     <div class="flex justify-between font-bold text-lg mb-4">
-                        <span>合計金額:</span>
-                        <span id="checkout-total">¥500</span>
+                        <span>Total a Pagar:</span>
+                        <span id="checkout-total">€5</span>
                     </div>
                     
                     <button type="submit" 
                             class="w-full bg-orange-600 hover:bg-orange-700 text-white py-2 px-4 rounded font-medium">
-                        注文を送信
+                        Enviar Pedido
                     </button>
                 </div>
             </form>
@@ -274,13 +274,13 @@
             categories: [
                 {
                     id: 1,
-                    name: "カテゴリ1",
+                    name: "Platos Principales",
                     doorImageUrl: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=256",
                     sortOrder: 1
                 },
                 {
                     id: 2,
-                    name: "カテゴリ3", 
+                    name: "Platos Ripple", 
                     doorImageUrl: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=256",
                     sortOrder: 3
                 }
@@ -335,7 +335,7 @@
                             <div class="w-full">
                                 <img src="${category.doorImageUrl}" alt="${category.name} - グループ ${chunkIndex + 1}" class="door-image">
                                 <div class="text-center mt-2">
-                                    <h3 class="font-bold text-slate-800 text-sm">${category.name} - グループ ${chunkIndex + 1}</h3>
+                                    <h3 class="font-bold text-slate-800 text-sm">${category.name} - Grupo ${chunkIndex + 1}</h3>
                                 </div>
                             </div>
                         `;
@@ -347,11 +347,11 @@
                             <table class="w-full">
                                 <thead class="bg-slate-50 border-b border-slate-200">
                                     <tr>
-                                        <th class="px-3 py-2 text-left font-semibold text-slate-700">画像</th>
-                                        <th class="px-3 py-2 text-left font-semibold text-slate-700">商品名</th>
-                                        <th class="px-3 py-2 text-right font-semibold text-slate-700">価格</th>
-                                        <th class="px-3 py-2 text-center font-semibold text-slate-700">数量</th>
-                                        <th class="px-3 py-2 text-center font-semibold text-slate-700">アクション</th>
+                                        <th class="px-3 py-2 text-left font-semibold text-slate-700">Imagen</th>
+                                        <th class="px-3 py-2 text-left font-semibold text-slate-700">Producto</th>
+                                        <th class="px-3 py-2 text-right font-semibold text-slate-700">Precio</th>
+                                        <th class="px-3 py-2 text-center font-semibold text-slate-700">Cantidad</th>
+                                        <th class="px-3 py-2 text-center font-semibold text-slate-700">Acción</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -364,7 +364,7 @@
                                                 <span class="font-medium text-slate-900">${dish.name}</span>
                                             </td>
                                             <td class="px-3 py-2 text-right">
-                                                <span class="font-bold text-orange-600">¥${parseFloat(dish.price).toLocaleString()}</span>
+                                                <span class="font-bold text-orange-600">€${parseFloat(dish.price).toLocaleString()}</span>
                                             </td>
                                             <td class="px-3 py-2">
                                                 <div class="quantity-control">
@@ -381,7 +381,7 @@
                                             <td class="px-3 py-2 text-center">
                                                 <button onclick="addToCart(${dish.id})" 
                                                         class="bg-orange-600 hover:bg-orange-700 text-white px-3 py-1 rounded text-sm font-medium">
-                                                    追加
+                                                    Añadir
                                                 </button>
                                             </td>
                                         </tr>
@@ -427,7 +427,7 @@
         function addToCart(dishId) {
             const quantity = quantities[dishId] || 0;
             if (quantity <= 0) {
-                alert('数量を選択してください。');
+                alert('Por favor seleccione una cantidad.');
                 return;
             }
             
@@ -444,7 +444,7 @@
             document.getElementById(`qty-${dishId}`).value = 0;
             
             updateCartDisplay();
-            alert(`${dish.name} × ${quantity} をカートに追加しました。`);
+            alert(`${dish.name} × ${quantity} añadido al carrito.`);
         }
 
         function removeFromCart(dishId) {
@@ -475,8 +475,8 @@
             
             const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
             const subtotal = cart.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0);
-            const shipping = 500;
-            const tax = Math.round(subtotal * 0.1);
+            const shipping = 5;
+            const tax = Math.round(subtotal * 0.21);
             const total = subtotal + shipping + tax;
             
             // Update cart count
@@ -489,14 +489,14 @@
             
             // Update cart items
             if (cart.length === 0) {
-                cartItems.innerHTML = '<p class="text-slate-500 text-center py-4">カートは空です</p>';
+                cartItems.innerHTML = '<p class="text-slate-500 text-center py-4">El carrito está vacío</p>';
             } else {
                 cartItems.innerHTML = cart.map(item => `
                     <div class="flex items-center space-x-3 p-3 bg-slate-50 rounded">
                         <img src="${item.imageUrl}" alt="${item.name}" class="w-10 h-10 rounded object-cover">
                         <div class="flex-1 min-w-0">
                             <p class="font-medium text-slate-900 text-sm truncate">${item.name}</p>
-                            <p class="text-orange-600 font-bold">¥${parseFloat(item.price).toLocaleString()}</p>
+                            <p class="text-orange-600 font-bold">€${parseFloat(item.price).toLocaleString()}</p>
                         </div>
                         <div class="flex items-center space-x-2">
                             <div class="quantity-control">
@@ -521,10 +521,10 @@
             }
             
             // Update totals
-            cartSubtotal.textContent = `¥${subtotal.toLocaleString()}`;
-            cartTax.textContent = `¥${tax.toLocaleString()}`;
-            cartTotal.textContent = `¥${total.toLocaleString()}`;
-            checkoutTotal.textContent = `¥${total.toLocaleString()}`;
+            cartSubtotal.textContent = `€${subtotal.toLocaleString()}`;
+            cartTax.textContent = `€${tax.toLocaleString()}`;
+            cartTotal.textContent = `€${total.toLocaleString()}`;
+            checkoutTotal.textContent = `€${total.toLocaleString()}`;
         }
 
         // UI controls
@@ -538,7 +538,7 @@
 
         function showCheckout() {
             if (cart.length === 0) {
-                alert('カートが空です。');
+                alert('El carrito está vacío.');
                 return;
             }
             
@@ -551,7 +551,7 @@
         }
 
         function showManagement() {
-            alert('管理機能は開発中です。');
+            alert('Función de gestión en desarrollo.');
         }
 
         // Form submission
@@ -563,8 +563,8 @@
             
             // Calculate totals
             const subtotal = cart.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0);
-            const shipping = 500;
-            const tax = Math.round(subtotal * 0.1);
+            const shipping = 5;
+            const tax = Math.round(subtotal * 0.21);
             const total = subtotal + shipping + tax;
             
             // Prepare order email content
@@ -578,7 +578,7 @@
             console.log('Order submitted:', orderDetails);
             
             // Show success message
-            alert('注文が送信されました！ご注文内容はyuukatsuchiya002@gmail.comに送信されました。');
+            alert('¡Pedido enviado! Los detalles del pedido han sido enviados a yuukatsuchiya002@gmail.com.');
             
             // Clear cart and close modal
             cart = [];
