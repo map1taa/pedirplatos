@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "@/pages/home";
 import DishManagement from "@/pages/dish-management";
+import LifeGame from "@/pages/life-game";
 import NotFound from "@/pages/not-found";
 import { CartProvider } from "@/hooks/use-cart";
 
@@ -13,6 +14,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/management" component={DishManagement} />
+      <Route path="/life" component={LifeGame} />
       <Route component={NotFound} />
     </Switch>
   );
