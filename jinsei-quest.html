@@ -11,8 +11,8 @@
 :root{
   --bg:#0e1a18; --bg-2:#132522; --panel:#16302b;
   --edge:#2b514a; --ink:#e9e7dc; --muted:#8fa8a1;
-  --amber:#e2a349;
-  --leaf:#7fb069; --rust:#cf5b3f; --violet:#9a86c4;
+  --amber:#e2a349; --leaf:#7fb069; --rust:#cf5b3f;
+  --human:#5b9bd5; --social:#e2a349; --money:#7fb069; --asset:#9a86c4; --time:#e8875f;
   --disp:"Zen Antique","Hiragino Mincho ProN",serif;
   --body:"Zen Kaku Gothic New","Hiragino Sans",sans-serif;
   --dot:"DotGothic16",monospace;
@@ -31,11 +31,10 @@ body{
 h1,h2,h3{margin:0}
 button{font-family:inherit}
 
-/* ── ヘッダー ── */
 .top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px;
   border-bottom:1px solid var(--edge);padding-bottom:14px}
-.brand h1{font-family:var(--disp);font-size:clamp(1.7rem,4vw,2.4rem);letter-spacing:.16em;color:var(--ink)}
-.brand p{margin:4px 0 0;color:var(--muted);font-size:.85rem;max-width:40em}
+.brand h1{font-family:var(--disp);font-size:clamp(1.7rem,4vw,2.4rem);letter-spacing:.16em}
+.brand p{margin:4px 0 0;color:var(--muted);font-size:.85rem;max-width:44em}
 .today{font-family:var(--dot);font-size:.78rem;letter-spacing:.16em;color:var(--amber);text-align:right}
 
 .grid{display:grid;grid-template-columns:274px minmax(0,1fr) 288px;gap:18px;align-items:start}
@@ -44,28 +43,29 @@ button{font-family:inherit}
 .card{background:var(--panel);border:1px solid var(--edge);border-radius:4px;padding:14px 15px}
 .card + .card{margin-top:16px}
 .card h2{font-family:var(--dot);font-size:.72rem;letter-spacing:.26em;color:var(--amber);font-weight:400;
-  margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+  margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.card h2 span{letter-spacing:normal;font-family:var(--body)}
 .side{position:sticky;top:16px}
 
-/* ── ステータス ── */
 .lv{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
 .lv small{font-family:var(--dot);font-size:.7rem;letter-spacing:.2em;color:var(--muted)}
 .lv b{font-family:var(--dot);font-size:2.6rem;line-height:1;color:var(--amber);font-variant-numeric:tabular-nums}
 .bar{height:9px;background:#0d201d;border:1px solid var(--edge);border-radius:99px;overflow:hidden}
 .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--leaf),var(--amber));transition:width .5s ease}
-.bar-note{display:flex;justify-content:space-between;font-family:var(--dot);font-size:.68rem;color:var(--muted);margin-top:5px;
-  font-variant-numeric:tabular-nums}
+.bar-note{display:flex;justify-content:space-between;font-family:var(--dot);font-size:.68rem;color:var(--muted);
+  margin-top:5px;font-variant-numeric:tabular-nums}
 .gold{margin-top:12px;display:flex;justify-content:space-between;align-items:baseline;
   border-top:1px dotted var(--edge);padding-top:10px;font-size:.85rem}
 .gold b{font-family:var(--dot);font-size:1.3rem;color:var(--amber);font-variant-numeric:tabular-nums}
 
-.stats{display:flex;flex-direction:column;gap:9px}
-.stat{display:grid;grid-template-columns:3.6em 1fr 2.2em;gap:8px;align-items:center;font-size:.8rem}
-.stat .sbar{height:7px;background:#0d201d;border-radius:99px;overflow:hidden}
-.stat .sbar i{display:block;height:100%;transition:width .4s ease}
-.stat b{font-family:var(--dot);font-size:.85rem;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+.caps{display:flex;flex-direction:column;gap:10px}
+.cap{font-size:.8rem}
+.cap-top{display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+.cap-top b{font-family:var(--dot);font-size:.9rem;color:var(--ink);font-variant-numeric:tabular-nums}
+.cap .sbar{height:7px;background:#0d201d;border-radius:99px;overflow:hidden;margin-top:4px}
+.cap .sbar i{display:block;height:100%;transition:width .4s ease}
+.cap small{color:var(--muted);font-size:.68rem}
 
-/* ── タブとクエスト ── */
 .tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
 .tab{background:transparent;border:1px solid var(--edge);color:var(--muted);
   padding:7px 14px;border-radius:99px;font-size:.82rem;cursor:pointer}
@@ -79,9 +79,10 @@ button{font-family:inherit}
 .item.done{opacity:.5}
 .item.done .t{text-decoration:line-through;color:var(--muted)}
 .item .name{font-size:.94rem;flex:1;min-width:0}
-.item .meta{font-family:var(--dot);font-size:.68rem;color:var(--muted);letter-spacing:.08em;display:flex;gap:8px;flex-wrap:wrap;margin-top:2px}
-.tag{border:1px solid var(--edge);border-radius:99px;padding:0 7px}
-.streak{color:var(--rust)}
+.item .meta{font-size:.68rem;color:var(--muted);display:flex;gap:6px;flex-wrap:wrap;margin-top:3px;align-items:center}
+.tag{border:1px solid var(--edge);border-radius:99px;padding:1px 8px;font-family:var(--dot);letter-spacing:.06em}
+.res{border-radius:99px;padding:1px 8px;font-size:.68rem;border:1px solid}
+.streak{color:var(--rust);font-family:var(--dot)}
 .check{width:30px;height:30px;flex:none;border-radius:50%;border:2px solid var(--leaf);
   background:transparent;color:var(--leaf);font-size:1rem;cursor:pointer;line-height:1}
 .check:hover{background:rgba(127,176,105,.16)}
@@ -90,21 +91,20 @@ button{font-family:inherit}
 .del:hover{color:var(--rust)}
 .empty{color:var(--muted);font-size:.85rem;padding:14px 2px;text-align:center;border:1px dashed var(--edge);border-radius:3px}
 
-/* ボス */
 .boss{background:var(--bg-2);border:1px solid var(--edge);border-radius:3px;padding:13px 14px}
 .boss + .boss{margin-top:10px}
 .boss-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
 .boss-name{font-family:var(--disp);font-size:1.12rem;letter-spacing:.06em}
 .boss-hp{height:12px;background:#0d201d;border:1px solid var(--edge);border-radius:2px;overflow:hidden;margin:9px 0 6px}
 .boss-hp i{display:block;height:100%;background:linear-gradient(90deg,var(--rust),#e8875f);transition:width .45s ease}
-.boss-foot{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.boss-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .boss-num{font-family:var(--dot);font-size:.72rem;color:var(--muted);font-variant-numeric:tabular-nums}
 .boss.slain{opacity:.55}
 .boss.slain .boss-name::after{content:" 討伐済";font-family:var(--dot);font-size:.66rem;color:var(--leaf);letter-spacing:.1em}
 
-/* フォーム */
-.form{margin-top:14px;border-top:1px dotted var(--edge);padding-top:12px;display:flex;flex-wrap:wrap;gap:8px}
-.form input[type=text]{flex:1 1 190px;min-width:0}
+.form{margin-top:14px;border-top:1px dotted var(--edge);padding-top:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.form input[type=text]{flex:1 1 200px;min-width:0}
+.form-label{width:100%;font-family:var(--dot);font-size:.68rem;letter-spacing:.2em;color:var(--muted);margin-bottom:-2px}
 input,select{background:#0d201d;border:1px solid var(--edge);color:var(--ink);
   border-radius:3px;padding:8px 10px;font-size:.86rem;font-family:inherit}
 input[type=number]{width:82px;font-family:var(--dot)}
@@ -117,7 +117,14 @@ input[type=number]{width:82px;font-family:var(--dot)}
 .btn.danger{background:transparent;border-color:var(--rust);color:var(--rust)}
 .btn.danger:hover{background:rgba(207,91,63,.16)}
 
-/* Notion */
+/* 残るもの（6項目）のトグル */
+.flags{display:flex;flex-wrap:wrap;gap:6px}
+.flag{background:transparent;border:1px solid var(--edge);color:var(--muted);border-radius:99px;
+  padding:4px 11px;font-size:.78rem;cursor:pointer;display:inline-flex;align-items:center;gap:5px}
+.flag:hover{color:var(--ink)}
+.flag[aria-pressed="true"]{color:#16211c;font-weight:700}
+.flag .dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+
 .notice{background:#0d201d;border:1px solid var(--edge);border-left:4px solid var(--amber);
   border-radius:3px;padding:12px 14px;font-size:.85rem;color:#c3d2cd}
 .notice b{color:var(--ink)}
@@ -131,26 +138,36 @@ input[type=number]{width:82px;font-family:var(--dot)}
 .sect:first-of-type{margin-top:4px}
 .src{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;
   border-bottom:1px dotted var(--edge);padding-bottom:9px;margin-bottom:6px}
-.src .name{font-size:.9rem}
 .src .name a{color:var(--amber)}
 .busy{opacity:.5;pointer-events:none}
 
-/* 報酬・ログ */
+/* 攻略法タブ */
+figure{margin:0 0 16px}
+figure svg{width:100%;height:auto;color:var(--ink)}
+figcaption{font-size:.78rem;color:var(--muted);margin-top:8px;text-align:center}
+.route{border-top:1px dotted var(--edge);padding-top:12px;margin-top:6px}
+.route h3{font-family:var(--disp);font-size:1rem;letter-spacing:.08em;margin-bottom:6px}
+.route p{font-size:.86rem;margin:0 0 8px;color:#c3d2cd}
+.route ul{margin:0 0 10px;padding-left:1.2em;font-size:.84rem;color:#c3d2cd}
+.route li{margin-bottom:3px}
+.axes{display:flex;flex-direction:column;gap:7px;margin-top:6px}
+.axis{display:flex;align-items:center;gap:9px;font-size:.85rem;background:var(--bg-2);
+  border:1px solid var(--edge);border-left:4px solid var(--edge);border-radius:3px;padding:8px 11px}
+.axis b{font-family:var(--dot);font-size:.8rem;font-variant-numeric:tabular-nums;margin-left:auto;color:var(--muted)}
+
 .reward{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dotted var(--edge)}
 .reward:last-of-type{border-bottom:none}
 .reward .name{flex:1;font-size:.88rem}
 .reward .cost{font-family:var(--dot);font-size:.8rem;color:var(--amber);font-variant-numeric:tabular-nums}
-.log{max-height:260px;overflow-y:auto}
+.log{max-height:250px;overflow-y:auto}
+.log ul{margin:0;padding:0}
 .log li{list-style:none;font-size:.78rem;color:#c3d2cd;padding:5px 0;border-bottom:1px dotted var(--edge);display:flex;gap:8px}
 .log li:last-child{border-bottom:none}
 .log time{font-family:var(--dot);font-size:.68rem;color:var(--muted);flex:none}
-.log ul{margin:0;padding:0}
 
-/* トースト */
-.toasts{position:fixed;right:16px;bottom:16px;display:flex;flex-direction:column;gap:8px;z-index:40}
+.toasts{position:fixed;right:16px;bottom:16px;display:flex;flex-direction:column;gap:8px;z-index:40;max-width:320px}
 .toast{background:var(--panel);border:1px solid var(--amber);border-left:5px solid var(--amber);
-  padding:11px 15px;border-radius:3px;font-size:.86rem;box-shadow:0 8px 24px rgba(0,0,0,.45);
-  animation:rise .3s ease}
+  padding:11px 15px;border-radius:3px;font-size:.86rem;box-shadow:0 8px 24px rgba(0,0,0,.45);animation:rise .3s ease}
 .toast.level{border-color:var(--leaf);border-left-color:var(--leaf)}
 .toast b{font-family:var(--disp);letter-spacing:.08em}
 @keyframes rise{from{opacity:0;transform:translateY(10px)}}
@@ -165,13 +182,12 @@ footer button:hover{color:var(--rust)}
   <div class="top">
     <div class="brand">
       <h1>人生クエスト</h1>
-      <p>毎日の習慣・やることリスト・大きな目標を、経験値とゴールドで進むゲームに変える手帳。データはこのブラウザにだけ保存されます。</p>
+      <p>唯一の元手である「時間」を、人的資本・社会的資本・金融資本・知的資産に変えて、最後に時間を買い戻すためのゲーム。やったことに「何が残ったか」を記録していきます。</p>
     </div>
     <div class="today" id="today"></div>
   </div>
 
   <div class="grid">
-    <!-- 左：ステータス -->
     <aside class="side">
       <section class="card">
         <h2>status</h2>
@@ -183,23 +199,22 @@ footer button:hover{color:var(--rust)}
       </section>
 
       <section class="card">
-        <h2>能力値</h2>
-        <div class="stats" id="stats"></div>
+        <h2>資本 <span id="cap-total"></span></h2>
+        <div class="caps" id="caps"></div>
       </section>
     </aside>
 
-    <!-- 中央：クエスト -->
     <main>
       <div class="tabs" role="tablist">
         <button class="tab" role="tab" data-tab="daily" aria-selected="true">日課</button>
         <button class="tab" role="tab" data-tab="quest" aria-selected="false">クエスト</button>
-        <button class="tab" role="tab" data-tab="boss" aria-selected="false">ボス（大きな目標）</button>
+        <button class="tab" role="tab" data-tab="boss" aria-selected="false">ボス</button>
         <button class="tab" role="tab" data-tab="notion" aria-selected="false">Notion</button>
+        <button class="tab" role="tab" data-tab="map" aria-selected="false">攻略法</button>
       </div>
       <section class="card" id="panel"></section>
     </main>
 
-    <!-- 右：報酬とログ -->
     <aside class="side">
       <section class="card">
         <h2>ごほうび交換所</h2>
@@ -224,31 +239,50 @@ footer button:hover{color:var(--rust)}
   </footer>
 </div>
 <div class="toasts" id="toasts"></div>
-
 <script>
 "use strict";
-const KEY = "jinsei-quest-v1";
-const STATS = {
-  karada:{name:"体力",color:"#cf5b3f"},
-  atama :{name:"知力",color:"#5b9bd5"},
-  kokoro:{name:"精神",color:"#9a86c4"},
-  hito  :{name:"社交",color:"#e2a349"},
-  kurashi:{name:"生活",color:"#7fb069"},
+const KEY = "jinsei-quest-v2", OLD_KEY = "jinsei-quest-v1";
+
+/* ── モデル：時間 → 4つの資本 → 時間 ────────────────── */
+const CAPITALS = {
+  human :{name:"人的資本",  color:"var(--human)",  note:"スキル・知識・経験"},
+  social:{name:"社会的資本", color:"var(--social)", note:"人脈・信頼・評判"},
+  money :{name:"金融資本",  color:"var(--money)",  note:"お金・資産・収入源"},
+  asset :{name:"知的資産",  color:"var(--asset)",  note:"作品・記事・権利"},
+  time  :{name:"自由時間",  color:"var(--time)",   note:"買い戻した将来の時間"},
 };
+
+/** 行動を評価する6項目。チェックした数だけ資本に変わる */
+const RESIDUES = [
+  {key:"ability",  n:1, name:"能力",   full:"能力が残る",           caps:["human"]},
+  {key:"record",   n:2, name:"実績",   full:"実績が残る",           caps:["human","social"]},
+  {key:"work",     n:3, name:"作品",   full:"作品・コンテンツが残る", caps:["asset"]},
+  {key:"relation", n:4, name:"関係",   full:"人との関係が残る",      caps:["social"]},
+  {key:"money",    n:5, name:"お金",   full:"お金が残る",           caps:["money"]},
+  {key:"future",   n:6, name:"時間",   full:"将来の時間を減らせる",   caps:["time"]},
+];
+const RES = Object.fromEntries(RESIDUES.map(r => [r.key, r]));
+const resColor = k => CAPITALS[RES[k].caps[0]].color;
+
 const DIFF = {
   easy:{name:"かんたん", exp:10, gold:5},
   mid :{name:"ふつう",   exp:25, gold:12},
   hard:{name:"たいへん", exp:50, gold:25},
 };
-const TITLES = [
-  [1,"かけだし"],[3,"見習い"],[6,"旅人"],[10,"熟練者"],[15,"達人"],[20,"賢者"],[30,"伝説"],
-];
+const TITLES = [[1,"かけだし"],[3,"見習い"],[6,"旅人"],[10,"熟練者"],[15,"達人"],[20,"賢者"],[30,"伝説"]];
 
-const todayKey = () => new Date().toLocaleDateString("sv-SE"); // YYYY-MM-DD
-const yesterdayKey = () => {
-  const d = new Date(); d.setDate(d.getDate()-1);
-  return d.toLocaleDateString("sv-SE");
-};
+const RES_HINTS = [
+  [/読|学|勉強|講座|語学|資格|練習|訓練|研究|調査|リサーチ|観測|分析/, "ability"],
+  [/完成|納品|公開|提出|達成|出展|登壇|発売|入稿|実行/, "record"],
+  [/記事|投稿|動画|写真|作品|ZINE|コンテンツ|撮影|制作|執筆|編集|デザイン|ページ/, "work"],
+  [/連絡|返信|会う|紹介|DM|打合|面談|依頼|共有|イベント|交流|取材|営業/, "relation"],
+  [/販売|売上|請求|価格|在庫|決済|入金|投資|仕入|発送|注文/, "money"],
+  [/自動化|外注|効率|テンプレ|仕組み|整理|片づけ|設定|導入|準備/, "future"],
+];
+const guessResidues = t => RES_HINTS.filter(([re]) => re.test(t)).map(([,k]) => k);
+
+const todayKey = () => new Date().toLocaleDateString("sv-SE");
+const yesterdayKey = () => { const d = new Date(); d.setDate(d.getDate()-1); return d.toLocaleDateString("sv-SE"); };
 const uid = () => Math.random().toString(36).slice(2,9);
 const needExp = lv => 50 + lv*30;
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -256,18 +290,20 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":
 function seed(){
   return {
     level:1, exp:0, gold:0,
-    stats:{karada:0, atama:0, kokoro:0, hito:0, kurashi:0},
+    capitals:{human:0, social:0, money:0, asset:0, time:0},
+    counts:{ability:0, record:0, work:0, relation:0, money:0, future:0},
+    spent:0,
     dailies:[
-      {id:uid(), name:"朝、決めた時間に起きる", stat:"kurashi", diff:"easy", last:"", streak:0},
-      {id:uid(), name:"30分うごく（散歩・筋トレ）", stat:"karada", diff:"mid", last:"", streak:0},
-      {id:uid(), name:"本を10ページ読む", stat:"atama", diff:"easy", last:"", streak:0},
+      {id:uid(), name:"30分うごく（散歩・筋トレ）", diff:"mid",  res:["ability"], last:"", streak:0},
+      {id:uid(), name:"本を10ページ読む",          diff:"easy", res:["ability"], last:"", streak:0},
+      {id:uid(), name:"やったことを1行記録する",     diff:"easy", res:["record"], last:"", streak:0},
     ],
     quests:[
-      {id:uid(), name:"部屋の片づけをする", stat:"kurashi", diff:"mid", done:false},
-      {id:uid(), name:"しばらく会えていない人に連絡する", stat:"hito", diff:"easy", done:false},
+      {id:uid(), name:"学んだことを記事にして公開する", diff:"hard", res:["ability","record","work"], done:false},
+      {id:uid(), name:"しばらく会えていない人に連絡する", diff:"easy", res:["relation"], done:false},
     ],
     bosses:[
-      {id:uid(), name:"資格試験に合格する", stat:"atama", max:30, hp:30, slain:false},
+      {id:uid(), name:"作品を1つ完成させて売る", res:["work","record","money"], max:20, hp:20, slain:false},
     ],
     rewards:[
       {id:uid(), name:"好きなだけ寝る", cost:60},
@@ -277,43 +313,78 @@ function seed(){
   };
 }
 
+/* 旧バージョン（能力値5種）からの引き継ぎ */
+function migrate(old){
+  const s = seed();
+  Object.assign(s, {
+    level: old.level ?? 1, exp: old.exp ?? 0, gold: old.gold ?? 0,
+    rewards: old.rewards ?? s.rewards, log: old.log ?? [],
+  });
+  const conv = list => (list || []).map(x => ({...x, res: x.res || guessResidues(x.name)}));
+  s.dailies = conv(old.dailies).length ? conv(old.dailies) : s.dailies;
+  s.quests  = conv(old.quests);
+  s.bosses  = conv(old.bosses);
+  return s;
+}
+
 let S;
 try {
   const raw = localStorage.getItem(KEY);
-  S = raw ? {...seed(), ...JSON.parse(raw)} : seed();
+  if (raw) S = {...seed(), ...JSON.parse(raw)};
+  else {
+    const old = localStorage.getItem(OLD_KEY);
+    S = old ? migrate(JSON.parse(old)) : seed();
+  }
 } catch(e){ S = seed(); }
+S.capitals = {...seed().capitals, ...(S.capitals||{})};
+S.counts   = {...seed().counts,   ...(S.counts||{})};
 
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} };
 
 let tab = "daily";
+const drafts = {daily:new Set(), quest:new Set(), boss:new Set()};
 
-// ── ゲーム進行 ─────────────────────────────
+/* ── 進行 ──────────────────────────────────────── */
 function addLog(text){
   S.log.unshift({t:new Date().toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"}), text});
   S.log = S.log.slice(0,60);
 }
-function toast(text, kind){
-  const box = document.getElementById("toasts");
+function toast(html, kind){
   const d = document.createElement("div");
   d.className = "toast" + (kind ? " " + kind : "");
-  d.innerHTML = text;
-  box.appendChild(d);
-  setTimeout(() => d.remove(), 3600);
+  d.innerHTML = html;
+  el("toasts").appendChild(d);
+  setTimeout(() => d.remove(), 4200);
 }
-function titleOf(lv){
-  let t = TITLES[0][1];
-  for (const [need,name] of TITLES) if (lv >= need) t = name;
-  return t;
+function titleOf(lv){ let t = TITLES[0][1]; for (const [n,name] of TITLES) if (lv >= n) t = name; return t; }
+
+/** 難易度と「残るもの」から報酬を決める。何も残らなければ消費扱いで半減 */
+function payout(diff, res){
+  const base = DIFF[diff] || DIFF.mid;
+  const n = (res || []).length;
+  if (!n) return {exp: Math.round(base.exp/2), gold: Math.round(base.gold/2), consumed:true};
+  return {exp: base.exp + n*8, gold: base.gold + (res.includes("money") ? 10 : 0), consumed:false};
 }
-function gain(exp, gold, stat){
+function gain(exp, gold, res){
   S.exp += exp; S.gold += gold;
-  if (stat) S.stats[stat] = (S.stats[stat]||0) + 1;
+  (res || []).forEach(k => {
+    S.counts[k] = (S.counts[k]||0) + 1;
+    RES[k].caps.forEach(c => { S.capitals[c] = (S.capitals[c]||0) + 1; });
+  });
   while (S.exp >= needExp(S.level)){
     S.exp -= needExp(S.level);
     S.level++;
-    addLog(`レベル ${S.level} になった！`);
+    addLog(`レベル ${S.level}「${titleOf(S.level)}」になった`);
     toast(`<b>レベルアップ！</b> Lv.${S.level}「${titleOf(S.level)}」`, "level");
   }
+}
+const capsLine = res => (res || []).map(k => `${CAPITALS[RES[k].caps[0]].name}+`).join(" ") || "資本は増えない（消費）";
+
+function reward(item, diff){
+  const p = payout(diff, item.res);
+  gain(p.exp, p.gold, item.res);
+  if (p.consumed) S.spent++;
+  return p;
 }
 
 function completeDaily(id){
@@ -321,36 +392,37 @@ function completeDaily(id){
   if (!d || d.last === todayKey()) return;
   d.streak = d.last === yesterdayKey() ? d.streak + 1 : 1;
   d.last = todayKey();
-  const {exp, gold} = DIFF[d.diff];
-  const bonus = Math.min(d.streak - 1, 10) * 2;          // 連続日数ボーナス
-  gain(exp + bonus, gold, d.stat);
-  addLog(`日課「${d.name}」を達成（${d.streak}日連続）+${exp+bonus}EXP`);
-  toast(`+${exp + bonus} EXP / +${gold} G　${d.streak >= 2 ? d.streak + "日連続！" : ""}`);
+  const bonus = Math.min(d.streak - 1, 10) * 2;
+  const p = payout(d.diff, d.res);
+  gain(p.exp + bonus, p.gold, d.res);
+  if (p.consumed) S.spent++;
+  addLog(`日課「${d.name}」達成（${d.streak}日連続）+${p.exp+bonus}EXP・${capsLine(d.res)}`);
+  toast(`+${p.exp + bonus} EXP / +${p.gold} G<br>${capsLine(d.res)}${d.streak >= 2 ? "　🔥"+d.streak+"日連続" : ""}`);
   save(); render();
 }
-function toggleQuest(id){
+function completeQuest(id){
   const q = S.quests.find(x => x.id === id);
   if (!q || q.done) return;
   q.done = true;
-  const {exp, gold} = DIFF[q.diff];
-  gain(exp, gold, q.stat);
-  addLog(`クエスト「${q.name}」を達成 +${exp}EXP`);
-  toast(`+${exp} EXP / +${gold} G`);
+  const p = reward(q, q.diff);
+  addLog(`クエスト「${q.name}」達成 +${p.exp}EXP・${capsLine(q.res)}`);
+  toast(`+${p.exp} EXP / +${p.gold} G<br>${capsLine(q.res)}`);
   save(); render();
 }
 function hitBoss(id){
   const b = S.bosses.find(x => x.id === id);
   if (!b || b.slain) return;
   b.hp = Math.max(0, b.hp - 1);
-  gain(6, 3, b.stat);
+  gain(6, 3, []);
   if (b.hp === 0){
     b.slain = true;
-    const exp = b.max * 5, gold = b.max * 3;
-    gain(exp, gold, b.stat);
-    addLog(`ボス「${b.name}」を討伐！ +${exp}EXP / +${gold}G`);
-    toast(`<b>${esc(b.name)} 討伐！</b><br>+${exp} EXP / +${gold} G`, "level");
+    const exp = b.max*5, gold = b.max*3;
+    gain(exp, gold, b.res);
+    (b.res || []).forEach(k => RES[k].caps.forEach(c => { S.capitals[c] += 2; }));
+    addLog(`ボス「${b.name}」討伐！ +${exp}EXP・${capsLine(b.res)}`);
+    toast(`<b>${esc(b.name)} 討伐！</b><br>+${exp} EXP / +${gold} G　${capsLine(b.res)}`, "level");
   } else {
-    addLog(`「${b.name}」に1回ぶん前進（残り${b.hp}）`);
+    addLog(`「${b.name}」を1回ぶん進めた（残り${b.hp}）`);
     toast(`残り ${b.hp} / ${b.max}　+6 EXP`);
   }
   save(); render();
@@ -365,8 +437,22 @@ function buy(id){
   save(); render();
 }
 
-// ── 描画 ───────────────────────────────────
+/* ── 描画 ──────────────────────────────────────── */
 const el = id => document.getElementById(id);
+const resChips = res => (res && res.length
+  ? res.map(k => `<span class="res" style="color:${resColor(k)};border-color:${resColor(k)}">${RES[k].name}</span>`).join("")
+  : `<span class="res" style="color:var(--muted);border-color:var(--edge)">消費</span>`);
+
+function flagRow(kind){
+  return `<div class="form-label">この行動で残るもの（選ぶほどEXPと資本が増える）</div>
+    <div class="flags">${RESIDUES.map(r => {
+      const on = drafts[kind].has(r.key);
+      return `<button class="flag" data-flag="${kind}:${r.key}" aria-pressed="${on}"
+        style="${on ? `background:${CAPITALS[r.caps[0]].color};border-color:${CAPITALS[r.caps[0]].color}` : ""}"
+        title="${r.full} → ${r.caps.map(c => CAPITALS[c].name).join("・")}">
+        <span class="dot" style="background:${on ? "#16211c" : CAPITALS[r.caps[0]].color}"></span>${r.n}. ${r.name}</button>`;
+    }).join("")}</div>`;
+}
 
 function renderStatus(){
   const now = new Date();
@@ -375,303 +461,213 @@ function renderStatus(){
   el("level").textContent = S.level;
   el("title-name").textContent = "「" + titleOf(S.level) + "」";
   const need = needExp(S.level);
-  el("exp-bar").style.width = Math.min(100, S.exp / need * 100) + "%";
+  el("exp-bar").style.width = Math.min(100, S.exp/need*100) + "%";
   el("exp-note").textContent = `${S.exp} / ${need}`;
   el("gold").textContent = S.gold.toLocaleString("ja-JP");
   el("today-done").textContent = S.dailies.filter(d => d.last === todayKey()).length + " / " + S.dailies.length;
 
-  const max = Math.max(10, ...Object.values(S.stats));
-  el("stats").innerHTML = Object.entries(STATS).map(([k,v]) => `
-    <div class="stat">
-      <span>${v.name}</span>
-      <span class="sbar"><i style="width:${(S.stats[k]||0)/max*100}%;background:${v.color}"></i></span>
-      <b>${S.stats[k]||0}</b>
+  const vals = Object.values(S.capitals), max = Math.max(8, ...vals);
+  el("cap-total").textContent = "合計 " + vals.reduce((a,b) => a+b, 0);
+  el("caps").innerHTML = Object.entries(CAPITALS).map(([k,c]) => `
+    <div class="cap">
+      <div class="cap-top"><span>${c.name}</span><b>${S.capitals[k]||0}</b></div>
+      <div class="sbar"><i style="width:${(S.capitals[k]||0)/max*100}%;background:${c.color}"></i></div>
+      <small>${c.note}</small>
     </div>`).join("");
 }
 
-function statSelect(id){
-  return `<select id="${id}" aria-label="伸ばす能力">${
-    Object.entries(STATS).map(([k,v]) => `<option value="${k}">${v.name}</option>`).join("")}</select>`;
-}
-function diffSelect(id){
-  return `<select id="${id}" aria-label="難易度">${
-    Object.entries(DIFF).map(([k,v]) => `<option value="${k}"${k==="mid"?" selected":""}>${v.name}（${v.exp}EXP）</option>`).join("")}</select>`;
+const DIFF_SELECT = id => `<select id="${id}" aria-label="難易度">${
+  Object.entries(DIFF).map(([k,v]) => `<option value="${k}"${k==="mid"?" selected":""}>${v.name}（${v.exp}EXP）</option>`).join("")}</select>`;
+
+function itemRow(x, kind, done){
+  const p = payout(x.diff, x.res);
+  return `<div class="item ${done?"done":""}" style="border-left-color:${x.res && x.res.length ? resColor(x.res[0]) : "var(--edge)"}">
+    <button class="check" data-${kind}="${x.id}" aria-label="${esc(x.name)}を達成">${done?"✓":""}</button>
+    <div class="name"><span class="t">${esc(x.name)}</span>
+      <div class="meta">${resChips(x.res)}
+        <span class="tag">${p.exp}EXP / ${p.gold}G</span>
+        ${x.streak ? `<span class="streak">🔥 ${x.streak}日連続</span>` : ""}</div>
+    </div>
+    <button class="del" data-del="${kind === "daily" ? "dailies" : "quests"}:${x.id}" aria-label="削除">✕</button>
+  </div>`;
 }
 
 function renderPanel(){
   const p = el("panel");
+
   if (tab === "daily"){
     const t = todayKey();
-    p.innerHTML = `
-      <h2>日課 <span style="color:var(--muted)">毎日リセット・連続でボーナス</span></h2>
-      <div class="items">${
-        S.dailies.length ? S.dailies.map(d => {
-          const done = d.last === t;
-          return `<div class="item ${done?"done":""}" style="border-left-color:${STATS[d.stat].color}">
-            <button class="check" data-daily="${d.id}" aria-label="${esc(d.name)}を達成">${done?"✓":""}</button>
-            <div class="name"><span class="t">${esc(d.name)}</span>
-              <div class="meta">
-                <span class="tag">${STATS[d.stat].name}</span>
-                <span class="tag">${DIFF[d.diff].name} ${DIFF[d.diff].exp}EXP</span>
-                ${d.streak ? `<span class="streak">🔥 ${d.streak}日連続</span>` : ""}
-              </div>
-            </div>
-            <button class="del" data-del="dailies:${d.id}" aria-label="削除">✕</button>
-          </div>`;
-        }).join("") : `<p class="empty">毎日くり返したいことを登録しよう。</p>`}
-      </div>
+    p.innerHTML = `<h2>日課 <span style="color:var(--muted)">毎日リセット・連続でボーナス</span></h2>
+      <div class="items">${S.dailies.length
+        ? S.dailies.map(d => itemRow(d, "daily", d.last === t)).join("")
+        : `<p class="empty">毎日くり返したいことを登録しよう。</p>`}</div>
       <div class="form">
-        <input type="text" id="d-name" placeholder="日課（例：22時に寝る）" maxlength="40">
-        ${statSelect("d-stat")} ${diffSelect("d-diff")}
+        <input type="text" id="d-name" placeholder="日課（例：30分ぶんの作品制作）" maxlength="40">
+        ${DIFF_SELECT("d-diff")}
         <button class="btn" data-add="daily">追加</button>
+        ${flagRow("daily")}
       </div>`;
+    return;
   }
 
   if (tab === "quest"){
     const open = S.quests.filter(q => !q.done), done = S.quests.filter(q => q.done);
-    const row = q => `<div class="item ${q.done?"done":""}" style="border-left-color:${STATS[q.stat].color}">
-        <button class="check" data-quest="${q.id}" aria-label="${esc(q.name)}を達成">${q.done?"✓":""}</button>
-        <div class="name"><span class="t">${esc(q.name)}</span>
-          <div class="meta"><span class="tag">${STATS[q.stat].name}</span>
-          <span class="tag">${DIFF[q.diff].name} ${DIFF[q.diff].exp}EXP</span></div>
-        </div>
-        <button class="del" data-del="quests:${q.id}" aria-label="削除">✕</button>
-      </div>`;
-    p.innerHTML = `
-      <h2>クエスト <span style="color:var(--muted)">一度きりのやること</span></h2>
-      <div class="items">${
-        open.length ? open.map(row).join("") : `<p class="empty">やることを登録すると経験値になります。</p>`}
-      </div>
+    p.innerHTML = `<h2>クエスト <span style="color:var(--muted)">一度きりのやること</span></h2>
+      <div class="items">${open.length
+        ? open.map(q => itemRow(q, "quest", false)).join("")
+        : `<p class="empty">やることを登録すると経験値と資本になります。</p>`}</div>
       ${done.length ? `<h2 style="margin-top:16px">達成済み（${done.length}）</h2>
-        <div class="items">${done.map(row).join("")}</div>` : ""}
+        <div class="items">${done.map(q => itemRow(q, "quest", true)).join("")}</div>` : ""}
       <div class="form">
-        <input type="text" id="q-name" placeholder="やること（例：歯医者を予約する）" maxlength="40">
-        ${statSelect("q-stat")} ${diffSelect("q-diff")}
+        <input type="text" id="q-name" placeholder="やること（例：取材記事を1本書いて公開する）" maxlength="40">
+        ${DIFF_SELECT("q-diff")}
         <button class="btn" data-add="quest">追加</button>
+        ${flagRow("quest")}
       </div>`;
+    return;
+  }
+
+  if (tab === "boss"){
+    p.innerHTML = `<h2>ボス <span style="color:var(--muted)">回数で削る大きな目標</span></h2>
+      <div>${S.bosses.length ? S.bosses.map(b => `
+        <div class="boss ${b.slain?"slain":""}">
+          <div class="boss-head"><span class="boss-name">${esc(b.name)}</span>
+            <span class="boss-num">${b.max - b.hp} / ${b.max} 回</span></div>
+          <div class="boss-hp"><i style="width:${b.hp/b.max*100}%"></i></div>
+          <div class="boss-foot">
+            <span class="meta" style="display:flex;gap:6px;flex-wrap:wrap">${resChips(b.res)}
+              <span class="boss-num">討伐報酬 ${b.max*5}EXP / ${b.max*3}G</span></span>
+            <span>${b.slain ? "" : `<button class="btn small" data-boss="${b.id}">1回ぶん進めた</button>`}
+              <button class="btn small danger" data-del="bosses:${b.id}">削除</button></span>
+          </div>
+        </div>`).join("") : `<p class="empty">「何回やれば終わるか」で大きな目標を登録しよう。</p>`}</div>
+      <div class="form">
+        <input type="text" id="b-name" placeholder="目標（例：ZINEを1冊作って売り切る）" maxlength="40">
+        <input type="number" id="b-max" value="20" min="1" max="999" aria-label="必要な回数">
+        <button class="btn" data-add="boss">追加</button>
+        ${flagRow("boss")}
+      </div>`;
+    return;
   }
 
   if (tab === "notion") return renderNotion(p);
+  if (tab === "map") return renderMap(p);
+}
 
-  if (tab === "boss"){
-    p.innerHTML = `
-      <h2>ボス <span style="color:var(--muted)">回数で削る大きな目標</span></h2>
-      <div>${
-        S.bosses.length ? S.bosses.map(b => `
-          <div class="boss ${b.slain?"slain":""}">
-            <div class="boss-head">
-              <span class="boss-name">${esc(b.name)}</span>
-              <span class="boss-num">${b.max - b.hp} / ${b.max} 回</span>
-            </div>
-            <div class="boss-hp"><i style="width:${b.hp/b.max*100}%"></i></div>
-            <div class="boss-foot">
-              <span class="boss-num">${STATS[b.stat].name}　${b.slain ? "討伐報酬 受取済" : "討伐報酬 "+(b.max*5)+"EXP / "+(b.max*3)+"G"}</span>
-              <span>
-                ${b.slain ? "" : `<button class="btn small" data-boss="${b.id}">1回ぶん進めた</button>`}
-                <button class="btn small danger" data-del="bosses:${b.id}">削除</button>
-              </span>
-            </div>
-          </div>`).join("") : `<p class="empty">「何回やれば終わるか」で目標を登録しよう。</p>`}
+/* ── 攻略法タブ ─────────────────────────────────── */
+const box = (x,y,w,h,label,note,val,color) => `
+  <rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="none" stroke="${color||"currentColor"}" stroke-width="1.5"/>
+  <text x="${x+w/2}" y="${y+26}" text-anchor="middle" font-size="19" fill="currentColor">${label}</text>
+  <text x="${x+w/2}" y="${y+47}" text-anchor="middle" font-size="13" fill="currentColor" opacity=".65">${note}</text>
+  ${val !== null ? `<text x="${x+w/2}" y="${y+h-10}" text-anchor="middle" font-size="15" fill="${color||"currentColor"}">${val}</text>` : ""}`;
+
+const arrow = (x1,y1,x2,y2,label,lx,ly,color) => `
+  <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${color||"currentColor"}" stroke-width="1.5"
+    opacity="${color?1:.5}" marker-end="url(#ah)"/>
+  ${label ? `<text x="${lx}" y="${ly}" text-anchor="middle" font-size="13" fill="currentColor" opacity=".8">${label}</text>` : ""}`;
+
+function renderMap(p){
+  const c = S.capitals;
+  p.innerHTML = `<h2>攻略法 <span style="color:var(--muted)">時間を資本に変えて、時間を買い戻す</span></h2>
+  <figure>
+    <svg viewBox="0 0 900 470" role="img" aria-label="時間が学習・労働・社会活動を通じて人的資本・金融資本・社会的資本に変わり、資本どうしが互いを強め、最後に金融資本が時間を買い戻す循環図">
+      <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+        <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+
+      ${box(20,120,150,220,"時間","1日24時間",`使い道 ${S.counts.ability+S.counts.record+S.counts.work+S.counts.relation+S.counts.money+S.counts.future+S.spent} 回`,null)}
+
+      ${box(300,40,220,80,"人的資本","スキル・知識・経験",c.human,"var(--human)")}
+      ${box(300,190,220,80,"金融資本","お金・資産・収入源",c.money,"var(--money)")}
+      ${box(300,340,220,80,"社会的資本","人脈・信頼・評判",c.social,"var(--social)")}
+      ${box(640,190,220,80,"知的資産","作品・記事・権利",c.asset,"var(--asset)")}
+
+      ${arrow(175,150,295,85,"学習・訓練",225,132)}
+      ${arrow(175,230,295,230,"労働",235,220)}
+      ${arrow(175,310,295,375,"社会活動",225,345)}
+
+      ${arrow(410,125,410,185,"希少性で単価↑",478,160)}
+      ${arrow(430,335,430,275,"紹介・チャンス",500,312)}
+      ${arrow(390,275,390,335,"投資",362,308)}
+
+      ${arrow(520,80,700,185,"作品化",620,120)}
+      ${arrow(700,275,540,360,"発信・認知",640,340)}
+      ${arrow(640,212,530,220,"販売・権利収入",590,198)}
+
+      <path d="M300,395 C240,420 200,400 175,350" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".5" marker-end="url(#ah)"/>
+      <text x="215" y="418" text-anchor="middle" font-size="13" fill="currentColor" opacity=".8">学習速度が上がる</text>
+
+      <path d="M300,250 C230,262 200,270 178,272" fill="none" stroke="var(--amber)" stroke-width="2.5" marker-end="url(#ah)"/>
+      <text x="240" y="302" text-anchor="middle" font-size="14" fill="var(--amber)">時間を買い戻す</text>
+    </svg>
+    <figcaption>太い線（外注・自動化・資産運用）がこのゲームの目的地。資本を増やすこと自体ではなく、望まないことに時間を使わなくてよい状態をつくること。</figcaption>
+  </figure>
+
+  <div class="route">
+    <h3>行動を測る6項目</h3>
+    <p>クエストを登録するとき、この6つのうち何が残るかを選びます。多いほどEXPと資本が増え、ひとつも残らない行動は「消費」として半分になります。</p>
+    <div class="axes">${RESIDUES.map(r => `
+      <div class="axis" style="border-left-color:${CAPITALS[r.caps[0]].color}">
+        <span class="res" style="color:${CAPITALS[r.caps[0]].color};border-color:${CAPITALS[r.caps[0]].color}">${r.n}</span>
+        <span>${r.full}<br><small style="color:var(--muted)">→ ${r.caps.map(k => CAPITALS[k].name).join("・")}</small></span>
+        <b>${S.counts[r.key]||0} 回</b>
+      </div>`).join("")}
+      <div class="axis" style="border-left-color:var(--edge)">
+        <span class="res" style="color:var(--muted);border-color:var(--edge)">―</span>
+        <span>何も残らなかった行動<br><small style="color:var(--muted)">→ 消費した時間</small></span>
+        <b>${S.spent} 回</b>
       </div>
-      <div class="form">
-        <input type="text" id="b-name" placeholder="目標（例：10kmを走れるようになる）" maxlength="40">
-        ${statSelect("b-stat")}
-        <input type="number" id="b-max" value="20" min="1" max="999" aria-label="必要な回数">
-        <button class="btn" data-add="boss">追加</button>
-      </div>`;
-  }
-}
-
-function renderNotion(p){
-  const N = notion;
-  const head = `<h2>Notion <span style="color:var(--muted)">やることページをクエストに</span></h2>`;
-
-  if (N.status === "unavailable"){
-    p.innerHTML = head + `<div class="notice"><b>この画面ではNotionに接続できません。</b><br>
-      Notion連携は claude.ai で公開したURL版で動きます。ローカルのファイルからは連携できないため、
-      日課・クエスト・ボスのタブをそのままお使いください。</div>`;
-    return;
-  }
-  if (N.status === "idle"){
-    p.innerHTML = head + `<div class="notice">Notionの「やること」ページを読み込んで、チェックボックスをクエストに変えます。
-      アプリで達成すると、Notion側のチェックも入ります。</div>
-      <div class="form" style="border-top:none;padding-top:12px">
-        <button class="btn" data-notion="load">Notionを読み込む</button>
-      </div>`;
-    return;
-  }
-  if (N.status === "loading"){
-    p.innerHTML = head + `<div class="notice">Notionを読み込んでいます…</div>`;
-    return;
-  }
-  if (N.status === "error"){
-    p.innerHTML = head + `<div class="notice bad">${esc(N.error)}</div>
-      <div class="form" style="border-top:none;padding-top:12px">
-        <button class="btn" data-notion="load">もう一度ためす</button>
-      </div>`;
-    return;
-  }
-
-  const picker = N.pages.length > 1 ? `<div class="pagepick">${
-    N.pages.map(pg => `<button data-npage="${pg.id}" aria-pressed="${pg.id === N.pageId}">${esc(pg.title)}</button>`).join("")}</div>` : "";
-
-  const open = N.items.filter(i => !i.done);
-  const sections = [...new Set(open.map(i => i.section))];
-  const body = sections.length ? sections.map(sec => `
-      <div class="sect">${esc(sec)}　${DIFF[SECTION_DIFF[sec] || "mid"].exp}EXP</div>
-      <div class="items">${open.filter(i => i.section === sec).map(i => {
-        const d = DIFF[SECTION_DIFF[sec] || "mid"];
-        return `<div class="item" style="border-left-color:${STATS[i.stat].color}">
-          <button class="check" data-ntodo="${i.id}" aria-label="${esc(i.text)}を達成">✓</button>
-          <div class="name"><span class="t">${esc(i.text)}</span>
-            <div class="meta"><span class="tag">${STATS[i.stat].name}</span><span class="tag">${d.exp}EXP / ${d.gold}G</span></div>
-          </div>
-        </div>`;
-      }).join("")}</div>`).join("")
-    : `<p class="empty">未完了のチェックボックスはありません。おつかれさまでした。</p>`;
-
-  p.innerHTML = head + picker + `
-    <div class="src">
-      <span class="name">📄 <a href="${esc(N.pageUrl)}" target="_blank" rel="noopener">${esc(N.pageTitle)}</a>
-        <span style="color:var(--muted)">　未完了 ${open.length} / ${N.items.length}</span></span>
-      <button class="btn small ghost" data-notion="reload">最新に更新</button>
     </div>
-    <div class="${N.busy ? "busy" : ""}">${body}</div>`;
+  </div>
+
+  <div class="route">
+    <h3>変換のコツ</h3>
+    <ul>
+      <li><b>時間 → 人的資本</b>：能力は掛け算で希少になる。「語学 × 専門 × 発信」のように重ねるほど単価が上がる。</li>
+      <li><b>人的資本 → 金融資本</b>：時給で売らず成果で売る。同じ20時間でも「一式◯◯円」なら時間単価が変わる。</li>
+      <li><b>社会的資本 → 金融資本</b>：仕事を探す→紹介される→依頼される、に変わると営業時間がゼロになる。</li>
+      <li><b>金融資本 → 社会的資本</b>：交際費ではなく「お金 → 接点 → 信頼」への投資として使う。</li>
+      <li><b>社会的資本 → 人的資本</b>：優れた人と仕事をすると学習速度そのものが上がる。</li>
+      <li><b>金融資本 → 時間</b>：外注・自動化・資産運用で、将来の労働時間を先に減らす。</li>
+      <li><b>ひとつの時間を多重取り</b>：旅する→撮る→書く→発信する→本にする→売る、と資本が同時に生まれる。</li>
+    </ul>
+  </div>`;
 }
 
-function renderSide(){
-  el("rewards").innerHTML = S.rewards.length ? S.rewards.map(r => `
-    <div class="reward">
-      <span class="name">${esc(r.name)}</span>
-      <span class="cost">${r.cost} G</span>
-      <button class="btn small ghost" data-buy="${r.id}" ${S.gold < r.cost ? "disabled" : ""}>交換</button>
-      <button class="del" data-del="rewards:${r.id}" aria-label="削除">✕</button>
-    </div>`).join("") : `<p class="empty">自分へのごほうびを決めよう。</p>`;
-
-  el("log").innerHTML = S.log.length
-    ? S.log.map(l => `<li><time>${l.t}</time><span>${esc(l.text)}</span></li>`).join("")
-    : `<li style="color:var(--muted)">まだ記録はありません。</li>`;
-}
-
-const render = () => { renderStatus(); renderPanel(); renderSide(); };
-
-// ── 操作 ───────────────────────────────────
-document.addEventListener("click", ev => {
-  const t = ev.target.closest("button");
-  if (!t) return;
-
-  if (t.dataset.tab){
-    tab = t.dataset.tab;
-    document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", String(b === t)));
-    renderPanel();
-    return;
-  }
-  if (t.dataset.notion === "load" || t.dataset.notion === "reload"){
-    return notionLoad(t.dataset.notion === "reload" ? notion.pageId : null);
-  }
-  if (t.dataset.npage) return notionLoad(t.dataset.npage);
-  if (t.dataset.ntodo) return notionComplete(t.dataset.ntodo);
-  if (t.dataset.daily) return completeDaily(t.dataset.daily);
-  if (t.dataset.quest) return toggleQuest(t.dataset.quest);
-  if (t.dataset.boss)  return hitBoss(t.dataset.boss);
-  if (t.dataset.buy)   return buy(t.dataset.buy);
-
-  if (t.dataset.del){
-    const [list, id] = t.dataset.del.split(":");
-    S[list] = S[list].filter(x => x.id !== id);
-    save(); render();
-    return;
-  }
-
-  if (t.dataset.add){
-    const kind = t.dataset.add;
-    const val = id => (el(id)?.value || "").trim();
-    if (kind === "daily"){
-      const name = val("d-name"); if (!name) return;
-      S.dailies.push({id:uid(), name, stat:el("d-stat").value, diff:el("d-diff").value, last:"", streak:0});
-    }
-    if (kind === "quest"){
-      const name = val("q-name"); if (!name) return;
-      S.quests.push({id:uid(), name, stat:el("q-stat").value, diff:el("q-diff").value, done:false});
-    }
-    if (kind === "boss"){
-      const name = val("b-name"); if (!name) return;
-      const max = Math.max(1, Math.min(999, parseInt(el("b-max").value, 10) || 20));
-      S.bosses.push({id:uid(), name, stat:el("b-stat").value, max, hp:max, slain:false});
-    }
-    if (kind === "reward"){
-      const name = val("r-name"); if (!name) return;
-      const cost = Math.max(1, Math.min(9999, parseInt(el("r-cost").value, 10) || 50));
-      S.rewards.push({id:uid(), name, cost});
-      el("r-name").value = "";
-    }
-    save(); render();
-  }
-
-  if (t.id === "reset"){
-    if (confirm("記録をすべて消して最初からはじめますか？")) {
-      S = seed(); save(); render();
-    }
-  }
-});
-
-// Enter キーで追加できるように
-document.addEventListener("keydown", ev => {
-  if (ev.key !== "Enter" || ev.target.tagName !== "INPUT") return;
-  const map = {"d-name":"daily","q-name":"quest","b-name":"boss","r-name":"reward","b-max":"boss","r-cost":"reward"};
-  const kind = map[ev.target.id];
-  if (kind) document.querySelector(`[data-add="${kind}"]`)?.click();
-});
-
-// ── Notion 連携 ─────────────────────────────
+/* ── Notion 連携 ─────────────────────────────────── */
 const NOTION_SERVER = "Notion";
-const SECTION_DIFF = {
-  "最優先":"hard", "期限超過":"hard", "今日中":"mid",
-  "余裕があれば":"easy", "今週の次のステップ":"mid",
-};
-const STAT_HINTS = [
-  [/連絡|返信|依頼|共有|DM|問い合わせ|告知|投稿|紹介/, "hito"],
-  [/育成|学習|リサーチ|調査|観測|構成|記録|集計|判断|決める|確認/, "atama"],
-  [/運動|走|歩|梱包|発送|印刷|製本|断裁|整え|片づけ|準備/, "karada"],
-];
-const guessStat = t => (STAT_HINTS.find(([re]) => re.test(t)) || [null,"kurashi"])[1];
-
+const SECTION_DIFF = {"最優先":"hard","期限超過":"hard","今日中":"mid","余裕があれば":"easy","今週の次のステップ":"mid"};
 let notion = {status:"idle", pages:[], pageId:null, pageTitle:"", pageUrl:"", items:[], error:"", busy:false};
 
 const ERROR_COPY = {
-  needs_reauth: "Notionの接続が切れています。claude.ai の 設定 → コネクター で Notion を再接続してください。",
-  server_not_connected: "Notionコネクターが見つかりません。claude.ai の 設定 → コネクター で Notion を追加してください。",
-  selection_required: "同じ名前のNotion接続が複数あります。表示される選択画面でどれを使うか選んでください。",
-  server_not_found: "Notion接続が見つかりませんでした。設定 → コネクター を確認してください。",
-  server_unavailable: "Notionに一時的につながりませんでした。少し待ってもう一度お試しください。",
-  not_in_manifest: "このページはその操作をNotionに要求できません。",
-  blocked_by_policy: "組織の設定でこの操作が許可されていません。",
-  approval_required: "この操作には管理者の承認が必要です。",
-  tool_error: "Notion側でエラーが返りました。",
-  bad_request: "リクエストの内容が不正でした。",
-  rate_limited: "呼び出しが多すぎます。少し待ってからお試しください。",
+  needs_reauth:"Notionの接続が切れています。claude.ai の 設定 → コネクター で Notion を再接続してください。",
+  server_not_connected:"Notionコネクターが見つかりません。claude.ai の 設定 → コネクター で Notion を追加してください。",
+  selection_required:"同じ名前のNotion接続が複数あります。表示される選択画面でどれを使うか選んでください。",
+  server_not_found:"Notion接続が見つかりませんでした。設定 → コネクター を確認してください。",
+  server_unavailable:"Notionに一時的につながりませんでした。少し待ってもう一度お試しください。",
+  not_in_manifest:"このページはその操作をNotionに要求できません。",
+  blocked_by_policy:"組織の設定でこの操作が許可されていません。",
+  approval_required:"この操作には管理者の承認が必要です。",
+  tool_error:"Notion側でエラーが返りました。",
+  bad_request:"リクエストの内容が不正でした。",
+  rate_limited:"呼び出しが多すぎます。少し待ってからお試しください。",
 };
 const errText = e => (ERROR_COPY[e && e.code] || "Notionの読み込みに失敗しました。")
   + (e && e.message && !ERROR_COPY[e.code] ? "（" + e.message + "）" : "");
 
 async function mcpns(){
-  try { return window.claude && claude.use ? await claude.use("mcp") : null; }
-  catch(e){ return null; }
+  try { return window.claude && claude.use ? await claude.use("mcp") : null; } catch(e){ return null; }
 }
 
-/** ページ本文（Notion Markdown）から未完了・完了のチェックボックスを取り出す */
 function parseTodos(text){
-  const items = [];
-  let section = "やること", n = 0;
+  const items = []; let section = "やること", n = 0;
   for (const raw of String(text).split("\n")){
     const h = raw.match(/^##+\s*(.+?)\s*$/);
     if (h){ section = h[1]; continue; }
     const m = raw.match(/^\s*-\s\[( |x|X)\]\s*(.+?)\s*$/);
     if (!m) continue;
-    const body = m[2];
-    const label = body.replace(/\*\*/g,"").replace(/\[([^\]]+)\]\([^)]*\)/g,"$1");
-    items.push({id:"n"+(n++), line:raw.trim(), body, text:label,
-      done:m[1].toLowerCase()==="x", section, stat:guessStat(label)});
+    const label = m[2].replace(/\*\*/g,"").replace(/\[([^\]]+)\]\([^)]*\)/g,"$1");
+    items.push({id:"n"+(n++), line:raw.trim(), text:label, done:m[1].toLowerCase()==="x",
+      section, res:guessResidues(label), diff:SECTION_DIFF[section] || "mid"});
   }
   return items;
 }
@@ -684,7 +680,8 @@ async function notionLoad(pageId){
     if (!pageId){
       const r = await mcp.callTool(NOTION_SERVER, "notion-search",
         {query:"やること", page_size:10, max_highlight_length:0}, {cache:{staleTime:60000}});
-      const found = ((r.payload && r.payload.results) || []).filter(x => x.type === "page" && /やること|TODO|ToDo|タスク/i.test(x.title));
+      const found = ((r.payload && r.payload.results) || [])
+        .filter(x => x.type === "page" && /やること|TODO|ToDo|タスク/i.test(x.title));
       if (!found.length) throw {code:"empty"};
       notion.pages = found.slice(0,6).map(x => ({id:x.id, title:x.title}));
       pageId = notion.pages[0].id;
@@ -712,18 +709,18 @@ async function notionComplete(itemId){
   if (!mcp){ notion.status = "unavailable"; renderPanel(); return; }
 
   notion.busy = true; renderPanel();
-  const done = it.line.replace(/^-\s\[\s\]/, "- [x]");
   try {
     await mcp.callTool(NOTION_SERVER, "notion-update-page", {
       page_id: notion.pageId,
       command: "update_content",
-      content_updates: [{old_str: it.line, new_str: done}],
+      content_updates: [{old_str: it.line, new_str: it.line.replace(/^-\s\[\s\]/, "- [x]")}],
     });
-    const diff = DIFF[SECTION_DIFF[it.section] || "mid"];
-    gain(diff.exp, diff.gold, it.stat);
+    const p = payout(it.diff, it.res);
+    gain(p.exp, p.gold, it.res);
+    if (p.consumed) S.spent++;
     it.done = true;
-    addLog(`Notion「${it.text}」を完了 +${diff.exp}EXP`);
-    toast(`+${diff.exp} EXP / +${diff.gold} G　Notionにもチェックを入れました`);
+    addLog(`Notion「${it.text}」完了 +${p.exp}EXP・${capsLine(it.res)}`);
+    toast(`+${p.exp} EXP / +${p.gold} G<br>${capsLine(it.res)}<br>Notionにもチェックを入れました`);
     save();
     try { await mcp.invalidate(NOTION_SERVER, "notion-fetch"); } catch(e){}
   } catch(e){
@@ -733,6 +730,159 @@ async function notionComplete(itemId){
   notion.busy = false;
   renderStatus(); renderPanel(); renderSide();
 }
+
+/** Notion項目の「残るもの」を手で直す */
+function toggleNotionRes(itemId, key){
+  const it = notion.items.find(x => x.id === itemId);
+  if (!it) return;
+  it.res = it.res.includes(key) ? it.res.filter(k => k !== key) : [...it.res, key];
+  renderPanel();
+}
+
+function renderNotion(p){
+  const N = notion;
+  const head = `<h2>Notion <span style="color:var(--muted)">やることページをクエストに</span></h2>`;
+
+  if (N.status === "unavailable"){
+    p.innerHTML = head + `<div class="notice"><b>この画面ではNotionに接続できません。</b><br>
+      Notion連携は claude.ai で公開したURL版で動きます。ローカルのファイルからは連携できないため、
+      日課・クエスト・ボスのタブをお使いください。</div>`;
+    return;
+  }
+  if (N.status === "idle"){
+    p.innerHTML = head + `<div class="notice">Notionの「やること」ページを読み込んで、チェックボックスをクエストに変えます。
+      アプリで達成すると、Notion側のチェックも入ります。</div>
+      <div class="form" style="border-top:none;padding-top:12px"><button class="btn" data-notion="load">Notionを読み込む</button></div>`;
+    return;
+  }
+  if (N.status === "loading"){ p.innerHTML = head + `<div class="notice">Notionを読み込んでいます…</div>`; return; }
+  if (N.status === "error"){
+    p.innerHTML = head + `<div class="notice bad">${esc(N.error)}</div>
+      <div class="form" style="border-top:none;padding-top:12px"><button class="btn" data-notion="load">もう一度ためす</button></div>`;
+    return;
+  }
+
+  const picker = N.pages.length > 1 ? `<div class="pagepick">${
+    N.pages.map(pg => `<button data-npage="${pg.id}" aria-pressed="${pg.id === N.pageId}">${esc(pg.title)}</button>`).join("")}</div>` : "";
+
+  const open = N.items.filter(i => !i.done);
+  const sections = [...new Set(open.map(i => i.section))];
+  const body = sections.length ? sections.map(sec => `
+      <div class="sect">${esc(sec)}</div>
+      <div class="items">${open.filter(i => i.section === sec).map(i => {
+        const pay = payout(i.diff, i.res);
+        return `<div class="item" style="border-left-color:${i.res.length ? resColor(i.res[0]) : "var(--edge)"}">
+          <button class="check" data-ntodo="${i.id}" aria-label="${esc(i.text)}を達成">✓</button>
+          <div class="name"><span class="t">${esc(i.text)}</span>
+            <div class="meta">${RESIDUES.map(r => {
+              const on = i.res.includes(r.key);
+              return `<button class="res" data-nres="${i.id}:${r.key}" aria-pressed="${on}"
+                style="cursor:pointer;background:${on ? CAPITALS[r.caps[0]].color : "transparent"};
+                color:${on ? "#16211c" : "var(--muted)"};border-color:${on ? CAPITALS[r.caps[0]].color : "var(--edge)"}"
+                title="${r.full}">${r.name}</button>`;
+            }).join("")}<span class="tag">${pay.exp}EXP / ${pay.gold}G</span></div>
+          </div>
+        </div>`;
+      }).join("")}</div>`).join("")
+    : `<p class="empty">未完了のチェックボックスはありません。おつかれさまでした。</p>`;
+
+  p.innerHTML = head + picker + `
+    <div class="src">
+      <span class="name">📄 <a href="${esc(N.pageUrl)}" target="_blank" rel="noopener">${esc(N.pageTitle)}</a>
+        <span style="color:var(--muted)">　未完了 ${open.length} / ${N.items.length}</span></span>
+      <button class="btn small ghost" data-notion="reload">最新に更新</button>
+    </div>
+    <p style="font-size:.78rem;color:var(--muted);margin:0 0 8px">タグを押すと「何が残るか」を直せます。多いほどEXPと資本が増えます。</p>
+    <div class="${N.busy ? "busy" : ""}">${body}</div>`;
+}
+
+function renderSide(){
+  el("rewards").innerHTML = S.rewards.length ? S.rewards.map(r => `
+    <div class="reward">
+      <span class="name">${esc(r.name)}</span>
+      <span class="cost">${r.cost} G</span>
+      <button class="btn small ghost" data-buy="${r.id}" ${S.gold < r.cost ? "disabled" : ""}>交換</button>
+      <button class="del" data-del="rewards:${r.id}" aria-label="削除">✕</button>
+    </div>`).join("") : `<p class="empty">自分へのごほうびを決めよう。</p>`;
+
+  el("log").innerHTML = S.log.length
+    ? S.log.map(l => `<li><time>${l.t}</time><span>${esc(l.text)}</span></li>`).join("")
+    : `<li style="color:var(--muted)">まだ記録はありません。</li>`;
+}
+
+const render = () => { renderStatus(); renderPanel(); renderSide(); };
+
+/* ── 操作 ──────────────────────────────────────── */
+document.addEventListener("click", ev => {
+  const t = ev.target.closest("button");
+  if (!t) return;
+
+  if (t.dataset.tab){
+    tab = t.dataset.tab;
+    document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", String(b === t)));
+    return renderPanel();
+  }
+  if (t.dataset.flag){
+    const [kind, key] = t.dataset.flag.split(":");
+    drafts[kind].has(key) ? drafts[kind].delete(key) : drafts[kind].add(key);
+    return renderPanel();
+  }
+  if (t.dataset.nres){
+    const [id, key] = t.dataset.nres.split(":");
+    return toggleNotionRes(id, key);
+  }
+  if (t.dataset.notion) return notionLoad(t.dataset.notion === "reload" ? notion.pageId : null);
+  if (t.dataset.npage) return notionLoad(t.dataset.npage);
+  if (t.dataset.ntodo) return notionComplete(t.dataset.ntodo);
+  if (t.dataset.daily) return completeDaily(t.dataset.daily);
+  if (t.dataset.quest) return completeQuest(t.dataset.quest);
+  if (t.dataset.boss)  return hitBoss(t.dataset.boss);
+  if (t.dataset.buy)   return buy(t.dataset.buy);
+
+  if (t.dataset.del){
+    const [list, id] = t.dataset.del.split(":");
+    S[list] = S[list].filter(x => x.id !== id);
+    save(); return render();
+  }
+
+  if (t.dataset.add){
+    const kind = t.dataset.add;
+    const val = id => (el(id)?.value || "").trim();
+    if (kind === "daily"){
+      const name = val("d-name"); if (!name) return;
+      S.dailies.push({id:uid(), name, diff:el("d-diff").value, res:[...drafts.daily], last:"", streak:0});
+      drafts.daily.clear();
+    }
+    if (kind === "quest"){
+      const name = val("q-name"); if (!name) return;
+      S.quests.push({id:uid(), name, diff:el("q-diff").value, res:[...drafts.quest], done:false});
+      drafts.quest.clear();
+    }
+    if (kind === "boss"){
+      const name = val("b-name"); if (!name) return;
+      const max = Math.max(1, Math.min(999, parseInt(el("b-max").value, 10) || 20));
+      S.bosses.push({id:uid(), name, res:[...drafts.boss], max, hp:max, slain:false});
+      drafts.boss.clear();
+    }
+    if (kind === "reward"){
+      const name = val("r-name"); if (!name) return;
+      S.rewards.push({id:uid(), name, cost:Math.max(1, Math.min(9999, parseInt(el("r-cost").value, 10) || 50))});
+      el("r-name").value = "";
+    }
+    save(); return render();
+  }
+
+  if (t.id === "reset" && confirm("記録をすべて消して最初からはじめますか？")){
+    S = seed(); save(); render();
+  }
+});
+
+document.addEventListener("keydown", ev => {
+  if (ev.key !== "Enter" || ev.target.tagName !== "INPUT") return;
+  const map = {"d-name":"daily","q-name":"quest","b-name":"boss","b-max":"boss","r-name":"reward","r-cost":"reward"};
+  const kind = map[ev.target.id];
+  if (kind) document.querySelector(`[data-add="${kind}"]`)?.click();
+});
 
 render();
 </script>
