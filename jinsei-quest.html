@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>人生クエスト</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Antique&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=DotGothic16&display=swap">
+<style>
+:root{
+  --bg:#0e1a18; --bg-2:#132522; --panel:#16302b;
+  --edge:#2b514a; --ink:#e9e7dc; --muted:#8fa8a1;
+  --amber:#e2a349;
+  --leaf:#7fb069; --rust:#cf5b3f; --violet:#9a86c4;
+  --disp:"Zen Antique","Hiragino Mincho ProN",serif;
+  --body:"Zen Kaku Gothic New","Hiragino Sans",sans-serif;
+  --dot:"DotGothic16",monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:
+    radial-gradient(ellipse at 12% 0%, #1b332e 0%, transparent 55%),
+    radial-gradient(ellipse at 88% 100%, #17282f 0%, transparent 55%),
+    var(--bg);
+  color:var(--ink); font-family:var(--body); line-height:1.6;
+  padding:26px 16px 60px; min-height:100vh;
+}
+.wrap{max-width:1180px;margin:0 auto}
+h1,h2,h3{margin:0}
+button{font-family:inherit}
+
+/* ── ヘッダー ── */
+.top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px;
+  border-bottom:1px solid var(--edge);padding-bottom:14px}
+.brand h1{font-family:var(--disp);font-size:clamp(1.7rem,4vw,2.4rem);letter-spacing:.16em;color:var(--ink)}
+.brand p{margin:4px 0 0;color:var(--muted);font-size:.85rem;max-width:40em}
+.today{font-family:var(--dot);font-size:.78rem;letter-spacing:.16em;color:var(--amber);text-align:right}
+
+.grid{display:grid;grid-template-columns:274px minmax(0,1fr) 288px;gap:18px;align-items:start}
+@media(max-width:1040px){.grid{grid-template-columns:1fr}}
+
+.card{background:var(--panel);border:1px solid var(--edge);border-radius:4px;padding:14px 15px}
+.card + .card{margin-top:16px}
+.card h2{font-family:var(--dot);font-size:.72rem;letter-spacing:.26em;color:var(--amber);font-weight:400;
+  margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.side{position:sticky;top:16px}
+
+/* ── ステータス ── */
+.lv{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
+.lv small{font-family:var(--dot);font-size:.7rem;letter-spacing:.2em;color:var(--muted)}
+.lv b{font-family:var(--dot);font-size:2.6rem;line-height:1;color:var(--amber);font-variant-numeric:tabular-nums}
+.bar{height:9px;background:#0d201d;border:1px solid var(--edge);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--leaf),var(--amber));transition:width .5s ease}
+.bar-note{display:flex;justify-content:space-between;font-family:var(--dot);font-size:.68rem;color:var(--muted);margin-top:5px;
+  font-variant-numeric:tabular-nums}
+.gold{margin-top:12px;display:flex;justify-content:space-between;align-items:baseline;
+  border-top:1px dotted var(--edge);padding-top:10px;font-size:.85rem}
+.gold b{font-family:var(--dot);font-size:1.3rem;color:var(--amber);font-variant-numeric:tabular-nums}
+
+.stats{display:flex;flex-direction:column;gap:9px}
+.stat{display:grid;grid-template-columns:3.6em 1fr 2.2em;gap:8px;align-items:center;font-size:.8rem}
+.stat .sbar{height:7px;background:#0d201d;border-radius:99px;overflow:hidden}
+.stat .sbar i{display:block;height:100%;transition:width .4s ease}
+.stat b{font-family:var(--dot);font-size:.85rem;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* ── タブとクエスト ── */
+.tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.tab{background:transparent;border:1px solid var(--edge);color:var(--muted);
+  padding:7px 14px;border-radius:99px;font-size:.82rem;cursor:pointer}
+.tab:hover{color:var(--ink);border-color:var(--amber)}
+.tab[aria-selected="true"]{background:var(--amber);border-color:var(--amber);color:#16211c;font-weight:700}
+.tab:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+
+.items{display:flex;flex-direction:column;gap:8px}
+.item{display:flex;align-items:center;gap:11px;background:var(--bg-2);border:1px solid var(--edge);
+  border-left:4px solid var(--edge);border-radius:3px;padding:10px 12px}
+.item.done{opacity:.5}
+.item.done .t{text-decoration:line-through;color:var(--muted)}
+.item .name{font-size:.94rem;flex:1;min-width:0}
+.item .meta{font-family:var(--dot);font-size:.68rem;color:var(--muted);letter-spacing:.08em;display:flex;gap:8px;flex-wrap:wrap;margin-top:2px}
+.tag{border:1px solid var(--edge);border-radius:99px;padding:0 7px}
+.streak{color:var(--rust)}
+.check{width:30px;height:30px;flex:none;border-radius:50%;border:2px solid var(--leaf);
+  background:transparent;color:var(--leaf);font-size:1rem;cursor:pointer;line-height:1}
+.check:hover{background:rgba(127,176,105,.16)}
+.item.done .check{border-color:var(--muted);color:var(--muted)}
+.del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;padding:2px 4px;line-height:1}
+.del:hover{color:var(--rust)}
+.empty{color:var(--muted);font-size:.85rem;padding:14px 2px;text-align:center;border:1px dashed var(--edge);border-radius:3px}
+
+/* ボス */
+.boss{background:var(--bg-2);border:1px solid var(--edge);border-radius:3px;padding:13px 14px}
+.boss + .boss{margin-top:10px}
+.boss-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.boss-name{font-family:var(--disp);font-size:1.12rem;letter-spacing:.06em}
+.boss-hp{height:12px;background:#0d201d;border:1px solid var(--edge);border-radius:2px;overflow:hidden;margin:9px 0 6px}
+.boss-hp i{display:block;height:100%;background:linear-gradient(90deg,var(--rust),#e8875f);transition:width .45s ease}
+.boss-foot{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.boss-num{font-family:var(--dot);font-size:.72rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.boss.slain{opacity:.55}
+.boss.slain .boss-name::after{content:" 討伐済";font-family:var(--dot);font-size:.66rem;color:var(--leaf);letter-spacing:.1em}
+
+/* フォーム */
+.form{margin-top:14px;border-top:1px dotted var(--edge);padding-top:12px;display:flex;flex-wrap:wrap;gap:8px}
+.form input[type=text]{flex:1 1 190px;min-width:0}
+input,select{background:#0d201d;border:1px solid var(--edge);color:var(--ink);
+  border-radius:3px;padding:8px 10px;font-size:.86rem;font-family:inherit}
+input[type=number]{width:82px;font-family:var(--dot)}
+.btn{background:var(--amber);border:1px solid var(--amber);color:#16211c;font-weight:700;
+  border-radius:3px;padding:8px 15px;font-size:.86rem;cursor:pointer}
+.btn:hover{background:#efb75f}
+.btn.ghost{background:transparent;color:var(--amber);font-weight:500}
+.btn.ghost:hover{background:rgba(226,163,73,.14)}
+.btn.small{padding:5px 11px;font-size:.78rem}
+.btn.danger{background:transparent;border-color:var(--rust);color:var(--rust)}
+.btn.danger:hover{background:rgba(207,91,63,.16)}
+
+/* 報酬・ログ */
+.reward{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dotted var(--edge)}
+.reward:last-of-type{border-bottom:none}
+.reward .name{flex:1;font-size:.88rem}
+.reward .cost{font-family:var(--dot);font-size:.8rem;color:var(--amber);font-variant-numeric:tabular-nums}
+.log{max-height:260px;overflow-y:auto}
+.log li{list-style:none;font-size:.78rem;color:#c3d2cd;padding:5px 0;border-bottom:1px dotted var(--edge);display:flex;gap:8px}
+.log li:last-child{border-bottom:none}
+.log time{font-family:var(--dot);font-size:.68rem;color:var(--muted);flex:none}
+.log ul{margin:0;padding:0}
+
+/* トースト */
+.toasts{position:fixed;right:16px;bottom:16px;display:flex;flex-direction:column;gap:8px;z-index:40}
+.toast{background:var(--panel);border:1px solid var(--amber);border-left:5px solid var(--amber);
+  padding:11px 15px;border-radius:3px;font-size:.86rem;box-shadow:0 8px 24px rgba(0,0,0,.45);
+  animation:rise .3s ease}
+.toast.level{border-color:var(--leaf);border-left-color:var(--leaf)}
+.toast b{font-family:var(--disp);letter-spacing:.08em}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+footer{margin-top:26px;text-align:center;color:var(--muted);font-size:.74rem;font-family:var(--dot);letter-spacing:.14em}
+footer button{background:none;border:none;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:.74rem}
+footer button:hover{color:var(--rust)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand">
+      <h1>人生クエスト</h1>
+      <p>毎日の習慣・やることリスト・大きな目標を、経験値とゴールドで進むゲームに変える手帳。データはこのブラウザにだけ保存されます。</p>
+    </div>
+    <div class="today" id="today"></div>
+  </div>
+
+  <div class="grid">
+    <!-- 左：ステータス -->
+    <aside class="side">
+      <section class="card">
+        <h2>status</h2>
+        <div class="lv"><small>Lv.</small><b id="level">1</b><small id="title-name"></small></div>
+        <div class="bar"><i id="exp-bar" style="width:0%"></i></div>
+        <div class="bar-note"><span>EXP</span><span id="exp-note">0 / 80</span></div>
+        <div class="gold"><span>ゴールド</span><b id="gold">0</b></div>
+        <div class="gold" style="border-top:none;padding-top:2px"><span>今日の達成</span><b id="today-done">0</b></div>
+      </section>
+
+      <section class="card">
+        <h2>能力値</h2>
+        <div class="stats" id="stats"></div>
+      </section>
+    </aside>
+
+    <!-- 中央：クエスト -->
+    <main>
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" data-tab="daily" aria-selected="true">日課</button>
+        <button class="tab" role="tab" data-tab="quest" aria-selected="false">クエスト</button>
+        <button class="tab" role="tab" data-tab="boss" aria-selected="false">ボス（大きな目標）</button>
+      </div>
+      <section class="card" id="panel"></section>
+    </main>
+
+    <!-- 右：報酬とログ -->
+    <aside class="side">
+      <section class="card">
+        <h2>ごほうび交換所</h2>
+        <div id="rewards"></div>
+        <div class="form">
+          <input type="text" id="r-name" placeholder="ごほうび（例：映画を観る）" maxlength="40">
+          <input type="number" id="r-cost" value="50" min="1" max="9999" aria-label="必要ゴールド">
+          <button class="btn small" data-add="reward">追加</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>冒険の記録</h2>
+        <div class="log"><ul id="log"></ul></div>
+      </section>
+    </aside>
+  </div>
+
+  <footer>
+    データはブラウザに自動保存 ·
+    <button id="reset">すべて消してはじめから</button>
+  </footer>
+</div>
+<div class="toasts" id="toasts"></div>
+
+<script>
+"use strict";
+const KEY = "jinsei-quest-v1";
+const STATS = {
+  karada:{name:"体力",color:"#cf5b3f"},
+  atama :{name:"知力",color:"#5b9bd5"},
+  kokoro:{name:"精神",color:"#9a86c4"},
+  hito  :{name:"社交",color:"#e2a349"},
+  kurashi:{name:"生活",color:"#7fb069"},
+};
+const DIFF = {
+  easy:{name:"かんたん", exp:10, gold:5},
+  mid :{name:"ふつう",   exp:25, gold:12},
+  hard:{name:"たいへん", exp:50, gold:25},
+};
+const TITLES = [
+  [1,"かけだし"],[3,"見習い"],[6,"旅人"],[10,"熟練者"],[15,"達人"],[20,"賢者"],[30,"伝説"],
+];
+
+const todayKey = () => new Date().toLocaleDateString("sv-SE"); // YYYY-MM-DD
+const yesterdayKey = () => {
+  const d = new Date(); d.setDate(d.getDate()-1);
+  return d.toLocaleDateString("sv-SE");
+};
+const uid = () => Math.random().toString(36).slice(2,9);
+const needExp = lv => 50 + lv*30;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function seed(){
+  return {
+    level:1, exp:0, gold:0,
+    stats:{karada:0, atama:0, kokoro:0, hito:0, kurashi:0},
+    dailies:[
+      {id:uid(), name:"朝、決めた時間に起きる", stat:"kurashi", diff:"easy", last:"", streak:0},
+      {id:uid(), name:"30分うごく（散歩・筋トレ）", stat:"karada", diff:"mid", last:"", streak:0},
+      {id:uid(), name:"本を10ページ読む", stat:"atama", diff:"easy", last:"", streak:0},
+    ],
+    quests:[
+      {id:uid(), name:"部屋の片づけをする", stat:"kurashi", diff:"mid", done:false},
+      {id:uid(), name:"しばらく会えていない人に連絡する", stat:"hito", diff:"easy", done:false},
+    ],
+    bosses:[
+      {id:uid(), name:"資格試験に合格する", stat:"atama", max:30, hp:30, slain:false},
+    ],
+    rewards:[
+      {id:uid(), name:"好きなだけ寝る", cost:60},
+      {id:uid(), name:"欲しかった物を買う", cost:200},
+    ],
+    log:[],
+  };
+}
+
+let S;
+try {
+  const raw = localStorage.getItem(KEY);
+  S = raw ? {...seed(), ...JSON.parse(raw)} : seed();
+} catch(e){ S = seed(); }
+
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} };
+
+let tab = "daily";
+
+// ── ゲーム進行 ─────────────────────────────
+function addLog(text){
+  S.log.unshift({t:new Date().toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"}), text});
+  S.log = S.log.slice(0,60);
+}
+function toast(text, kind){
+  const box = document.getElementById("toasts");
+  const d = document.createElement("div");
+  d.className = "toast" + (kind ? " " + kind : "");
+  d.innerHTML = text;
+  box.appendChild(d);
+  setTimeout(() => d.remove(), 3600);
+}
+function titleOf(lv){
+  let t = TITLES[0][1];
+  for (const [need,name] of TITLES) if (lv >= need) t = name;
+  return t;
+}
+function gain(exp, gold, stat){
+  S.exp += exp; S.gold += gold;
+  if (stat) S.stats[stat] = (S.stats[stat]||0) + 1;
+  while (S.exp >= needExp(S.level)){
+    S.exp -= needExp(S.level);
+    S.level++;
+    addLog(`レベル ${S.level} になった！`);
+    toast(`<b>レベルアップ！</b> Lv.${S.level}「${titleOf(S.level)}」`, "level");
+  }
+}
+
+function completeDaily(id){
+  const d = S.dailies.find(x => x.id === id);
+  if (!d || d.last === todayKey()) return;
+  d.streak = d.last === yesterdayKey() ? d.streak + 1 : 1;
+  d.last = todayKey();
+  const {exp, gold} = DIFF[d.diff];
+  const bonus = Math.min(d.streak - 1, 10) * 2;          // 連続日数ボーナス
+  gain(exp + bonus, gold, d.stat);
+  addLog(`日課「${d.name}」を達成（${d.streak}日連続）+${exp+bonus}EXP`);
+  toast(`+${exp + bonus} EXP / +${gold} G　${d.streak >= 2 ? d.streak + "日連続！" : ""}`);
+  save(); render();
+}
+function toggleQuest(id){
+  const q = S.quests.find(x => x.id === id);
+  if (!q || q.done) return;
+  q.done = true;
+  const {exp, gold} = DIFF[q.diff];
+  gain(exp, gold, q.stat);
+  addLog(`クエスト「${q.name}」を達成 +${exp}EXP`);
+  toast(`+${exp} EXP / +${gold} G`);
+  save(); render();
+}
+function hitBoss(id){
+  const b = S.bosses.find(x => x.id === id);
+  if (!b || b.slain) return;
+  b.hp = Math.max(0, b.hp - 1);
+  gain(6, 3, b.stat);
+  if (b.hp === 0){
+    b.slain = true;
+    const exp = b.max * 5, gold = b.max * 3;
+    gain(exp, gold, b.stat);
+    addLog(`ボス「${b.name}」を討伐！ +${exp}EXP / +${gold}G`);
+    toast(`<b>${esc(b.name)} 討伐！</b><br>+${exp} EXP / +${gold} G`, "level");
+  } else {
+    addLog(`「${b.name}」に1回ぶん前進（残り${b.hp}）`);
+    toast(`残り ${b.hp} / ${b.max}　+6 EXP`);
+  }
+  save(); render();
+}
+function buy(id){
+  const r = S.rewards.find(x => x.id === id);
+  if (!r) return;
+  if (S.gold < r.cost){ toast("ゴールドが足りません。"); return; }
+  S.gold -= r.cost;
+  addLog(`ごほうび「${r.name}」と交換（-${r.cost}G）`);
+  toast(`「${esc(r.name)}」と交換した。楽しんで！`);
+  save(); render();
+}
+
+// ── 描画 ───────────────────────────────────
+const el = id => document.getElementById(id);
+
+function renderStatus(){
+  const now = new Date();
+  el("today").textContent = now.toLocaleDateString("ja-JP",{month:"long",day:"numeric"})
+    + "（" + now.toLocaleDateString("ja-JP",{weekday:"short"}) + "）";
+  el("level").textContent = S.level;
+  el("title-name").textContent = "「" + titleOf(S.level) + "」";
+  const need = needExp(S.level);
+  el("exp-bar").style.width = Math.min(100, S.exp / need * 100) + "%";
+  el("exp-note").textContent = `${S.exp} / ${need}`;
+  el("gold").textContent = S.gold.toLocaleString("ja-JP");
+  el("today-done").textContent = S.dailies.filter(d => d.last === todayKey()).length + " / " + S.dailies.length;
+
+  const max = Math.max(10, ...Object.values(S.stats));
+  el("stats").innerHTML = Object.entries(STATS).map(([k,v]) => `
+    <div class="stat">
+      <span>${v.name}</span>
+      <span class="sbar"><i style="width:${(S.stats[k]||0)/max*100}%;background:${v.color}"></i></span>
+      <b>${S.stats[k]||0}</b>
+    </div>`).join("");
+}
+
+function statSelect(id){
+  return `<select id="${id}" aria-label="伸ばす能力">${
+    Object.entries(STATS).map(([k,v]) => `<option value="${k}">${v.name}</option>`).join("")}</select>`;
+}
+function diffSelect(id){
+  return `<select id="${id}" aria-label="難易度">${
+    Object.entries(DIFF).map(([k,v]) => `<option value="${k}"${k==="mid"?" selected":""}>${v.name}（${v.exp}EXP）</option>`).join("")}</select>`;
+}
+
+function renderPanel(){
+  const p = el("panel");
+  if (tab === "daily"){
+    const t = todayKey();
+    p.innerHTML = `
+      <h2>日課 <span style="color:var(--muted)">毎日リセット・連続でボーナス</span></h2>
+      <div class="items">${
+        S.dailies.length ? S.dailies.map(d => {
+          const done = d.last === t;
+          return `<div class="item ${done?"done":""}" style="border-left-color:${STATS[d.stat].color}">
+            <button class="check" data-daily="${d.id}" aria-label="${esc(d.name)}を達成">${done?"✓":""}</button>
+            <div class="name"><span class="t">${esc(d.name)}</span>
+              <div class="meta">
+                <span class="tag">${STATS[d.stat].name}</span>
+                <span class="tag">${DIFF[d.diff].name} ${DIFF[d.diff].exp}EXP</span>
+                ${d.streak ? `<span class="streak">🔥 ${d.streak}日連続</span>` : ""}
+              </div>
+            </div>
+            <button class="del" data-del="dailies:${d.id}" aria-label="削除">✕</button>
+          </div>`;
+        }).join("") : `<p class="empty">毎日くり返したいことを登録しよう。</p>`}
+      </div>
+      <div class="form">
+        <input type="text" id="d-name" placeholder="日課（例：22時に寝る）" maxlength="40">
+        ${statSelect("d-stat")} ${diffSelect("d-diff")}
+        <button class="btn" data-add="daily">追加</button>
+      </div>`;
+  }
+
+  if (tab === "quest"){
+    const open = S.quests.filter(q => !q.done), done = S.quests.filter(q => q.done);
+    const row = q => `<div class="item ${q.done?"done":""}" style="border-left-color:${STATS[q.stat].color}">
+        <button class="check" data-quest="${q.id}" aria-label="${esc(q.name)}を達成">${q.done?"✓":""}</button>
+        <div class="name"><span class="t">${esc(q.name)}</span>
+          <div class="meta"><span class="tag">${STATS[q.stat].name}</span>
+          <span class="tag">${DIFF[q.diff].name} ${DIFF[q.diff].exp}EXP</span></div>
+        </div>
+        <button class="del" data-del="quests:${q.id}" aria-label="削除">✕</button>
+      </div>`;
+    p.innerHTML = `
+      <h2>クエスト <span style="color:var(--muted)">一度きりのやること</span></h2>
+      <div class="items">${
+        open.length ? open.map(row).join("") : `<p class="empty">やることを登録すると経験値になります。</p>`}
+      </div>
+      ${done.length ? `<h2 style="margin-top:16px">達成済み（${done.length}）</h2>
+        <div class="items">${done.map(row).join("")}</div>` : ""}
+      <div class="form">
+        <input type="text" id="q-name" placeholder="やること（例：歯医者を予約する）" maxlength="40">
+        ${statSelect("q-stat")} ${diffSelect("q-diff")}
+        <button class="btn" data-add="quest">追加</button>
+      </div>`;
+  }
+
+  if (tab === "boss"){
+    p.innerHTML = `
+      <h2>ボス <span style="color:var(--muted)">回数で削る大きな目標</span></h2>
+      <div>${
+        S.bosses.length ? S.bosses.map(b => `
+          <div class="boss ${b.slain?"slain":""}">
+            <div class="boss-head">
+              <span class="boss-name">${esc(b.name)}</span>
+              <span class="boss-num">${b.max - b.hp} / ${b.max} 回</span>
+            </div>
+            <div class="boss-hp"><i style="width:${b.hp/b.max*100}%"></i></div>
+            <div class="boss-foot">
+              <span class="boss-num">${STATS[b.stat].name}　${b.slain ? "討伐報酬 受取済" : "討伐報酬 "+(b.max*5)+"EXP / "+(b.max*3)+"G"}</span>
+              <span>
+                ${b.slain ? "" : `<button class="btn small" data-boss="${b.id}">1回ぶん進めた</button>`}
+                <button class="btn small danger" data-del="bosses:${b.id}">削除</button>
+              </span>
+            </div>
+          </div>`).join("") : `<p class="empty">「何回やれば終わるか」で目標を登録しよう。</p>`}
+      </div>
+      <div class="form">
+        <input type="text" id="b-name" placeholder="目標（例：10kmを走れるようになる）" maxlength="40">
+        ${statSelect("b-stat")}
+        <input type="number" id="b-max" value="20" min="1" max="999" aria-label="必要な回数">
+        <button class="btn" data-add="boss">追加</button>
+      </div>`;
+  }
+}
+
+function renderSide(){
+  el("rewards").innerHTML = S.rewards.length ? S.rewards.map(r => `
+    <div class="reward">
+      <span class="name">${esc(r.name)}</span>
+      <span class="cost">${r.cost} G</span>
+      <button class="btn small ghost" data-buy="${r.id}" ${S.gold < r.cost ? "disabled" : ""}>交換</button>
+      <button class="del" data-del="rewards:${r.id}" aria-label="削除">✕</button>
+    </div>`).join("") : `<p class="empty">自分へのごほうびを決めよう。</p>`;
+
+  el("log").innerHTML = S.log.length
+    ? S.log.map(l => `<li><time>${l.t}</time><span>${esc(l.text)}</span></li>`).join("")
+    : `<li style="color:var(--muted)">まだ記録はありません。</li>`;
+}
+
+const render = () => { renderStatus(); renderPanel(); renderSide(); };
+
+// ── 操作 ───────────────────────────────────
+document.addEventListener("click", ev => {
+  const t = ev.target.closest("button");
+  if (!t) return;
+
+  if (t.dataset.tab){
+    tab = t.dataset.tab;
+    document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", String(b === t)));
+    renderPanel();
+    return;
+  }
+  if (t.dataset.daily) return completeDaily(t.dataset.daily);
+  if (t.dataset.quest) return toggleQuest(t.dataset.quest);
+  if (t.dataset.boss)  return hitBoss(t.dataset.boss);
+  if (t.dataset.buy)   return buy(t.dataset.buy);
+
+  if (t.dataset.del){
+    const [list, id] = t.dataset.del.split(":");
+    S[list] = S[list].filter(x => x.id !== id);
+    save(); render();
+    return;
+  }
+
+  if (t.dataset.add){
+    const kind = t.dataset.add;
+    const val = id => (el(id)?.value || "").trim();
+    if (kind === "daily"){
+      const name = val("d-name"); if (!name) return;
+      S.dailies.push({id:uid(), name, stat:el("d-stat").value, diff:el("d-diff").value, last:"", streak:0});
+    }
+    if (kind === "quest"){
+      const name = val("q-name"); if (!name) return;
+      S.quests.push({id:uid(), name, stat:el("q-stat").value, diff:el("q-diff").value, done:false});
+    }
+    if (kind === "boss"){
+      const name = val("b-name"); if (!name) return;
+      const max = Math.max(1, Math.min(999, parseInt(el("b-max").value, 10) || 20));
+      S.bosses.push({id:uid(), name, stat:el("b-stat").value, max, hp:max, slain:false});
+    }
+    if (kind === "reward"){
+      const name = val("r-name"); if (!name) return;
+      const cost = Math.max(1, Math.min(9999, parseInt(el("r-cost").value, 10) || 50));
+      S.rewards.push({id:uid(), name, cost});
+      el("r-name").value = "";
+    }
+    save(); render();
+  }
+
+  if (t.id === "reset"){
+    if (confirm("記録をすべて消して最初からはじめますか？")) {
+      S = seed(); save(); render();
+    }
+  }
+});
+
+// Enter キーで追加できるように
+document.addEventListener("keydown", ev => {
+  if (ev.key !== "Enter" || ev.target.tagName !== "INPUT") return;
+  const map = {"d-name":"daily","q-name":"quest","b-name":"boss","r-name":"reward","b-max":"boss","r-cost":"reward"};
+  const kind = map[ev.target.id];
+  if (kind) document.querySelector(`[data-add="${kind}"]`)?.click();
+});
+
+render();
+</script>
+</body>
+</html>
