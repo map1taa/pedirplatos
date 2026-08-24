@@ -39,7 +39,11 @@ button{font-family:inherit}
 .today{font-family:var(--dot);font-size:.78rem;letter-spacing:.16em;color:var(--amber);text-align:right}
 
 .grid{display:grid;grid-template-columns:274px minmax(0,1fr) 288px;gap:18px;align-items:start}
-@media(max-width:1040px){.grid{grid-template-columns:1fr}}
+@media(max-width:1040px){
+  .grid{grid-template-columns:1fr}
+  /* 1カラムのときは、まずクエストを見せる */
+  main{order:-1}
+}
 
 .card{background:var(--panel);border:1px solid var(--edge);border-radius:4px;padding:14px 15px;
   box-shadow:0 1px 2px rgba(60,50,30,.05)}
@@ -47,7 +51,12 @@ button{font-family:inherit}
 .card h2{font-family:var(--dot);font-size:.72rem;letter-spacing:.26em;color:var(--amber);font-weight:400;
   margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:8px}
 .card h2 span{letter-spacing:normal;font-family:var(--body)}
-.side{position:sticky;top:16px}
+.side{position:static}
+/* 3カラムが並び、縦にも余裕があるときだけ左右を追従させる
+   （狭い画面で貼りつくと、下のクエスト一覧を覆ってしまうため） */
+@media (min-width:1041px) and (min-height:860px){
+  .side{position:sticky;top:16px}
+}
 
 .lv{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
 .lv small{font-family:var(--dot);font-size:.7rem;letter-spacing:.2em;color:var(--muted)}
