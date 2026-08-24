@@ -9,10 +9,11 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Antique&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=DotGothic16&display=swap">
 <style>
 :root{
-  --bg:#0e1a18; --bg-2:#132522; --panel:#16302b;
-  --edge:#2b514a; --ink:#e9e7dc; --muted:#8fa8a1;
-  --amber:#e2a349; --leaf:#7fb069; --rust:#cf5b3f;
-  --human:#5b9bd5; --social:#e2a349; --money:#7fb069; --asset:#9a86c4; --time:#e8875f;
+  --bg:#f5f2e8; --bg-2:#fffdf6; --panel:#fffefa;
+  --edge:#ddd6c2; --ink:#25302c; --muted:#77837b; --on-accent:#fffdf6;
+  --amber:#b87a1c; --leaf:#4a8a3d; --rust:#bd4a2c;
+  --human:#2a6ba8; --social:#b87a1c; --money:#4a8a3d; --asset:#6a55a3; --time:#c25f26;
+  --well:#efeadb;
   --disp:"Zen Antique","Hiragino Mincho ProN",serif;
   --body:"Zen Kaku Gothic New","Hiragino Sans",sans-serif;
   --dot:"DotGothic16",monospace;
@@ -21,8 +22,8 @@
 html,body{margin:0}
 body{
   background:
-    radial-gradient(ellipse at 12% 0%, #1b332e 0%, transparent 55%),
-    radial-gradient(ellipse at 88% 100%, #17282f 0%, transparent 55%),
+    radial-gradient(ellipse at 12% 0%, #fffdf4 0%, transparent 55%),
+    radial-gradient(ellipse at 88% 100%, #eef2e6 0%, transparent 55%),
     var(--bg);
   color:var(--ink); font-family:var(--body); line-height:1.6;
   padding:26px 16px 60px; min-height:100vh;
@@ -40,7 +41,8 @@ button{font-family:inherit}
 .grid{display:grid;grid-template-columns:274px minmax(0,1fr) 288px;gap:18px;align-items:start}
 @media(max-width:1040px){.grid{grid-template-columns:1fr}}
 
-.card{background:var(--panel);border:1px solid var(--edge);border-radius:4px;padding:14px 15px}
+.card{background:var(--panel);border:1px solid var(--edge);border-radius:4px;padding:14px 15px;
+  box-shadow:0 1px 2px rgba(60,50,30,.05)}
 .card + .card{margin-top:16px}
 .card h2{font-family:var(--dot);font-size:.72rem;letter-spacing:.26em;color:var(--amber);font-weight:400;
   margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -50,7 +52,7 @@ button{font-family:inherit}
 .lv{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
 .lv small{font-family:var(--dot);font-size:.7rem;letter-spacing:.2em;color:var(--muted)}
 .lv b{font-family:var(--dot);font-size:2.6rem;line-height:1;color:var(--amber);font-variant-numeric:tabular-nums}
-.bar{height:9px;background:#0d201d;border:1px solid var(--edge);border-radius:99px;overflow:hidden}
+.bar{height:9px;background:var(--well);border:1px solid var(--edge);border-radius:99px;overflow:hidden}
 .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--leaf),var(--amber));transition:width .5s ease}
 .bar-note{display:flex;justify-content:space-between;font-family:var(--dot);font-size:.68rem;color:var(--muted);
   margin-top:5px;font-variant-numeric:tabular-nums}
@@ -62,7 +64,7 @@ button{font-family:inherit}
 .cap{font-size:.8rem}
 .cap-top{display:flex;justify-content:space-between;align-items:baseline;gap:6px}
 .cap-top b{font-family:var(--dot);font-size:.9rem;color:var(--ink);font-variant-numeric:tabular-nums}
-.cap .sbar{height:7px;background:#0d201d;border-radius:99px;overflow:hidden;margin-top:4px}
+.cap .sbar{height:7px;background:var(--well);border-radius:99px;overflow:hidden;margin-top:4px}
 .cap .sbar i{display:block;height:100%;transition:width .4s ease}
 .cap small{color:var(--muted);font-size:.68rem}
 
@@ -70,7 +72,7 @@ button{font-family:inherit}
 .tab{background:transparent;border:1px solid var(--edge);color:var(--muted);
   padding:7px 14px;border-radius:99px;font-size:.82rem;cursor:pointer}
 .tab:hover{color:var(--ink);border-color:var(--amber)}
-.tab[aria-selected="true"]{background:var(--amber);border-color:var(--amber);color:#16211c;font-weight:700}
+.tab[aria-selected="true"]{background:var(--amber);border-color:var(--amber);color:var(--on-accent);font-weight:700}
 .tab:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
 
 .items{display:flex;flex-direction:column;gap:8px}
@@ -85,7 +87,7 @@ button{font-family:inherit}
 .streak{color:var(--rust);font-family:var(--dot)}
 .check{width:30px;height:30px;flex:none;border-radius:50%;border:2px solid var(--leaf);
   background:transparent;color:var(--leaf);font-size:1rem;cursor:pointer;line-height:1}
-.check:hover{background:rgba(127,176,105,.16)}
+.check:hover{background:rgba(74,138,61,.14)}
 .item.done .check{border-color:var(--muted);color:var(--muted)}
 .del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;padding:2px 4px;line-height:1}
 .del:hover{color:var(--rust)}
@@ -95,7 +97,7 @@ button{font-family:inherit}
 .boss + .boss{margin-top:10px}
 .boss-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
 .boss-name{font-family:var(--disp);font-size:1.12rem;letter-spacing:.06em}
-.boss-hp{height:12px;background:#0d201d;border:1px solid var(--edge);border-radius:2px;overflow:hidden;margin:9px 0 6px}
+.boss-hp{height:12px;background:var(--well);border:1px solid var(--edge);border-radius:2px;overflow:hidden;margin:9px 0 6px}
 .boss-hp i{display:block;height:100%;background:linear-gradient(90deg,var(--rust),#e8875f);transition:width .45s ease}
 .boss-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .boss-num{font-family:var(--dot);font-size:.72rem;color:var(--muted);font-variant-numeric:tabular-nums}
@@ -105,35 +107,35 @@ button{font-family:inherit}
 .form{margin-top:14px;border-top:1px dotted var(--edge);padding-top:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .form input[type=text]{flex:1 1 200px;min-width:0}
 .form-label{width:100%;font-family:var(--dot);font-size:.68rem;letter-spacing:.2em;color:var(--muted);margin-bottom:-2px}
-input,select{background:#0d201d;border:1px solid var(--edge);color:var(--ink);
+input,select{background:#fffdf6;border:1px solid var(--edge);color:var(--ink);
   border-radius:3px;padding:8px 10px;font-size:.86rem;font-family:inherit}
 input[type=number]{width:82px;font-family:var(--dot)}
-.btn{background:var(--amber);border:1px solid var(--amber);color:#16211c;font-weight:700;
+.btn{background:var(--amber);border:1px solid var(--amber);color:var(--on-accent);font-weight:700;
   border-radius:3px;padding:8px 15px;font-size:.86rem;cursor:pointer}
-.btn:hover{background:#efb75f}
+.btn:hover{background:#cf8c26}
 .btn.ghost{background:transparent;color:var(--amber);font-weight:500}
-.btn.ghost:hover{background:rgba(226,163,73,.14)}
+.btn.ghost:hover{background:rgba(184,122,28,.12)}
 .btn.small{padding:5px 11px;font-size:.78rem}
 .btn.danger{background:transparent;border-color:var(--rust);color:var(--rust)}
-.btn.danger:hover{background:rgba(207,91,63,.16)}
+.btn.danger:hover{background:rgba(189,74,44,.12)}
 
 /* 残るもの（6項目）のトグル */
 .flags{display:flex;flex-wrap:wrap;gap:6px}
 .flag{background:transparent;border:1px solid var(--edge);color:var(--muted);border-radius:99px;
   padding:4px 11px;font-size:.78rem;cursor:pointer;display:inline-flex;align-items:center;gap:5px}
 .flag:hover{color:var(--ink)}
-.flag[aria-pressed="true"]{color:#16211c;font-weight:700}
+.flag[aria-pressed="true"]{color:var(--on-accent);font-weight:700}
 .flag .dot{width:7px;height:7px;border-radius:50%;display:inline-block}
 
-.notice{background:#0d201d;border:1px solid var(--edge);border-left:4px solid var(--amber);
-  border-radius:3px;padding:12px 14px;font-size:.85rem;color:#c3d2cd}
+.notice{background:#fbf7ea;border:1px solid var(--edge);border-left:4px solid var(--amber);
+  border-radius:3px;padding:12px 14px;font-size:.85rem;color:#4d5a53}
 .notice b{color:var(--ink)}
 .notice.bad{border-left-color:var(--rust)}
 .pagepick{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}
 .pagepick button{background:transparent;border:1px solid var(--edge);color:var(--muted);
   border-radius:99px;padding:5px 12px;font-size:.8rem;cursor:pointer}
 .pagepick button:hover{border-color:var(--amber);color:var(--ink)}
-.pagepick button[aria-pressed="true"]{background:var(--amber);border-color:var(--amber);color:#16211c;font-weight:700}
+.pagepick button[aria-pressed="true"]{background:var(--amber);border-color:var(--amber);color:var(--on-accent);font-weight:700}
 .sect{font-family:var(--dot);font-size:.7rem;letter-spacing:.2em;color:var(--amber);margin:14px 0 7px}
 .sect:first-of-type{margin-top:4px}
 .src{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;
@@ -147,8 +149,8 @@ figure svg{width:100%;height:auto;color:var(--ink)}
 figcaption{font-size:.78rem;color:var(--muted);margin-top:8px;text-align:center}
 .route{border-top:1px dotted var(--edge);padding-top:12px;margin-top:6px}
 .route h3{font-family:var(--disp);font-size:1rem;letter-spacing:.08em;margin-bottom:6px}
-.route p{font-size:.86rem;margin:0 0 8px;color:#c3d2cd}
-.route ul{margin:0 0 10px;padding-left:1.2em;font-size:.84rem;color:#c3d2cd}
+.route p{font-size:.86rem;margin:0 0 8px;color:#4d5a53}
+.route ul{margin:0 0 10px;padding-left:1.2em;font-size:.84rem;color:#4d5a53}
 .route li{margin-bottom:3px}
 .axes{display:flex;flex-direction:column;gap:7px;margin-top:6px}
 .axis{display:flex;align-items:center;gap:9px;font-size:.85rem;background:var(--bg-2);
@@ -161,13 +163,13 @@ figcaption{font-size:.78rem;color:var(--muted);margin-top:8px;text-align:center}
 .reward .cost{font-family:var(--dot);font-size:.8rem;color:var(--amber);font-variant-numeric:tabular-nums}
 .log{max-height:250px;overflow-y:auto}
 .log ul{margin:0;padding:0}
-.log li{list-style:none;font-size:.78rem;color:#c3d2cd;padding:5px 0;border-bottom:1px dotted var(--edge);display:flex;gap:8px}
+.log li{list-style:none;font-size:.78rem;color:#4d5a53;padding:5px 0;border-bottom:1px dotted var(--edge);display:flex;gap:8px}
 .log li:last-child{border-bottom:none}
 .log time{font-family:var(--dot);font-size:.68rem;color:var(--muted);flex:none}
 
 .toasts{position:fixed;right:16px;bottom:16px;display:flex;flex-direction:column;gap:8px;z-index:40;max-width:320px}
 .toast{background:var(--panel);border:1px solid var(--amber);border-left:5px solid var(--amber);
-  padding:11px 15px;border-radius:3px;font-size:.86rem;box-shadow:0 8px 24px rgba(0,0,0,.45);animation:rise .3s ease}
+  padding:11px 15px;border-radius:3px;font-size:.86rem;box-shadow:0 8px 22px rgba(60,50,30,.18);animation:rise .3s ease}
 .toast.level{border-color:var(--leaf);border-left-color:var(--leaf)}
 .toast b{font-family:var(--disp);letter-spacing:.08em}
 @keyframes rise{from{opacity:0;transform:translateY(10px)}}
@@ -450,7 +452,7 @@ function flagRow(kind){
       return `<button class="flag" data-flag="${kind}:${r.key}" aria-pressed="${on}"
         style="${on ? `background:${CAPITALS[r.caps[0]].color};border-color:${CAPITALS[r.caps[0]].color}` : ""}"
         title="${r.full} → ${r.caps.map(c => CAPITALS[c].name).join("・")}">
-        <span class="dot" style="background:${on ? "#16211c" : CAPITALS[r.caps[0]].color}"></span>${r.n}. ${r.name}</button>`;
+        <span class="dot" style="background:${on ? "var(--on-accent)" : CAPITALS[r.caps[0]].color}"></span>${r.n}. ${r.name}</button>`;
     }).join("")}</div>`;
 }
 
@@ -778,7 +780,7 @@ function renderNotion(p){
               const on = i.res.includes(r.key);
               return `<button class="res" data-nres="${i.id}:${r.key}" aria-pressed="${on}"
                 style="cursor:pointer;background:${on ? CAPITALS[r.caps[0]].color : "transparent"};
-                color:${on ? "#16211c" : "var(--muted)"};border-color:${on ? CAPITALS[r.caps[0]].color : "var(--edge)"}"
+                color:${on ? "var(--on-accent)" : "var(--muted)"};border-color:${on ? CAPITALS[r.caps[0]].color : "var(--edge)"}"
                 title="${r.full}">${r.name}</button>`;
             }).join("")}<span class="tag">${pay.exp}EXP / ${pay.gold}G</span></div>
           </div>
