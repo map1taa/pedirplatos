@@ -726,15 +726,15 @@ function renderQuest(){
     <div class="items">${open.length
       ? open.map(q => itemRow(q, "quest", false)).join("")
       : `<p class="empty">やることを登録すると経験値と資本になります。</p>`}</div>
-    ${done.length ? `<h2 style="margin-top:20px">達成済み（${done.length}）</h2>
-      <div class="items">${done.map(q => itemRow(q, "quest", true)).join("")}</div>` : ""}
     <div class="form">
       <input type="text" id="q-name" placeholder="やること（例：取材記事を1本書いて公開する）" maxlength="40">
       ${DIFF_SELECT("q-diff")}
       <button class="btn" data-add="quest">追加</button>
       ${flagRow("quest")}
     </div>`
-    + runnerHtml();
+    + runnerHtml()
+    + (done.length ? `<h2 style="margin-top:26px">達成済み（${done.length}）</h2>
+        <div class="items">${done.map(q => itemRow(q, "quest", true)).join("")}</div>` : "");
   renderRunnerList();
   runPaint();
 }
