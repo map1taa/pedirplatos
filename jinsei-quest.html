@@ -88,7 +88,8 @@ header h1{font-size:2.4rem;margin:0;font-weight:900;letter-spacing:.02em}
   text-align:left;font-family:inherit;cursor:pointer;box-shadow:2px 2px 0 var(--border-main);width:100%}
 .cap:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--border-main);background:#fff}
 .cap-more{display:block;font-size:.68rem;font-weight:800;color:var(--text-sub);margin-top:6px}
-.cap-name{font-size:.85rem;font-weight:800;display:flex;align-items:center;gap:6px}
+.cap-name{font-size:.85rem;font-weight:800;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.cap-name em{font-style:normal;font-size:.75rem;color:var(--text-sub)}
 .cap-name .dot{width:12px;height:12px;border-radius:50%;border:2px solid var(--border-main);flex:none}
 .cap-val{font-size:1.5rem;font-weight:900;font-variant-numeric:tabular-nums;line-height:1.2}
 .cap small{display:block;font-size:.7rem;color:var(--text-sub);font-weight:700;line-height:1.35}
@@ -369,11 +370,11 @@ const KEY = "jinsei-quest-v2", OLD_KEY = "jinsei-quest-v1";
 
 /* ── モデル：時間 → 4つの資本 → 時間 ────────────────── */
 const CAPITALS = {
-  human :{name:"人的資本",  color:"var(--human)",  note:"スキル・知識・経験"},
-  social:{name:"社会的資本", color:"var(--social)", note:"人脈・信頼・評判"},
-  money :{name:"金融資本",  color:"var(--money)",  note:"お金・資産・収入源"},
-  asset :{name:"知的資産",  color:"var(--asset)",  note:"作品・記事・権利"},
-  time  :{name:"自由時間",  color:"var(--time)",   note:"買い戻した将来の時間"},
+  human :{name:"人的資本",  sub:"吸収",     color:"var(--human)",  note:"スキル・知識・経験"},
+  social:{name:"社会的資本", sub:"つながり",  color:"var(--social)", note:"人脈・信頼・評判"},
+  money :{name:"金融資本",  sub:"仕事促進",  color:"var(--money)",  note:"お金・資産・収入源"},
+  asset :{name:"知的資産",  sub:"創造",     color:"var(--asset)",  note:"作品・記事・権利"},
+  time  :{name:"自由時間",  sub:"浪費",     color:"var(--time)",   note:"買い戻した将来の時間"},
 };
 
 /** 行動を評価する6項目。チェックした数だけ資本に変わる */
@@ -609,7 +610,7 @@ function renderStatus(){
   el("cap-total").textContent = "資本の合計 " + vals.reduce((a,b) => a+b, 0);
   el("caps").innerHTML = Object.entries(CAPITALS).map(([k,c]) => `
     <button class="cap" data-cap="${k}" aria-label="${c.name}のページを開く">
-      <div class="cap-name"><span class="dot" style="background:${c.color}"></span>${c.name}</div>
+      <div class="cap-name"><span class="dot" style="background:${c.color}"></span>${c.name}<em>（${c.sub}）</em></div>
       <div class="cap-val">${S.capitals[k]||0}</div>
       <small>${c.note}</small>
       <span class="cap-more">ひらく →</span>
@@ -719,10 +720,10 @@ function renderMap(p){
 
       ${box(20,120,150,220,"時間","1日24時間",`使い道 ${S.counts.ability+S.counts.record+S.counts.work+S.counts.relation+S.counts.money+S.counts.future+S.spent} 回`,null)}
 
-      ${box(300,40,220,80,"人的資本","スキル・知識・経験",c.human,"var(--human)")}
-      ${box(300,190,220,80,"金融資本","お金・資産・収入源",c.money,"var(--money)")}
-      ${box(300,340,220,80,"社会的資本","人脈・信頼・評判",c.social,"var(--social)")}
-      ${box(640,190,220,80,"知的資産","作品・記事・権利",c.asset,"var(--asset)")}
+      ${box(300,40,220,80,"人的資本（吸収）","スキル・知識・経験",c.human,"var(--human)")}
+      ${box(300,190,220,80,"金融資本（仕事促進）","お金・資産・収入源",c.money,"var(--money)")}
+      ${box(300,340,220,80,"社会的資本（つながり）","人脈・信頼・評判",c.social,"var(--social)")}
+      ${box(640,190,220,80,"知的資産（創造）","作品・記事・権利",c.asset,"var(--asset)")}
 
       ${arrow(175,150,295,85,"学習・訓練",225,132)}
       ${arrow(175,230,295,230,"労働",235,220)}
@@ -879,7 +880,7 @@ function renderCapital(p, key){
     : `<div class="sug-chips">${page.sug.filter(n => !mine.some(x => x.name === n))
         .map(n => `<button class="sug" data-hold="${key}:other:${n}">＋ ${n}</button>`).join("")}</div>`;
 
-  p.innerHTML = `<h2>${c.name} <span>${c.note}</span></h2>
+  p.innerHTML = `<h2>${c.name}（${c.sub}） <span>${c.note}</span></h2>
     <div class="cap-page-top">
       <span class="cap-lv" style="background:${c.color}"><small>Lv.</small><b>${lv}</b></span>
       <span class="pill">${page.hold} <b>${mine.length}</b></span>
