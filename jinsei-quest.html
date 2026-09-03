@@ -109,6 +109,8 @@ header h1{font-size:2.4rem;margin:0;font-weight:900;letter-spacing:.02em}
 
 /* ── 次にやること（リングタイマー） ── */
 .runner{margin-top:4px}
+#quest-card > h2{justify-content:flex-start;gap:14px}
+#quest-now{font-size:1rem;font-weight:800;color:var(--text-main)}
 .runner h3{font-size:1rem;font-weight:900;margin:0 0 12px}
 .runner-top{display:grid;grid-template-columns:230px minmax(0,1fr);gap:20px;align-items:center}
 @media(max-width:640px){.runner-top{grid-template-columns:1fr;justify-items:center}}
@@ -134,10 +136,11 @@ header h1{font-size:2.4rem;margin:0;font-weight:900;letter-spacing:.02em}
 .run-task.over{border-top-color:var(--timer-red)}
 .run-handle{cursor:grab;color:#adb5bd;font-size:1rem;user-select:none;flex:none}
 .run-handle:hover{color:var(--timer-red)}
-.run-check{width:28px;height:28px;flex:none;border-radius:9px;border:2px solid var(--border-main);
-  background:var(--color-green);color:#fff;font-size:.9rem;font-weight:900;cursor:pointer;
-  font-family:inherit;line-height:1}
-.run-check:hover{transform:translate(-1px,-1px);box-shadow:2px 2px 0 var(--border-main)}
+.run-check{width:26px;height:26px;flex:none;border-radius:8px;border:2px solid var(--border-main);
+  background:#fff;color:var(--color-green);font-size:.95rem;font-weight:900;cursor:pointer;
+  font-family:inherit;line-height:1;padding:0}
+.run-check::after{content:"✓";opacity:0}
+.run-check:hover::after{opacity:.45}
 .run-task input{flex:1 1 60px;min-width:0;border:none;border-bottom:2px solid transparent;background:none;
   font:inherit;font-size:.9rem;font-weight:800;padding:3px 2px;border-radius:0}
 .run-task input:focus{outline:none;border-bottom-color:var(--timer-red)}
@@ -738,7 +741,7 @@ function itemRow(x, kind, done){
 
 function renderQuest(){
   const done = S.quests.filter(q => q.done);
-  el("quest-card").innerHTML = `<h2>やること <span>時間を決めて、順にこなす</span></h2>`
+  el("quest-card").innerHTML = `<h2>やること <span id="quest-now"></span></h2>`
     + runnerHtml()
     + (done.length ? `<h2 style="margin-top:26px">達成済み（${done.length}）</h2>
         <div class="items">${done.map(q => `
@@ -929,7 +932,7 @@ function renderRunnerList(){
   list.innerHTML = openQuests().map((q, i) => `
     <div class="run-task ${q.id === runActive ? "active" : ""}" data-run="${q.id}">
       <span class="run-handle" draggable="true" title="ドラッグで並び替え">⠿</span>
-      <button class="run-check" data-quest="${q.id}" aria-label="${esc(q.name)}を終えた">✓</button>
+      <button class="run-check" data-quest="${q.id}" aria-label="${esc(q.name)}を終えた"></button>
       <input type="text" value="${esc(q.name)}" placeholder="やること…" data-runtext="${q.id}" maxlength="40">
       <span class="durs">${RUN_MINS.map(m =>
         `<button class="dur ${q.min === m ? "sel" : ""}" data-runmin="${q.id}:${m}">${m}分</button>`).join("")}</span>
@@ -947,6 +950,8 @@ function runPaint(){
   const now = el("run-now");
   if (document.activeElement !== now) now.value = q ? q.name : "";
   now.placeholder = runLeft <= 0 && !runTick ? "おつかれさま" : "いまやること";
+  const head = el("quest-now");
+  if (head) head.textContent = q && q.name ? q.name : "";
   el("run-toggle").textContent = runTick ? "一時停止"
     : (runLeft > 0 && runLeft < runDur ? "つづける" : "スタート");
   document.title = runTick ? `${mmss(runLeft)} ${q && q.name ? q.name : "人生クエスト"}` : "人生クエスト";
@@ -1733,13 +1738,13 @@ document.addEventListener("input", ev => {
     let q = questAt(runActive) || openQuests()[0];
     if (!q){ q = {id:uid(), name:"", min:null, done:false}; S.quests.push(q); runActive = q.id; }
     q.name = ev.target.value;
-    save(); renderRunnerList();
+    save(); renderRunnerList(); runPaint();
     return;
   }
   const ri = ev.target.dataset && ev.target.dataset.runtext;
   if (ri){
     const q = questAt(ri);
-    if (q){ q.name = ev.target.value; save(); if (runTick && ri === runActive) runPaint(); }
+    if (q){ q.name = ev.target.value; save(); runPaint(); }
     return;
   }
   const age = ev.target.dataset && ev.target.dataset.year;
