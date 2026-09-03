@@ -17,7 +17,7 @@
   --color-orange:#ff922b;
   --color-yellow:#fcc419;
   --color-green:#40c057;
-  --color-purple:#b197fc;
+  --color-purple:#b197fc; --timer-red:#e23b2e;
 
   /* 資本の色 */
   /* 資本の色（1枚目のチケットの黄・紫、2枚目の看板の水色から） */
@@ -107,24 +107,45 @@ header h1{font-size:2.4rem;margin:0;font-weight:900;letter-spacing:.02em}
 .tab:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{
   outline:3px solid var(--color-blue);outline-offset:2px}
 
-/* ── タイマー ── */
-.timer{display:grid;grid-template-columns:minmax(0,1fr) 1fr;gap:18px;align-items:center}
-@media(max-width:640px){.timer{grid-template-columns:1fr}}
-.timer-face{border:3px solid var(--border-main);border-radius:16px;background:#fff;text-align:center;
-  padding:18px 10px;box-shadow:4px 4px 0 var(--border-main)}
-.timer-time{font-size:clamp(2.6rem,9vw,4rem);font-weight:900;line-height:1;font-variant-numeric:tabular-nums;
-  letter-spacing:.02em}
-.timer-note{font-size:.8rem;font-weight:800;color:var(--text-sub);margin-top:8px}
-.timer-face.running{background:var(--color-yellow)}
-.timer-face.done{background:var(--color-pink);animation:blink .6s steps(2) infinite}
-@keyframes blink{50%{opacity:.55}}
-.timer-side{display:flex;flex-direction:column;gap:12px}
-.timer-presets{display:flex;flex-wrap:wrap;gap:7px}
-.preset{border:2px solid var(--border-main);border-radius:30px;padding:6px 14px;font-size:.85rem;font-weight:800;
-  background:#fff;cursor:pointer;font-family:inherit;color:var(--text-main)}
-.preset:hover{background:#fffaf0}
-.preset[aria-pressed="true"]{background:var(--color-yellow)}
-.timer-btns{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+/* ── 次にやること（リングタイマー） ── */
+.runner{border-top:3px dashed var(--border-main);margin-top:22px;padding-top:18px}
+.runner h3{font-size:1rem;font-weight:900;margin:0 0 12px}
+.runner-top{display:grid;grid-template-columns:230px minmax(0,1fr);gap:20px;align-items:center}
+@media(max-width:640px){.runner-top{grid-template-columns:1fr;justify-items:center}}
+.ring-wrap{position:relative;width:230px;aspect-ratio:1;cursor:pointer}
+.ring{width:100%;height:100%;display:block}
+.ring .track{fill:none;stroke:#f0dcd9;stroke-width:10}
+.ring .prog{fill:none;stroke:var(--timer-red);stroke-width:10;stroke-linecap:round;
+  transition:stroke-dasharray .25s linear}
+.ring .tick{stroke:var(--timer-red);stroke-width:8;stroke-linecap:round}
+.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;pointer-events:none;padding:0 24px;text-align:center}
+.ring-time{font-size:2.8rem;font-weight:900;color:var(--timer-red);line-height:1;font-variant-numeric:tabular-nums}
+.ring-now{font-size:.75rem;font-weight:800;color:var(--text-sub);margin-top:8px;line-height:1.3}
+.runner-side{display:flex;flex-direction:column;gap:10px;width:100%}
+.run-task{display:flex;align-items:center;gap:8px;border:2px solid var(--border-main);border-radius:12px;
+  padding:7px 10px;background:#fff}
+.run-task.active{background:#fdeceb;box-shadow:3px 3px 0 var(--border-main)}
+.run-task.dragging{opacity:.45}
+.run-task.over{border-top-color:var(--timer-red)}
+.run-handle{cursor:grab;color:#adb5bd;font-size:1rem;user-select:none;flex:none}
+.run-handle:hover{color:var(--timer-red)}
+.run-no{font-size:.8rem;font-weight:900;width:1.2em;flex:none;text-align:center}
+.run-task input{flex:1 1 60px;min-width:0;border:none;border-bottom:2px solid transparent;background:none;
+  font:inherit;font-size:.9rem;font-weight:800;padding:3px 2px;border-radius:0}
+.run-task input:focus{outline:none;border-bottom-color:var(--timer-red)}
+.durs{display:flex;gap:4px;flex:none}
+.dur{border:2px solid var(--border-main);background:#fff;color:var(--text-main);font:inherit;font-size:.72rem;
+  font-weight:800;padding:3px 7px;border-radius:8px;cursor:pointer}
+.dur:hover{background:#fff4e6}
+.dur.sel{background:var(--timer-red);border-color:var(--timer-red);color:#fff}
+.run-del{border:none;background:none;color:#adb5bd;cursor:pointer;font-size:1rem;font-weight:900;
+  padding:0 2px;flex:none;font-family:inherit}
+.run-del:hover{color:#e03131}
+.run-add{border:2px dashed var(--border-main);background:none;border-radius:10px;padding:6px 12px;
+  font:inherit;font-size:.82rem;font-weight:800;cursor:pointer;color:var(--text-sub);align-self:flex-start}
+.run-add:hover{color:var(--text-main);background:#fffaf0}
+.run-ctrl{display:flex;gap:8px;flex-wrap:wrap;margin-top:2px}
 
 /* ── 1日のスケジュール ── */
 .sched{display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:18px;align-items:start;margin-bottom:20px}
@@ -384,31 +405,6 @@ footer button:hover{color:#e03131}
 
   <section class="card" id="quest-card"></section>
 
-  <section class="card" id="timer-card">
-    <h2>タイマー <span>集中する時間を決めて始める</span></h2>
-    <div class="timer">
-      <div class="timer-face">
-        <div class="timer-time" id="timer-time">25:00</div>
-        <div class="timer-note" id="timer-note">25分</div>
-      </div>
-      <div class="timer-side">
-        <div class="timer-presets">
-          <button class="preset" data-min="5">5分</button>
-          <button class="preset" data-min="10">10分</button>
-          <button class="preset" data-min="15">15分</button>
-          <button class="preset" data-min="25" aria-pressed="true">25分</button>
-          <button class="preset" data-min="30">30分</button>
-          <button class="preset" data-min="45">45分</button>
-          <button class="preset" data-min="60">60分</button>
-        </div>
-        <div class="timer-btns">
-          <button class="btn" id="timer-toggle">スタート</button>
-          <button class="btn small" id="timer-reset">リセット</button>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <section class="card" id="daily-card"></section>
 
   <section class="card">
@@ -509,6 +505,7 @@ function seed(){
     counts:{ability:0, record:0, work:0, relation:0, money:0, future:0},
     spent:0,
     birthYear:null, timeline:{}, schedule:{}, workRules:{},
+    runner:[{text:"今日の振り返り", min:null}, {text:"SNS投稿予約", min:null}],
     skills:[
       {id:uid(), name:"英語",     cat:"lang"},
       {id:uid(), name:"スペイン語", cat:"lang"},
@@ -565,6 +562,7 @@ S.counts   = {...seed().counts,   ...(S.counts||{})};
 S.timeline = {...(S.timeline||{})};
 S.schedule = {...(S.schedule||{})};
 S.workRules = {...(S.workRules||{})};
+if (!Array.isArray(S.runner)) S.runner = seed().runner;
 if (!Array.isArray(S.skills)) S.skills = seed().skills;
 // 旧データ（スキルのみ）を資本ごとの持ちものへ移す
 if (!Array.isArray(S.holdings)){
@@ -735,7 +733,10 @@ function renderQuest(){
       ${DIFF_SELECT("q-diff")}
       <button class="btn" data-add="quest">追加</button>
       ${flagRow("quest")}
-    </div>`;
+    </div>`
+    + runnerHtml();
+  renderRunnerList();
+  runPaint();
 }
 
 function renderDaily(){
@@ -870,69 +871,203 @@ function renderMap(p){
   </div>`;
 }
 
-/* ── カウントダウンタイマー ─────────────────────── */
-let timerMin = 25, timerLeft = 25 * 60 * 1000, timerEnd = 0, timerTick = null;
+/* ── 次にやること：タスクを順に流すリングタイマー ───── */
+const RUN_MINS = [5, 10, 15];
+let runDur = 300, runLeft = 300, runEnd = 0, runTick = null, runActive = -1, runDrag = null;
 
-const fmt = ms => {
-  const t = Math.max(0, Math.ceil(ms / 1000));
-  return `${String(Math.floor(t / 60)).padStart(2,"0")}:${String(t % 60).padStart(2,"0")}`;
+const mmss = sec => {
+  sec = Math.max(0, Math.ceil(sec));
+  return Math.floor(sec / 60) + ":" + String(sec % 60).padStart(2, "0");
 };
 
-function timerPaint(){
-  const face = document.querySelector(".timer-face");
-  el("timer-time").textContent = fmt(timerLeft);
-  el("timer-toggle").textContent = timerTick ? "一時停止"
-    : (timerLeft > 0 && timerLeft < timerMin * 60000 ? "つづける" : "スタート");
-  face.classList.toggle("running", !!timerTick);
-  face.classList.toggle("done", timerLeft <= 0 && !timerTick);
-  el("timer-note").textContent = timerLeft <= 0 ? "時間になりました" : `${timerMin}分`;
-  document.title = timerTick ? `${fmt(timerLeft)} 人生クエスト` : "人生クエスト";
+function runnerHtml(){
+  return `<div class="runner">
+    <h3>次にやること</h3>
+    <div class="runner-top">
+      <div class="ring-wrap" id="ring-wrap" title="押すとスタート／一時停止">
+        <svg class="ring" viewBox="0 0 360 360">
+          <circle class="track" cx="180" cy="180" r="160"/>
+          <circle class="prog" id="run-prog" cx="180" cy="180" r="160" pathLength="1"
+            stroke-dasharray="1 1" transform="rotate(-90 180 180)"/>
+          <line class="tick" x1="180" y1="6" x2="180" y2="30"/>
+        </svg>
+        <div class="ring-center">
+          <div class="ring-time" id="run-time">5:00</div>
+          <div class="ring-now" id="run-now">タスクを選んでスタート</div>
+        </div>
+      </div>
+      <div class="runner-side">
+        <div id="runner-list"></div>
+        <button class="run-add" id="run-add">＋ 追加</button>
+        <div class="run-ctrl">
+          <button class="btn" id="run-toggle">スタート</button>
+          <button class="btn small" id="run-reset">リセット</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
 }
 
-function timerStop(){
-  if (timerTick){ clearInterval(timerTick); timerTick = null; }
+function renderRunnerList(){
+  const list = el("runner-list");
+  if (!list) return;
+  list.innerHTML = S.runner.map((t, i) => `
+    <div class="run-task ${i === runActive ? "active" : ""}" data-run="${i}">
+      <span class="run-handle" draggable="true" title="ドラッグで並び替え">⠿</span>
+      <span class="run-no">${i + 1}</span>
+      <input type="text" value="${esc(t.text)}" placeholder="やること…" data-runtext="${i}" maxlength="40">
+      <span class="durs">${RUN_MINS.map(m =>
+        `<button class="dur ${t.min === m ? "sel" : ""}" data-runmin="${i}:${m}">${m}分</button>`).join("")}</span>
+      <button class="run-del" data-rundel="${i}" aria-label="削除">✕</button>
+    </div>`).join("");
 }
-function timerStart(){
-  if (timerLeft <= 0) timerLeft = timerMin * 60000;
-  timerEnd = Date.now() + timerLeft;
-  timerTick = setInterval(() => {
-    timerLeft = timerEnd - Date.now();
-    if (timerLeft <= 0){
-      timerLeft = 0;
-      timerStop();
-      beep();
-      toast("<b>時間になりました</b><br>おつかれさま。記録に残そう。", "level");
+
+function runPaint(){
+  const time = el("run-time");
+  if (!time) return;
+  time.textContent = mmss(runLeft);
+  const remain = runDur > 0 ? Math.max(0, Math.min(1, runLeft / runDur)) : 0;
+  el("run-prog").setAttribute("stroke-dasharray", `${remain.toFixed(4)} 1`);
+  const t = S.runner[runActive];
+  el("run-now").textContent = runTick
+    ? (t && t.text ? t.text : "実行中")
+    : (runLeft <= 0 ? "おつかれさま" : (t && t.text ? t.text : "タスクを選んでスタート"));
+  el("run-toggle").textContent = runTick ? "一時停止"
+    : (runLeft > 0 && runLeft < runDur ? "つづける" : "スタート");
+  document.title = runTick ? `${mmss(runLeft)} ${t && t.text ? t.text : "人生クエスト"}` : "人生クエスト";
+}
+
+function runStop(){ if (runTick){ clearInterval(runTick); runTick = null; } }
+
+/** タスクが終わったら、次のタスクへ自動でつなぐ */
+function runStep(){
+  while (runTick && Date.now() >= runEnd){
+    const carry = Math.max(1, Math.round(runDur / 60));
+    const next = runActive + 1;
+    if (next >= S.runner.length){
+      runNotify(-1);
+      runStop(); runActive = -1; runLeft = 0;
+      renderRunnerList(); runPaint();
+      toast("<b>ぜんぶ終わりました</b><br>おつかれさま。記録に残そう。", "level");
+      return;
     }
-    timerPaint();
-  }, 250);
-  timerPaint();
+    runNotify(next);
+    runActive = next;
+    if (S.runner[next].min == null){ S.runner[next].min = carry; save(); }
+    runDur = S.runner[next].min * 60;
+    runEnd += runDur * 1000;
+    renderRunnerList(); runPaint();
+  }
+  if (runTick){ runLeft = (runEnd - Date.now()) / 1000; runPaint(); }
 }
-function timerSet(min){
-  timerStop();
-  timerMin = min;
-  timerLeft = min * 60000;
-  document.querySelectorAll(".preset").forEach(b =>
-    b.setAttribute("aria-pressed", String(Number(b.dataset.min) === min)));
-  timerPaint();
+
+function runStart(){
+  runAskNotify();
+  if (runLeft <= 0) runLeft = runDur;
+  runEnd = Date.now() + runLeft * 1000;
+  runStop();
+  runTick = setInterval(runStep, 250);
+  runStep(); runPaint();
+}
+function runSelect(i){
+  runStop();
+  runActive = i;
+  runDur = (i !== -1 && S.runner[i] && S.runner[i].min ? S.runner[i].min : 5) * 60;
+  runLeft = runDur;
+  renderRunnerList(); runPaint();
+}
+const runFirstTimed = () => S.runner.findIndex(t => t.min != null);
+
+function runToggle(){
+  if (runTick){ runStop(); runPaint(); return; }
+  if (runActive !== -1 && runLeft > 0 && runLeft < runDur){ runStart(); return; }
+  const f = runFirstTimed();
+  const idx = f !== -1 ? f : (S.runner.length ? 0 : -1);
+  if (idx !== -1) runSelect(idx);
+  runStart();
+}
+function runReset(){
+  runStop();
+  const f = runFirstTimed();
+  if (f !== -1){ runActive = f; runDur = S.runner[f].min * 60; }
+  runLeft = runDur;
+  renderRunnerList(); runPaint();
+}
+function runMove(from, to){
+  if (from === to || from < 0 || to < 0 || from >= S.runner.length || to >= S.runner.length) return;
+  const act = runActive !== -1 ? S.runner[runActive] : null;
+  const [m] = S.runner.splice(from, 1);
+  S.runner.splice(to, 0, m);
+  if (act) runActive = S.runner.indexOf(act);
+  save(); renderRunnerList();
+}
+
+function runAskNotify(){
+  try { if ("Notification" in window && Notification.permission === "default") Notification.requestPermission(); } catch(e){}
+}
+function runNotify(nextIndex){
+  beep();
+  try {
+    if ("Notification" in window && Notification.permission === "granted"){
+      const t = S.runner[nextIndex];
+      new Notification("⏰ 時間になりました", {body: nextIndex === -1
+        ? "すべて終わりました 🎉"
+        : `次：${t.text || "やること"}（${t.min}分）`});
+    }
+  } catch(e){}
 }
 
 /** 終了の合図（短いビープを3回） */
 function beep(){
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    [0, 0.4, 0.8].forEach(at => {
+    [0, 0.25, 0.5].forEach(at => {
       const o = ctx.createOscillator(), g = ctx.createGain();
       o.type = "sine"; o.frequency.value = 880;
       g.gain.setValueAtTime(0.001, ctx.currentTime + at);
       g.gain.exponentialRampToValueAtTime(0.3, ctx.currentTime + at + 0.02);
-      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + at + 0.28);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + at + 0.22);
       o.connect(g).connect(ctx.destination);
-      o.start(ctx.currentTime + at); o.stop(ctx.currentTime + at + 0.3);
+      o.start(ctx.currentTime + at); o.stop(ctx.currentTime + at + 0.24);
     });
     setTimeout(() => ctx.close(), 1500);
   } catch(e){}
 }
 
+// 別のタブから戻ったとき、すぐ追いつく
+document.addEventListener("visibilitychange", () => { if (runTick && !document.hidden) runStep(); });
+
+// 並び替え（ドラッグ＆ドロップ）
+document.addEventListener("dragstart", ev => {
+  const h = ev.target.closest(".run-handle");
+  if (!h) return;
+  const row = h.closest(".run-task");
+  runDrag = Number(row.dataset.run);
+  row.classList.add("dragging");
+  ev.dataTransfer.effectAllowed = "move";
+});
+document.addEventListener("dragover", ev => {
+  if (runDrag === null) return;
+  const row = ev.target.closest(".run-task");
+  if (row){ ev.preventDefault(); row.classList.add("over"); }
+});
+document.addEventListener("dragleave", ev => {
+  const row = ev.target.closest(".run-task");
+  if (row) row.classList.remove("over");
+});
+document.addEventListener("drop", ev => {
+  const row = ev.target.closest(".run-task");
+  if (row && runDrag !== null){
+    ev.preventDefault();
+    runMove(runDrag, Number(row.dataset.run));
+  }
+  runDrag = null;
+  document.querySelectorAll(".run-task").forEach(r => r.classList.remove("over","dragging"));
+});
+document.addEventListener("dragend", () => {
+  runDrag = null;
+  document.querySelectorAll(".run-task").forEach(r => r.classList.remove("over","dragging"));
+});
 
 /* ── 1日のスケジュール（8:00〜24:00・30分きざみ） ───── */
 const SLOT_FROM = 8, SLOT_COUNT = 32;           // 8:00 から 32コマ＝16時間
@@ -1466,6 +1601,7 @@ const render = () => { renderStatus(); renderQuest(); renderDaily(); renderPanel
 
 /* ── 操作 ──────────────────────────────────────── */
 document.addEventListener("click", ev => {
+  if (ev.target.closest("#ring-wrap")) return runToggle();
   const t = ev.target.closest("button");
   if (!t) return;
 
@@ -1493,9 +1629,20 @@ document.addEventListener("click", ev => {
     }
     return renderPanel();
   }
-  if (t.dataset.min){ return timerSet(Number(t.dataset.min)); }
-  if (t.id === "timer-toggle"){ timerTick ? (timerStop(), timerPaint()) : timerStart(); return; }
-  if (t.id === "timer-reset"){ timerStop(); timerLeft = timerMin * 60000; timerPaint(); return; }
+  if (t.dataset.runmin){
+    const [i, m] = t.dataset.runmin.split(":").map(Number);
+    S.runner[i].min = m; save();
+    if (runTick) renderRunnerList(); else runSelect(runFirstTimed());
+    return;
+  }
+  if (t.dataset.rundel !== undefined){
+    S.runner.splice(Number(t.dataset.rundel), 1);
+    if (runActive >= S.runner.length) runActive = -1;
+    save(); renderRunnerList(); runPaint(); return;
+  }
+  if (t.id === "run-add"){ S.runner.push({text:"", min:null}); save(); renderRunnerList(); return; }
+  if (t.id === "run-toggle"){ return runToggle(); }
+  if (t.id === "run-reset"){ return runReset(); }
   if (t.dataset.rule){
     const n = t.dataset.rule;
     S.workRules[n] = !S.workRules[n];
@@ -1569,6 +1716,13 @@ document.addEventListener("click", ev => {
 });
 
 document.addEventListener("input", ev => {
+  const ri = ev.target.dataset && ev.target.dataset.runtext;
+  if (ri !== undefined){
+    S.runner[Number(ri)].text = ev.target.value;
+    save();
+    if (runTick && Number(ri) === runActive) runPaint();
+    return;
+  }
   const age = ev.target.dataset && ev.target.dataset.year;
   if (age === undefined) return;
   S.timeline[age] = ev.target.value;
@@ -1586,7 +1740,6 @@ document.addEventListener("keydown", ev => {
 });
 
 render();
-timerPaint();
 </script>
 </body>
 </html>
