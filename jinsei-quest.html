@@ -831,13 +831,19 @@ const slotLabel = i => {
   const h = SLOT_FROM + Math.floor(i / 2), m = i % 2 ? "30" : "00";
   return `${h}:${m}`;
 };
+/** 時間割の項目：5つの資本に「必要維持」を足したもの */
+const SCHED_ITEMS = {
+  ...Object.fromEntries(Object.entries(CAPITALS).map(([k,c]) => [k, {label:`${c.name}（${c.sub}）`, sub:c.sub, color:c.color}])),
+  base: {label:"必要維持（食事・シャワー・睡眠）", sub:"必要維持", color:"#ced4da"},
+};
 let palPick = "human";
 
 const todaySched = () => (S.schedule[todayKey()] = S.schedule[todayKey()] || {});
 
 function slotStyle(cap){
-  return cap ? `background:${CAPITALS[cap].color}` : "background:#fff";
+  return cap && SCHED_ITEMS[cap] ? `background:${SCHED_ITEMS[cap].color}` : "background:#fff";
 }
+const slotText = cap => (cap && SCHED_ITEMS[cap]) ? SCHED_ITEMS[cap].sub : "";
 
 function scheduleHtml(){
   const day = todaySched();
@@ -845,13 +851,13 @@ function scheduleHtml(){
     const cap = day[i];
     return `<button class="slot ${i % 2 === 0 ? "hour" : ""}" data-slot="${i}" aria-label="${slotLabel(i)}">
       <span class="slot-time">${i % 2 === 0 ? slotLabel(i) : ""}</span>
-      <span class="slot-fill" style="${slotStyle(cap)}">${cap ? CAPITALS[cap].sub : ""}</span>
+      <span class="slot-fill" style="${slotStyle(cap)}">${slotText(cap)}</span>
     </button>`;
   }).join("");
 
-  const pal = Object.entries(CAPITALS).map(([k,c]) => `
+  const pal = Object.entries(SCHED_ITEMS).map(([k,it]) => `
     <button data-pal="${k}" aria-pressed="${palPick === k}"
-      style="${palPick === k ? `background:${c.color}` : ""}">${c.name}（${c.sub}）</button>`).join("")
+      style="${palPick === k ? `background:${it.color}` : ""}">${it.label}</button>`).join("")
     + `<button data-pal="" aria-pressed="${palPick === ""}"
         style="${palPick === "" ? "background:#e9ecef" : ""}">消す</button>`;
 
@@ -871,8 +877,8 @@ function schedSumHtml(){
   const counts = {};
   Object.values(day).forEach(k => { if (k) counts[k] = (counts[k] || 0) + 1; });
   const used = Object.values(counts).reduce((a,b) => a + b, 0);
-  return Object.entries(CAPITALS).map(([k,c]) =>
-    `<div><span>${c.sub}</span><b>${((counts[k]||0)/2).toFixed(1)}h</b></div>`).join("")
+  return Object.entries(SCHED_ITEMS).map(([k,it]) =>
+    `<div><span>${it.sub}</span><b>${((counts[k]||0)/2).toFixed(1)}h</b></div>`).join("")
     + `<div style="border-top:1px dotted #ced4da;margin-top:4px;padding-top:4px">
         <span>空き</span><b>${((SLOT_COUNT - used)/2).toFixed(1)}h</b></div>`;
 }
@@ -884,7 +890,7 @@ function paintSlot(btn){
   if (palPick) day[i] = palPick; else delete day[i];
   const fill = btn.querySelector(".slot-fill");
   fill.setAttribute("style", slotStyle(day[i]));
-  fill.textContent = day[i] ? CAPITALS[day[i]].sub : "";
+  fill.textContent = slotText(day[i]);
   const sum = el("sched-sum");
   if (sum) sum.innerHTML = schedSumHtml();
   save();
