@@ -225,28 +225,26 @@ figcaption{font-size:.85rem;color:var(--text-sub);margin-top:12px;text-align:cen
 .axis b{margin-left:auto;font-weight:900;font-variant-numeric:tabular-nums;white-space:nowrap}
 
 /* ── 履歴（年表） ── */
-.tl-setup{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:22px}
-.tl{position:relative;padding-left:26px}
-.tl::before{content:"";position:absolute;left:7px;top:6px;bottom:6px;width:4px;
-  background:var(--border-main);border-radius:4px}
-.tl-row{position:relative;display:flex;gap:14px;align-items:flex-start;margin-bottom:14px}
-.tl-row::before{content:"";position:absolute;left:-25px;top:16px;width:16px;height:16px;border-radius:50%;
-  background:var(--card-bg);border:4px solid var(--border-main)}
+.tl-setup{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:20px}
+.tl{position:relative;padding-left:22px}
+.tl::before{content:"";position:absolute;left:5px;top:10px;bottom:10px;width:3px;background:var(--border-main)}
+.tl-row{position:relative;display:flex;gap:16px;align-items:baseline;padding:9px 0;
+  border-bottom:2px dashed #e9ecef}
+.tl-row:last-child{border-bottom:none}
+.tl-row::before{content:"";position:absolute;left:-21px;top:16px;width:11px;height:11px;border-radius:50%;
+  background:var(--card-bg);border:3px solid var(--border-main)}
 .tl-row.filled::before{background:var(--color-yellow)}
-.tl-when{flex:none;width:132px;border:2px solid var(--border-main);border-radius:12px;padding:8px 10px;
-  background:#fafafa;box-shadow:2px 2px 0 var(--border-main)}
-.tl-age{font-size:1.15rem;font-weight:900;line-height:1.2}
-.tl-wa{display:inline-block;background:var(--color-blue);border:2px solid var(--border-main);border-radius:30px;
-  padding:0 9px;font-size:.72rem;font-weight:800;margin-top:4px}
-.tl-ad{font-size:.75rem;font-weight:800;color:var(--text-sub);font-variant-numeric:tabular-nums;margin-top:3px}
-.tl-word{flex:1;min-width:0}
-.tl-word input{width:100%}
-.tl-decade{display:inline-block;background:var(--border-main);color:#fff;font-weight:800;font-size:.85rem;
-  padding:2px 12px;border-radius:6px;margin:18px 0 12px}
+.tl-when{flex:none;width:170px;display:flex;align-items:baseline;gap:8px}
+.tl-wa{font-size:.8rem;font-weight:800}
+.tl-ad{font-size:.78rem;font-weight:700;color:var(--text-sub);font-variant-numeric:tabular-nums}
+.tl-age{font-size:.78rem;font-weight:800;color:var(--text-sub);margin-left:auto}
+.tl-word{flex:1;min-width:0;font-weight:800}
+.tl-word input{width:100%;border-width:2px;padding:7px 10px}
+.tl-read .tl-row{padding:11px 0}
 @media(max-width:560px){
-  .tl-row{flex-direction:column;gap:8px}
-  .tl-when{width:100%;display:flex;align-items:center;gap:10px}
-  .tl-when .tl-ad{margin-top:0}
+  .tl-row{flex-direction:column;gap:4px;align-items:stretch}
+  .tl-when{width:100%}
+  .tl-age{margin-left:0}
 }
 
 /* ── ごほうび・記録 ── */
@@ -752,8 +750,7 @@ function renderHistory(p){
 
   if (!by){
     p.innerHTML = head + `
-      <div class="notice">生まれた年（西暦）を入れると、0才から30才までの31年分が和暦つきで並びます。
-        各年に「ひと言」を書き込むと自動で保存されます。</div>
+      <div class="notice">生まれた年（西暦）を入れると、0才から30才までが和暦つきで並びます。</div>
       <div class="form" style="border-top:none;padding-top:16px">
         <input type="number" id="birth-year" placeholder="例：1990" min="1900" max="2100"
           style="width:130px" aria-label="生まれた年（西暦）">
@@ -762,33 +759,38 @@ function renderHistory(p){
     return;
   }
 
-  const filled = Object.values(S.timeline).filter(v => v && v.trim()).length;
-  let rows = "";
-  for (let age = 0; age <= 30; age++){
-    const y = by + age;
-    const word = S.timeline[age] || "";
-    if (age % 10 === 0) rows += `<div class="tl-decade">${age === 0 ? "0才 — 生まれる" : age + "才代"}</div>`;
-    rows += `
-      <div class="tl-row ${word.trim() ? "filled" : ""}">
-        <div class="tl-when">
-          <div class="tl-age">${age}才</div>
-          <span class="tl-wa">${wareki(y)}</span>
-          <div class="tl-ad">${y}年</div>
-        </div>
-        <div class="tl-word">
-          <input type="text" data-year="${age}" maxlength="60" value="${esc(word)}"
-            placeholder="${AGE_HINTS[age] || "ひと言"}" aria-label="${y}年（${age}才）のひと言">
-        </div>
-      </div>`;
+  const words = [];
+  for (let age = 0; age <= 30; age++) words.push({age, y:by + age, word:(S.timeline[age] || "").trim()});
+  const filled = words.filter(w => w.word);
+  const editing = S.tlEdit === true || !filled.length;
+
+  const bar = `
+    <div class="tl-setup">
+      <span class="pill">${by}年生まれ</span>
+      <span class="pill done"><b id="tl-count">${filled.length}</b> / 31 記入</span>
+      <button class="btn small ${editing ? "yellow" : ""}" data-tl="${editing ? "read" : "edit"}">${editing ? "書き終えた" : "書き足す"}</button>
+      <button class="btn small" data-birth="edit">生まれた年を変える</button>
+    </div>`;
+
+  if (!editing){
+    p.innerHTML = head + bar + `<div class="tl tl-read">${
+      filled.map(w => `
+        <div class="tl-row filled">
+          <div class="tl-when"><span class="tl-wa">${wareki(w.y)}</span><span class="tl-ad">${w.y}</span><span class="tl-age">${w.age}才</span></div>
+          <div class="tl-word">${esc(w.word)}</div>
+        </div>`).join("")}</div>`;
+    return;
   }
 
-  p.innerHTML = head + `
-    <div class="tl-setup">
-      <span class="pill">生まれ <b>${by}年</b>（${wareki(by)}）</span>
-      <span class="pill done">記入済み <b id="tl-count">${filled}</b> / 31</span>
-      <button class="btn small" data-birth="edit">生まれた年を変える</button>
-    </div>
-    <div class="tl">${rows}</div>`;
+  p.innerHTML = head + bar + `<div class="tl">${
+    words.map(w => `
+      <div class="tl-row ${w.word ? "filled" : ""}">
+        <div class="tl-when"><span class="tl-wa">${wareki(w.y)}</span><span class="tl-ad">${w.y}</span><span class="tl-age">${w.age}才</span></div>
+        <div class="tl-word">
+          <input type="text" data-year="${w.age}" maxlength="60" value="${esc(w.word)}"
+            placeholder="${AGE_HINTS[w.age] || "ひと言"}" aria-label="${w.y}年（${w.age}才）のひと言">
+        </div>
+      </div>`).join("")}</div>`;
 }
 
 /* ── Notion 連携 ─────────────────────────────────── */
@@ -994,6 +996,7 @@ document.addEventListener("click", ev => {
     S.birthYear = y; save(); return renderPanel();
   }
   if (t.dataset.birth === "edit"){ S.birthYear = null; save(); return renderPanel(); }
+  if (t.dataset.tl){ S.tlEdit = t.dataset.tl === "edit"; save(); return renderPanel(); }
   if (t.dataset.notion) return notionLoad(t.dataset.notion === "reload" ? notion.pageId : null);
   if (t.dataset.npage) return notionLoad(t.dataset.npage);
   if (t.dataset.ntodo) return notionComplete(t.dataset.ntodo);
