@@ -224,6 +224,31 @@ figcaption{font-size:.85rem;color:var(--text-sub);margin-top:12px;text-align:cen
 }
 .axis b{margin-left:auto;font-weight:900;font-variant-numeric:tabular-nums;white-space:nowrap}
 
+/* ── 履歴（年表） ── */
+.tl-setup{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:22px}
+.tl{position:relative;padding-left:26px}
+.tl::before{content:"";position:absolute;left:7px;top:6px;bottom:6px;width:4px;
+  background:var(--border-main);border-radius:4px}
+.tl-row{position:relative;display:flex;gap:14px;align-items:flex-start;margin-bottom:14px}
+.tl-row::before{content:"";position:absolute;left:-25px;top:16px;width:16px;height:16px;border-radius:50%;
+  background:var(--card-bg);border:4px solid var(--border-main)}
+.tl-row.filled::before{background:var(--color-yellow)}
+.tl-when{flex:none;width:132px;border:2px solid var(--border-main);border-radius:12px;padding:8px 10px;
+  background:#fafafa;box-shadow:2px 2px 0 var(--border-main)}
+.tl-age{font-size:1.15rem;font-weight:900;line-height:1.2}
+.tl-wa{display:inline-block;background:var(--color-blue);border:2px solid var(--border-main);border-radius:30px;
+  padding:0 9px;font-size:.72rem;font-weight:800;margin-top:4px}
+.tl-ad{font-size:.75rem;font-weight:800;color:var(--text-sub);font-variant-numeric:tabular-nums;margin-top:3px}
+.tl-word{flex:1;min-width:0}
+.tl-word input{width:100%}
+.tl-decade{display:inline-block;background:var(--border-main);color:#fff;font-weight:800;font-size:.85rem;
+  padding:2px 12px;border-radius:6px;margin:18px 0 12px}
+@media(max-width:560px){
+  .tl-row{flex-direction:column;gap:8px}
+  .tl-when{width:100%;display:flex;align-items:center;gap:10px}
+  .tl-when .tl-ad{margin-top:0}
+}
+
 /* ── ごほうび・記録 ── */
 .reward{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:2px dashed #ced4da;flex-wrap:wrap}
 .reward:last-of-type{border-bottom:none}
@@ -281,6 +306,7 @@ footer button:hover{color:#e03131}
     <button class="tab" role="tab" data-tab="quest" aria-selected="false">クエスト</button>
     <button class="tab" role="tab" data-tab="boss" aria-selected="false">ボス</button>
     <button class="tab" role="tab" data-tab="notion" aria-selected="false">Notion</button>
+    <button class="tab" role="tab" data-tab="history" aria-selected="false">履歴</button>
     <button class="tab" role="tab" data-tab="map" aria-selected="false">攻略法</button>
   </div>
 
@@ -360,6 +386,7 @@ function seed(){
     capitals:{human:0, social:0, money:0, asset:0, time:0},
     counts:{ability:0, record:0, work:0, relation:0, money:0, future:0},
     spent:0,
+    birthYear:null, timeline:{},
     dailies:[
       {id:uid(), name:"30分うごく（散歩・筋トレ）", diff:"mid",  res:["ability"], last:"", streak:0},
       {id:uid(), name:"本を10ページ読む",          diff:"easy", res:["ability"], last:"", streak:0},
@@ -405,6 +432,7 @@ try {
 } catch(e){ S = seed(); }
 S.capitals = {...seed().capitals, ...(S.capitals||{})};
 S.counts   = {...seed().counts,   ...(S.counts||{})};
+S.timeline = {...(S.timeline||{})};
 
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} };
 
@@ -617,6 +645,7 @@ function renderPanel(){
   }
 
   if (tab === "notion") return renderNotion(p);
+  if (tab === "history") return renderHistory(p);
   if (tab === "map") return renderMap(p);
 }
 
@@ -698,6 +727,68 @@ function renderMap(p){
       <li><b>ひとつの時間を多重取り</b>：旅する→撮る→書く→発信する→本にする→売る、と資本が同時に生まれる。</li>
     </ul>
   </div>`;
+}
+
+/* ── 履歴（0才〜30才のひと言年表） ───────────────── */
+/** 西暦から和暦へ。境界の年は「その年の大半を占める元号」で表す */
+function wareki(y){
+  const eras = [[2019,"令和",2018],[1989,"平成",1988],[1927,"昭和",1925],[1913,"大正",1911],[1868,"明治",1867]];
+  for (const [from, name, base] of eras){
+    if (y >= from){ const n = y - base; return name + (n === 1 ? "元年" : n + "年"); }
+  }
+  return "";
+}
+
+const AGE_HINTS = {
+  0:"生まれた場所は？", 3:"いちばん古い記憶は？", 6:"小学校に入学", 10:"熱中していたこと",
+  12:"小学校を卒業", 13:"中学校に入学", 15:"高校受験・進路", 16:"はまっていたこと",
+  18:"高校卒業・進路を決めた年", 20:"成人。何を始めた？", 22:"社会に出た年",
+  25:"転機になったこと", 28:"手に入れたもの", 30:"30才で見えたこと",
+};
+
+function renderHistory(p){
+  const by = S.birthYear;
+  const head = `<h2>履歴 <span>0才から30才までのひと言年表</span></h2>`;
+
+  if (!by){
+    p.innerHTML = head + `
+      <div class="notice">生まれた年（西暦）を入れると、0才から30才までの31年分が和暦つきで並びます。
+        各年に「ひと言」を書き込むと自動で保存されます。</div>
+      <div class="form" style="border-top:none;padding-top:16px">
+        <input type="number" id="birth-year" placeholder="例：1990" min="1900" max="2100"
+          style="width:130px" aria-label="生まれた年（西暦）">
+        <button class="btn yellow" data-birth="set">年表をつくる</button>
+      </div>`;
+    return;
+  }
+
+  const filled = Object.values(S.timeline).filter(v => v && v.trim()).length;
+  let rows = "";
+  for (let age = 0; age <= 30; age++){
+    const y = by + age;
+    const word = S.timeline[age] || "";
+    if (age % 10 === 0) rows += `<div class="tl-decade">${age === 0 ? "0才 — 生まれる" : age + "才代"}</div>`;
+    rows += `
+      <div class="tl-row ${word.trim() ? "filled" : ""}">
+        <div class="tl-when">
+          <div class="tl-age">${age}才</div>
+          <span class="tl-wa">${wareki(y)}</span>
+          <div class="tl-ad">${y}年</div>
+        </div>
+        <div class="tl-word">
+          <input type="text" data-year="${age}" maxlength="60" value="${esc(word)}"
+            placeholder="${AGE_HINTS[age] || "ひと言"}" aria-label="${y}年（${age}才）のひと言">
+        </div>
+      </div>`;
+  }
+
+  p.innerHTML = head + `
+    <div class="tl-setup">
+      <span class="pill">生まれ <b>${by}年</b>（${wareki(by)}）</span>
+      <span class="pill done">記入済み <b id="tl-count">${filled}</b> / 31</span>
+      <button class="btn small" data-birth="edit">生まれた年を変える</button>
+    </div>
+    <div class="tl">${rows}</div>`;
 }
 
 /* ── Notion 連携 ─────────────────────────────────── */
@@ -897,6 +988,12 @@ document.addEventListener("click", ev => {
     const [id, key] = t.dataset.nres.split(":");
     return toggleNotionRes(id, key);
   }
+  if (t.dataset.birth === "set"){
+    const y = parseInt(el("birth-year")?.value, 10);
+    if (!y || y < 1900 || y > 2100){ toast("生まれた年を西暦4桁で入れてください（例：1990）"); return; }
+    S.birthYear = y; save(); return renderPanel();
+  }
+  if (t.dataset.birth === "edit"){ S.birthYear = null; save(); return renderPanel(); }
   if (t.dataset.notion) return notionLoad(t.dataset.notion === "reload" ? notion.pageId : null);
   if (t.dataset.npage) return notionLoad(t.dataset.npage);
   if (t.dataset.ntodo) return notionComplete(t.dataset.ntodo);
@@ -943,8 +1040,18 @@ document.addEventListener("click", ev => {
   }
 });
 
+document.addEventListener("input", ev => {
+  const age = ev.target.dataset && ev.target.dataset.year;
+  if (age === undefined) return;
+  S.timeline[age] = ev.target.value;
+  ev.target.closest(".tl-row")?.classList.toggle("filled", !!ev.target.value.trim());
+  const count = el("tl-count");
+  if (count) count.textContent = Object.values(S.timeline).filter(v => v && v.trim()).length;
+  save();
+});
+
 document.addEventListener("keydown", ev => {
-  if (ev.key !== "Enter" || ev.target.tagName !== "INPUT") return;
+  if (ev.key !== "Enter" || ev.target.tagName !== "INPUT" || ev.target.dataset.year !== undefined) return;
   const map = {"d-name":"daily","q-name":"quest","b-name":"boss","b-max":"boss","r-name":"reward","r-cost":"reward"};
   const kind = map[ev.target.id];
   if (kind) document.querySelector(`[data-add="${kind}"]`)?.click();
