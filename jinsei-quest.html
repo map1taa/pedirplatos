@@ -106,6 +106,32 @@ header h1{font-size:2.4rem;margin:0;font-weight:900;letter-spacing:.02em}
 .tab:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{
   outline:3px solid var(--color-blue);outline-offset:2px}
 
+/* ── 1日のスケジュール ── */
+.sched{display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:18px;align-items:start;margin-bottom:20px}
+@media(max-width:640px){.sched{grid-template-columns:1fr}.sched-pal{order:-1}}
+.sched-grid{border:2px solid var(--border-main);border-radius:14px;overflow:hidden;touch-action:none;
+  box-shadow:3px 3px 0 var(--border-main)}
+.slot{display:grid;grid-template-columns:56px 1fr;align-items:center;width:100%;
+  border:none;border-top:1px solid #e9ecef;background:#fff;padding:0;font-family:inherit;cursor:pointer}
+.slot:first-child{border-top:none}
+.slot.hour{border-top:2px solid var(--border-main)}
+.slot-time{font-size:.72rem;font-weight:800;color:var(--text-sub);text-align:right;padding-right:8px;
+  font-variant-numeric:tabular-nums}
+.slot-fill{height:22px;border-left:2px solid var(--border-main);display:flex;align-items:center;
+  padding-left:8px;font-size:.72rem;font-weight:800}
+.slot:hover .slot-fill{filter:brightness(.96)}
+.sched-pal{border:2px solid var(--border-main);border-radius:14px;padding:12px;background:#fafafa;
+  box-shadow:3px 3px 0 var(--border-main)}
+.sched-pal h3{font-size:.85rem;font-weight:900;margin:0 0 4px}
+.sched-pal p{font-size:.72rem;color:var(--text-sub);margin:0 0 10px}
+.pal{display:flex;flex-direction:column;gap:7px}
+.pal button{border:2px solid var(--border-main);border-radius:10px;padding:8px 12px;font-weight:800;
+  font-size:.85rem;cursor:pointer;font-family:inherit;text-align:left;background:#fff;color:var(--text-main)}
+.pal button[aria-pressed="true"]{box-shadow:3px 3px 0 var(--border-main);transform:translate(-1px,-1px)}
+.sched-sum{border-top:2px dashed var(--border-main);margin-top:12px;padding-top:10px;font-size:.75rem;font-weight:800}
+.sched-sum div{display:flex;justify-content:space-between;padding:2px 0}
+.sched-sum b{font-variant-numeric:tabular-nums}
+
 /* ── 項目 ── */
 .items{display:flex;flex-direction:column;gap:14px}
 .item{
@@ -418,7 +444,7 @@ function seed(){
     capitals:{human:0, social:0, money:0, asset:0, time:0},
     counts:{ability:0, record:0, work:0, relation:0, money:0, future:0},
     spent:0,
-    birthYear:null, timeline:{},
+    birthYear:null, timeline:{}, schedule:{},
     skills:[
       {id:uid(), name:"英語",     cat:"lang"},
       {id:uid(), name:"スペイン語", cat:"lang"},
@@ -473,6 +499,7 @@ try {
 S.capitals = {...seed().capitals, ...(S.capitals||{})};
 S.counts   = {...seed().counts,   ...(S.counts||{})};
 S.timeline = {...(S.timeline||{})};
+S.schedule = {...(S.schedule||{})};
 if (!Array.isArray(S.skills)) S.skills = seed().skills;
 // 旧データ（スキルのみ）を資本ごとの持ちものへ移す
 if (!Array.isArray(S.holdings)){
@@ -638,7 +665,7 @@ function renderPanel(){
 
   if (tab === "daily"){
     const t = todayKey();
-    p.innerHTML = `<h2>日課 <span style="color:var(--text-sub)">毎日リセット・連続でボーナス</span></h2>
+    p.innerHTML = scheduleHtml() + `<h2>日課 <span style="color:var(--text-sub)">毎日リセット・連続でボーナス</span></h2>
       <div class="items">${S.dailies.length
         ? S.dailies.map(d => itemRow(d, "daily", d.last === t)).join("")
         : `<p class="empty">毎日くり返したいことを登録しよう。</p>`}</div>
@@ -776,6 +803,89 @@ function renderMap(p){
     </ul>
   </div>`;
 }
+
+/* ── 1日のスケジュール（8:00〜24:00・30分きざみ） ───── */
+const SLOT_FROM = 8, SLOT_COUNT = 32;           // 8:00 から 32コマ＝16時間
+const slotLabel = i => {
+  const h = SLOT_FROM + Math.floor(i / 2), m = i % 2 ? "30" : "00";
+  return `${h}:${m}`;
+};
+let palPick = "human";
+
+const todaySched = () => (S.schedule[todayKey()] = S.schedule[todayKey()] || {});
+
+function slotStyle(cap){
+  return cap ? `background:${CAPITALS[cap].color}` : "background:#fff";
+}
+
+function scheduleHtml(){
+  const day = todaySched();
+  const rows = Array.from({length: SLOT_COUNT}, (_, i) => {
+    const cap = day[i];
+    return `<button class="slot ${i % 2 === 0 ? "hour" : ""}" data-slot="${i}" aria-label="${slotLabel(i)}">
+      <span class="slot-time">${i % 2 === 0 ? slotLabel(i) : ""}</span>
+      <span class="slot-fill" style="${slotStyle(cap)}">${cap ? CAPITALS[cap].sub : ""}</span>
+    </button>`;
+  }).join("");
+
+  const pal = Object.entries(CAPITALS).map(([k,c]) => `
+    <button data-pal="${k}" aria-pressed="${palPick === k}"
+      style="${palPick === k ? `background:${c.color}` : ""}">${c.name}（${c.sub}）</button>`).join("")
+    + `<button data-pal="" aria-pressed="${palPick === ""}"
+        style="${palPick === "" ? "background:#e9ecef" : ""}">消す</button>`;
+
+  return `<h2>今日の時間割 <span style="color:var(--text-sub)">8:00〜24:00・30分ごと</span></h2>
+    <div class="sched">
+      <div class="sched-grid" id="sched">${rows}</div>
+      <div class="sched-pal">
+        <h3>何に使う？</h3>
+        <p>右で選んで、左のマスを押す（なぞってもOK）。</p>
+        <div class="pal">${pal}</div>
+        <div class="sched-sum" id="sched-sum">${schedSumHtml()}</div>
+      </div>
+    </div>`;
+}
+
+function schedSumHtml(){
+  const day = todaySched();
+  const counts = {};
+  Object.values(day).forEach(k => { if (k) counts[k] = (counts[k] || 0) + 1; });
+  const used = Object.values(counts).reduce((a,b) => a + b, 0);
+  return Object.entries(CAPITALS).map(([k,c]) =>
+    `<div><span>${c.sub}</span><b>${((counts[k]||0)/2).toFixed(1)}h</b></div>`).join("")
+    + `<div style="border-top:1px dotted #ced4da;margin-top:4px;padding-top:4px">
+        <span>空き</span><b>${((SLOT_COUNT - used)/2).toFixed(1)}h</b></div>`;
+}
+
+/** マスを塗る（画面全体を描き直さずに、その場だけ更新する） */
+function paintSlot(btn){
+  const i = btn.dataset.slot;
+  const day = todaySched();
+  if (palPick) day[i] = palPick; else delete day[i];
+  const fill = btn.querySelector(".slot-fill");
+  fill.setAttribute("style", slotStyle(day[i]));
+  fill.textContent = day[i] ? CAPITALS[day[i]].sub : "";
+  const sum = el("sched-sum");
+  if (sum) sum.innerHTML = schedSumHtml();
+  save();
+}
+
+let painting = false;
+document.addEventListener("pointerdown", ev => {
+  const btn = ev.target.closest(".slot");
+  if (!btn) return;
+  painting = true;
+  paintSlot(btn);
+  ev.preventDefault();
+});
+document.addEventListener("pointerover", ev => {
+  if (!painting) return;
+  const btn = ev.target.closest(".slot");
+  if (btn) paintSlot(btn);
+});
+document.addEventListener("pointerup", () => { painting = false; });
+document.addEventListener("pointercancel", () => { painting = false; });
+
 
 /* ── スキル（持っているものを分類する） ─────────── */
 const SKILL_CATS = {
@@ -1183,6 +1293,7 @@ document.addEventListener("click", ev => {
     }
     return renderPanel();
   }
+  if (t.dataset.pal !== undefined){ palPick = t.dataset.pal; return renderPanel(); }
   if (t.dataset.cap){ tab = "cap:" + t.dataset.cap; document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected","false")); return renderPanel(); }
   if (t.dataset.birth === "set"){
     const y = parseInt(el("birth-year")?.value, 10);
