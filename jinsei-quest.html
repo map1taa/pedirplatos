@@ -283,6 +283,24 @@ figcaption{font-size:.85rem;color:var(--text-sub);margin-top:12px;text-align:cen
 .cap-sec h3{font-size:1rem;font-weight:900;margin:0 0 4px}
 .cap-sec p{font-size:.85rem;color:var(--text-sub);margin:0 0 12px}
 
+.principles{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.principle{border:2px solid var(--border-main);border-radius:12px;padding:10px 14px;background:var(--color-yellow);
+  font-weight:800;font-size:.95rem;box-shadow:2px 2px 0 var(--border-main)}
+.principle b{display:inline-block;background:var(--border-main);color:#fff;border-radius:6px;
+  padding:0 8px;margin-right:10px;font-size:.78rem}
+.rule-list{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.rule{display:flex;align-items:center;gap:10px;width:100%;text-align:left;font-family:inherit;
+  border:2px solid var(--border-main);border-radius:10px;padding:7px 12px;background:#fff;
+  font-weight:800;font-size:.85rem;cursor:pointer;color:var(--text-main)}
+.rule:hover{background:#fffaf0}
+.rule.on{background:var(--color-green)}
+.rule.on .rule-n{background:#fff}
+.rule-n{flex:none;width:26px;height:26px;border:2px solid var(--border-main);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:.72rem;font-variant-numeric:tabular-nums;
+  background:#fff}
+.rule-col{font-size:.78rem;font-weight:800;color:var(--text-sub);border-left:4px solid var(--border-main);
+  padding-left:10px;margin:0 0 16px}
+
 /* ── 履歴（年表） ── */
 .tl-setup{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:20px}
 .tl{position:relative;padding-left:22px}
@@ -444,7 +462,7 @@ function seed(){
     capitals:{human:0, social:0, money:0, asset:0, time:0},
     counts:{ability:0, record:0, work:0, relation:0, money:0, future:0},
     spent:0,
-    birthYear:null, timeline:{}, schedule:{},
+    birthYear:null, timeline:{}, schedule:{}, workRules:{},
     skills:[
       {id:uid(), name:"英語",     cat:"lang"},
       {id:uid(), name:"スペイン語", cat:"lang"},
@@ -500,6 +518,7 @@ S.capitals = {...seed().capitals, ...(S.capitals||{})};
 S.counts   = {...seed().counts,   ...(S.counts||{})};
 S.timeline = {...(S.timeline||{})};
 S.schedule = {...(S.schedule||{})};
+S.workRules = {...(S.workRules||{})};
 if (!Array.isArray(S.skills)) S.skills = seed().skills;
 // 旧データ（スキルのみ）を資本ごとの持ちものへ移す
 if (!Array.isArray(S.holdings)){
@@ -916,6 +935,68 @@ const SKILL_SUGGESTIONS = {
   other :["Excel・スプレッドシート","Notion","AIの使いこなし","タイピング","車の整備","ラジオ・話す"],
 };
 
+/* ── 仕事の原則（社会的資本のページに置く） ───────── */
+const WORK_PRINCIPLES = [
+  "頼まれたことは、必ずやりきる",
+  "50点で構わないから早く出せ",
+  "つまらない仕事はない",
+];
+const WORK_BLOCKS = [
+  {end:"コラム1　会社選びの3つの基準", items:[
+    "何があっても遅刻はするな","メールは24時間以内に返信せよ","「何のために」で世界が変わる",
+    "単純作業こそ「仕組み化」「ゲーム化」","カバン持ちはチャンスの宝庫","仕事の効率は「最後の5分」で決まる",
+    "予習・本番・復習は3対3対3","質問はメモを見せながら","仕事は復習がすべて",
+    "頼まれなくても議事録を書け","会議では新人でも必ず発言せよ","アポ取りから始めよ",
+    "朝のあいさつはハキハキと","「早く帰ります」宣言する","仕事は根回し"]},
+  {end:"コラム2　70歳になっても勉強し続ける意味", items:[
+    "仕事は盗んで、真似るもの","情報は原典に当たれ","仕事は総力戦",
+    "コミュニケーションは、メール「and」電話","本を速読するな","ファイリングしない。ブクマもしない",
+    "まずは英語を「読める」ようになれ","目の前だけでなく、全体像を見て、つなげよ",
+    "世界史ではなく、塩の歴史を勉強せよ","社会人の勉強は、アウトプットがゴール","脳に負荷をかけよ",
+    "自分にとって都合のいい先生を探せ","ペースメーカーとして、資格試験を申し込む","新聞は2紙以上、紙で読め"]},
+  {end:"コラム3　キャリアアップは人磨き", items:[
+    "仕事に関係ない人とランチせよ","スーツは「フィット感」で選べ","「あえて言わせてください」で意見を言え",
+    "敬語は外国語のつもりで覚えよ","相手との距離感を誤るな","目上の人を尊敬せよ",
+    "感動は、ためらわずに伝える","上司にも心を込めてフィードバックせよ","ミスをしたら、再発防止の仕組みを考えよ",
+    "叱られたら意味を見出せ","幹事とは、特権を得ること","宴会芸は死ぬ気でやれ",
+    "休息を取ることも「仕事」だ","ビジネスマンはアスリート"]},
+  {end:"コラム4　チャンスをつかめる人になれ", items:[
+    "苦手な人には「惚れ力」を発揮","ペース配分を把握せよ","同期とはつき合うな",
+    "悩みは関係ない人に相談","社内の人と飲みに行くな","何はともあれ貯蓄せよ",
+    "小さな出費は年額に換算してみる"]},
+];
+
+function workRulesHtml(){
+  const done = S.workRules || {};
+  let n = 0, out = "";
+  WORK_BLOCKS.forEach(block => {
+    out += `<div class="rule-list">${block.items.map(text => {
+      n++;
+      const on = !!done[n];
+      return `<button class="rule ${on ? "on" : ""}" data-rule="${n}">
+        <span class="rule-n">${n}</span><span>${text}</span></button>`;
+    }).join("")}</div>
+    <div class="rule-col">${block.end}</div>`;
+  });
+  return out;
+}
+
+function workSectionHtml(){
+  const count = Object.values(S.workRules || {}).filter(Boolean).length;
+  return `<div class="cap-sec">
+    <h3>仕事において大切な3つの原則</h3>
+    <div class="principles">${WORK_PRINCIPLES.map((t,i) =>
+      `<div class="principle"><b>原則${i+1}</b>${t}</div>`).join("")}</div>
+
+    <h3 style="margin-top:20px">50の指針 <span style="font-weight:700;font-size:.8rem;color:var(--text-sub)">
+      できている <b id="rule-count">${count}</b> / 50</span></h3>
+    <p>できているものを押していく。押すと色がつきます。</p>
+    ${workRulesHtml()}
+    <p style="margin-top:10px">出典：岩瀬大輔『入社1年目の教科書』の目次より</p>
+  </div>`;
+}
+
+
 /** 資本ごとの説明と、持ちものの呼び名・候補 */
 const CAP_PAGES = {
   human:{
@@ -1018,7 +1099,8 @@ function renderCapital(p, key){
       <h3>${page.want}</h3>
       <p>押すと「${page.hold}」に入ります。</p>
       ${want}
-    </div>`;
+    </div>
+    ${key === "social" ? workSectionHtml() : ""}`;
 }
 
 /* ── 履歴（0才〜30才のひと言年表） ───────────────── */
@@ -1293,6 +1375,15 @@ document.addEventListener("click", ev => {
       save(); toast(`「${esc(name)}」を ${CAPITALS[cap].name} に登録しました`);
     }
     return renderPanel();
+  }
+  if (t.dataset.rule){
+    const n = t.dataset.rule;
+    S.workRules[n] = !S.workRules[n];
+    save();
+    t.classList.toggle("on", !!S.workRules[n]);
+    const c = el("rule-count");
+    if (c) c.textContent = Object.values(S.workRules).filter(Boolean).length;
+    return;
   }
   if (t.dataset.pal !== undefined){ palPick = t.dataset.pal; return renderDaily(); }
   if (t.dataset.cap){ tab = "cap:" + t.dataset.cap; document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected","false")); return renderPanel(); }
