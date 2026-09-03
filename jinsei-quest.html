@@ -349,6 +349,11 @@ figcaption{font-size:.85rem;color:var(--text-sub);margin-top:12px;text-align:cen
 .rule-n{flex:none;width:26px;height:26px;border:2px solid var(--border-main);border-radius:50%;
   display:flex;align-items:center;justify-content:center;font-size:.72rem;font-variant-numeric:tabular-nums;
   background:#fff}
+.hack-part{display:inline-block;background:var(--border-main);color:#fff;font-weight:900;font-size:.9rem;
+  padding:3px 14px;border-radius:6px;margin:22px 0 10px}
+.hack-part:first-child{margin-top:0}
+.hack-ch{font-size:.85rem;font-weight:800;color:var(--text-sub);border-left:4px solid var(--color-yellow);
+  padding-left:10px;margin:14px 0 8px}
 .rule-col{font-size:.78rem;font-weight:800;color:var(--text-sub);border-left:4px solid var(--border-main);
   padding-left:10px;margin:0 0 16px}
 
@@ -440,6 +445,7 @@ footer button:hover{color:#e03131}
     <button class="tab" role="tab" data-tab="notion" aria-selected="false">Notion</button>
     <button class="tab" role="tab" data-tab="history" aria-selected="false">履歴</button>
     <button class="tab" role="tab" data-tab="manual" aria-selected="false">トリセツ</button>
+    <button class="tab" role="tab" data-tab="hack" aria-selected="false">ライフハック</button>
     <button class="tab" role="tab" data-tab="map" aria-selected="false">攻略法</button>
   </div>
 
@@ -519,7 +525,7 @@ function seed(){
     capitals:{human:0, social:0, money:0, asset:0, time:0},
     counts:{ability:0, record:0, work:0, relation:0, money:0, future:0},
     spent:0,
-    birthYear:null, timeline:{}, schedule:{}, workRules:{},
+    birthYear:null, timeline:{}, schedule:{}, workRules:{}, hacks:{},
     manual:[
       "やることをAIに貼り付けてベースを作る",
       "環境が全て",
@@ -583,6 +589,7 @@ S.counts   = {...seed().counts,   ...(S.counts||{})};
 S.timeline = {...(S.timeline||{})};
 S.schedule = {...(S.schedule||{})};
 S.workRules = {...(S.workRules||{})};
+S.hacks = {...(S.hacks||{})};
 if (!Array.isArray(S.manual)) S.manual = seed().manual;
 // クエストは「やること」に一本化（分類と難易度は持たない）
 S.quests = (S.quests || []).map(q => ({id:q.id || uid(), name:q.name, min:q.min ?? null, done:!!q.done}));
@@ -817,8 +824,133 @@ function renderPanel(){
   if (tab.startsWith("cap:")) return renderCapital(p, tab.slice(4));
   if (tab === "history") return renderHistory(p);
   if (tab === "manual") return renderManual(p);
+  if (tab === "hack") return renderHacks(p);
   if (tab === "map") return renderMap(p);
 }
+
+/* ── ライフハック（自分を整える／環境を整える／人間関係を整える） ── */
+const HACKS = [
+  {part:"第1部　自分を整える", chapters:[
+    {title:"第1章　「身だしなみとマナー」がわからなかったら", items:[
+      "メイクで悩む前に「ひげ・指毛・眉間の毛」を処理する",
+      "だらしなさは「服のシワ・毛玉・テカリ・色あせ」にあらわれる",
+      "髪型は「ボブ」にして、洗う・乾かす・美容院の手間を減らす",
+      "365日、「全身黒」の「ワンピース・サロペット」でやり過ごす",
+      "見た目で「私、クセ強めです」と警告信号を発する ― 毒虫理論",
+      "カレーうどんやミートソースは「食べこぼす前提」で生きる",
+      "自分の出す「生活音」や「くしゃみ」の音量を下げる",
+      "バッグは「体に固定できるもの」を持つ",
+      "かばんの中身は入れ替えない。目的別に分ける",
+      "風呂キャンセル問題は「構造分解」して解決する",
+      "何をやってもくさい場合は「部屋」を疑う",
+      "他人の家での生理用品のゴミは、どんなに親しくても「持ち帰る」"]},
+    {title:"第2章　「体」が思い通りに動かなかったら", items:[
+      "疲れには「体力の枯渇」と「気力の枯渇」がある",
+      "自分の体調を「実況中継」する",
+      "食事と睡眠を「1日のペースメーカー」として利用する",
+      "スマートウォッチは時計ではなく「体の相棒」",
+      "気圧や生理などの「体の波」は、理由がわかるとラクになる",
+      "生理のもれは「ナプキン3段重ね」で乗り切る"]},
+    {title:"第3章　「心」がつらい日が増えたら", items:[
+      "「名前のない感情」の存在を認める",
+      "ホワイトボードで「しんどいの棚卸し」をする",
+      "カウンセリングは「心のスポーツジム」だと思って通う",
+      "自分の発言を全録音して、「ひとり反省会」をする",
+      "冬の落ち込みと春の異常なテンションの高さは季節性のうつを疑う",
+      "「泣きたくないのに人前で泣いてしまう」のは体質",
+      "フラッシュバックと、自分を罵倒する声から抜け出す",
+      "「しにたみ」とともに生きる"]},
+  ]},
+  {part:"第2部　環境を整える", chapters:[
+    {title:"第4章　「料理」ができなかったら", items:[
+      "「食事」と「自炊」のハードルを、極限まで下げる",
+      "包丁とまな板を捨て「キッチンばさみ」だけで戦う",
+      "電子レンジや電気ケトルは「視界から消える」道具です",
+      "食材の保存は「買ってきたパックのまま」冷凍庫にぶち込む",
+      "自炊の1品目はカップ麺、2品目は焼きそばを作る",
+      "自炊の3品目は、ノーカット豚汁を作る",
+      "ミールキット、冷凍食品、缶詰、お惣菜を「食材」として使い倒す",
+      "「本当に詰めるだけ」の高たんぱく弁当を持っていく",
+      "料理がまずかったらマヨネーズをかける",
+      "コンビニは、栄養を学ぶ「最高の教材」",
+      "自炊ができない日も、行きつけの定食屋を「安全基地」にする"]},
+    {title:"第5章　「家事と日常生活」が破綻しそうなら", items:[
+      "日用品の補充は「アマゾンおトク定期便」に任せて脳のメモリを解放する",
+      "家事の道具は「使い捨て」を基本にする",
+      "トイレ掃除は限界が来たら「洗濯槽クリーナー」をぶち込んで寝る",
+      "水回りの家事は、1日ごとに「リセットする」",
+      "私はなぜ、ドラム式洗濯乾燥機を2台持っているのか？",
+      "工務店や薬局など「生活のかかりつけ」をゆるやかに作る",
+      "個人賠償責任保険はADHDが「逃げないため」の装置"]},
+    {title:"第6章　「汚部屋」から抜け出したかったら", items:[
+      "ADHDは「なぜ片づけられないのか？」を分解する",
+      "「ミニマリストチャレンジ」で生活ルーチンを立て直す",
+      "床は「歩くための場所」だと認知を書き換える",
+      "「ゴミ捨てルール」を壁に貼り、どでかいゴミ箱を用意する",
+      "ゴミ箱に入れたときの「快感」を脳に覚えさせる",
+      "「あふれたら、片づける」限界ラインを決める",
+      "物の「入口」ではなく「出口」を管理する",
+      "「しまうコスト」を極限まで下げる",
+      "日用品の在庫管理は「アマゾン倉庫」をマネする",
+      "処理がめんどくさい書類は「一番邪魔な場所」に積み上げる"]},
+    {title:"第7章　「時間・タスク管理」ができなかったら", items:[
+      "気がかりな未完タスクは「広い面」に全部書き出す",
+      "先延ばしグセの「ボトルネック」をつかむ",
+      "バーチカル手帳で「すきま時間」を可視化する",
+      "時間見積もりの「予測 → 実行 → 答え合わせ」をする",
+      "「見たくない現実」はスマホのウィジェットで強制的に目に入れる",
+      "メールアドレスは「ショッピング用」を分ける",
+      "「特性」というエンジンに「状況」というガソリンを注いでタスクをぶん回す",
+      "ライフステージが変わったら、生活を改めて「棚卸し」する"]},
+  ]},
+  {part:"第3部　人間関係を整える", chapters:[
+    {title:"第8章　「仕事相手」とうまくいかなかったら", items:[
+      "職場は、みんなの「できるフリ」で回っている",
+      "職場で起こる人間ドラマを「データ」として集める",
+      "「仕事ができない」の正体を分解する",
+      "仕事の最終防衛ラインは「裏表のなさ」",
+      "「ありがとう」と「ごめんなさい」は、普段から軽率に言って慣れておく",
+      "「ADHDです」「親と縁切りしてて」……初対面で自己開示しすぎない",
+      "「やたら優しい」「やたら褒めてくる」人はいったん検問する"]},
+    {title:"第9章　「友人・パートナー」との関係で悩んだら", items:[
+      "「同調」は中身のない「安全確認の儀式」と割り切る",
+      "「白黒思考」が引き起こす極端な「他責（自責）」に要注意",
+      "相談されたら「共感のターン」か「解決のターン」かを見極める",
+      "マウンティングは「あえて気づかないフリ」",
+      "「沈黙」が怖くても、会話の口火を切るのを一度我慢してみる",
+      "友人は切らず、すがらず「距離を空ける」",
+      "こじらせコミュ障用、「友達」の作り方",
+      "パートナーを「会社の共同経営者」だと考えてみる",
+      "パートナーとのけんかは「相手のせい」ではなく「自分の不安」として処理する",
+      "「あなたのためにやってあげている」というパートナーからは逃げる"]},
+    {title:"第10章　「親」との関係に悩んだら", items:[
+      "「もし、近所の人だったら？」親の言動の「異常性」に気づく",
+      "親との過去を思い出したら「事実」と「感情」をわける",
+      "親に「自分には発達障害の特性がある」と伝えるか",
+      "異常な身内には「縁切り」を考える"]},
+  ]},
+];
+const HACK_TOTAL = HACKS.reduce((a,p) => a + p.chapters.reduce((b,c) => b + c.items.length, 0), 0);
+
+function renderHacks(p){
+  const done = S.hacks || {};
+  let n = 0;
+  const body = HACKS.map(part => `
+    <div class="hack-part">${part.part}</div>
+    ${part.chapters.map(ch => `
+      <div class="hack-ch">${ch.title}</div>
+      <div class="rule-list">${ch.items.map(text => {
+        n++;
+        return `<button class="rule ${done[n] ? "on" : ""}" data-hack="${n}">
+          <span class="rule-n">${n}</span><span>${text}</span></button>`;
+      }).join("")}</div>`).join("")}`).join("");
+
+  p.innerHTML = `<h2>ライフハック <span>やってみたものを押す</span></h2>
+    <p style="font-size:.9rem;margin:0 0 14px">試したもの・取り入れたものを押していく。
+      <b id="hack-count">${Object.values(done).filter(Boolean).length}</b> / ${HACK_TOTAL}</p>
+    ${body}`;
+}
+
 
 /* ── トリセツ（自分の取扱説明書） ───────────────── */
 function renderManual(p){
@@ -1698,6 +1830,15 @@ document.addEventListener("click", ev => {
     S.manual.splice(Number(t.dataset.mandel), 1); save(); return renderPanel();
   }
   if (t.id === "man-add"){ S.manual.push(""); save(); return renderPanel(); }
+  if (t.dataset.hack){
+    const n = t.dataset.hack;
+    S.hacks[n] = !S.hacks[n];
+    save();
+    t.classList.toggle("on", !!S.hacks[n]);
+    const c = el("hack-count");
+    if (c) c.textContent = Object.values(S.hacks).filter(Boolean).length;
+    return;
+  }
   if (t.dataset.rule){
     const n = t.dataset.rule;
     S.workRules[n] = !S.workRules[n];
