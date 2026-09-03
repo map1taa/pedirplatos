@@ -74,6 +74,7 @@ header h1{font-size:2.4rem;margin:0;font-weight:900;letter-spacing:.02em}
 .pill b{font-variant-numeric:tabular-nums;font-weight:900}
 .pill.gold{background:var(--color-orange)}
 .pill.done{background:var(--color-blue)}
+.pill.waste{background:#ffc9c9}
 .bar{
   height:16px;background:#f1f3f5;border:3px solid var(--border-main);border-radius:30px;overflow:hidden;
 }
@@ -324,6 +325,7 @@ footer button:hover{color:#e03131}
       <div class="lv-title" id="title-name"></div>
       <div class="pill gold">ゴールド <b id="gold">0</b></div>
       <div class="pill done">今日の達成 <b id="today-done">0</b></div>
+      <div class="pill waste">浪費 <b id="spent">0</b> 回</div>
     </div>
     <div class="bar"><i id="exp-bar" style="width:0%"></i></div>
     <div class="bar-note"><span>EXP</span><span id="exp-note">0 / 80</span></div>
@@ -601,6 +603,7 @@ function renderStatus(){
   el("exp-note").textContent = `${S.exp} / ${need}`;
   el("gold").textContent = S.gold.toLocaleString("ja-JP");
   el("today-done").textContent = S.dailies.filter(d => d.last === todayKey()).length + " / " + S.dailies.length;
+  el("spent").textContent = S.spent || 0;
 
   const vals = Object.values(S.capitals);
   el("cap-total").textContent = "資本の合計 " + vals.reduce((a,b) => a+b, 0);
@@ -753,7 +756,7 @@ function renderMap(p){
       </div>`).join("")}
       <div class="axis" style="border-left:10px solid #ced4da">
         <span class="num" style="background:#e9ecef">―</span>
-        <span>何も残らなかった行動<br><small style="color:var(--text-sub);font-weight:700">→ 消費した時間</small></span>
+        <span>浪費（何も残らなかった行動）<br><small style="color:var(--text-sub);font-weight:700">→ 消費した時間</small></span>
         <b>${S.spent} 回</b>
       </div>
     </div>
