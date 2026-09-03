@@ -121,7 +121,11 @@ header h1{font-size:2.4rem;margin:0;font-weight:900;letter-spacing:.02em}
 .ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
   justify-content:center;pointer-events:none;padding:0 24px;text-align:center}
 .ring-time{font-size:2.8rem;font-weight:900;color:var(--timer-red);line-height:1;font-variant-numeric:tabular-nums}
-.ring-now{font-size:.75rem;font-weight:800;color:var(--text-sub);margin-top:8px;line-height:1.3}
+.ring-input{width:100%;margin-top:10px;border:none;border-bottom:2px solid #f0dcd9;background:none;
+  text-align:center;font:inherit;font-size:.85rem;font-weight:800;color:var(--text-main);
+  padding:3px 2px;border-radius:0;pointer-events:auto}
+.ring-input:focus{outline:none;border-bottom-color:var(--timer-red)}
+.ring-input::placeholder{color:#c9b7b4;font-weight:700}
 .runner-side{display:flex;flex-direction:column;gap:10px;width:100%}
 .run-task{display:flex;align-items:center;gap:8px;border:2px solid var(--border-main);border-radius:12px;
   padding:7px 10px;background:#fff}
@@ -882,7 +886,6 @@ const mmss = sec => {
 
 function runnerHtml(){
   return `<div class="runner">
-    <h3>次にやること</h3>
     <div class="runner-top">
       <div class="ring-wrap" id="ring-wrap" title="押すとスタート／一時停止">
         <svg class="ring" viewBox="0 0 360 360">
@@ -893,7 +896,8 @@ function runnerHtml(){
         </svg>
         <div class="ring-center">
           <div class="ring-time" id="run-time">5:00</div>
-          <div class="ring-now" id="run-now">タスクを選んでスタート</div>
+          <input class="ring-input" id="run-now" placeholder="いまやること" maxlength="40"
+            aria-label="いまやること">
         </div>
       </div>
       <div class="runner-side">
@@ -928,10 +932,10 @@ function runPaint(){
   time.textContent = mmss(runLeft);
   const remain = runDur > 0 ? Math.max(0, Math.min(1, runLeft / runDur)) : 0;
   el("run-prog").setAttribute("stroke-dasharray", `${remain.toFixed(4)} 1`);
-  const t = S.runner[runActive];
-  el("run-now").textContent = runTick
-    ? (t && t.text ? t.text : "実行中")
-    : (runLeft <= 0 ? "おつかれさま" : (t && t.text ? t.text : "タスクを選んでスタート"));
+  const t = S.runner[runActive] || (runActive === -1 ? S.runner[0] : null);
+  const now = el("run-now");
+  if (document.activeElement !== now) now.value = t ? t.text : "";
+  now.placeholder = runLeft <= 0 && !runTick ? "おつかれさま" : "いまやること";
   el("run-toggle").textContent = runTick ? "一時停止"
     : (runLeft > 0 && runLeft < runDur ? "つづける" : "スタート");
   document.title = runTick ? `${mmss(runLeft)} ${t && t.text ? t.text : "人生クエスト"}` : "人生クエスト";
@@ -1601,7 +1605,7 @@ const render = () => { renderStatus(); renderQuest(); renderDaily(); renderPanel
 
 /* ── 操作 ──────────────────────────────────────── */
 document.addEventListener("click", ev => {
-  if (ev.target.closest("#ring-wrap")) return runToggle();
+  if (ev.target.closest("#ring-wrap") && !ev.target.closest("input")) return runToggle();
   const t = ev.target.closest("button");
   if (!t) return;
 
@@ -1716,6 +1720,16 @@ document.addEventListener("click", ev => {
 });
 
 document.addEventListener("input", ev => {
+  if (ev.target.id === "run-now"){
+    if (runActive === -1){
+      if (!S.runner.length) S.runner.push({text:"", min:null});
+      runActive = 0;
+    }
+    S.runner[runActive].text = ev.target.value;
+    save();
+    renderRunnerList();
+    return;
+  }
   const ri = ev.target.dataset && ev.target.dataset.runtext;
   if (ri !== undefined){
     S.runner[Number(ri)].text = ev.target.value;
