@@ -107,6 +107,25 @@ header h1{font-size:2.4rem;margin:0;font-weight:900;letter-spacing:.02em}
 .tab:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{
   outline:3px solid var(--color-blue);outline-offset:2px}
 
+/* ── タイマー ── */
+.timer{display:grid;grid-template-columns:minmax(0,1fr) 1fr;gap:18px;align-items:center}
+@media(max-width:640px){.timer{grid-template-columns:1fr}}
+.timer-face{border:3px solid var(--border-main);border-radius:16px;background:#fff;text-align:center;
+  padding:18px 10px;box-shadow:4px 4px 0 var(--border-main)}
+.timer-time{font-size:clamp(2.6rem,9vw,4rem);font-weight:900;line-height:1;font-variant-numeric:tabular-nums;
+  letter-spacing:.02em}
+.timer-note{font-size:.8rem;font-weight:800;color:var(--text-sub);margin-top:8px}
+.timer-face.running{background:var(--color-yellow)}
+.timer-face.done{background:var(--color-pink);animation:blink .6s steps(2) infinite}
+@keyframes blink{50%{opacity:.55}}
+.timer-side{display:flex;flex-direction:column;gap:12px}
+.timer-presets{display:flex;flex-wrap:wrap;gap:7px}
+.preset{border:2px solid var(--border-main);border-radius:30px;padding:6px 14px;font-size:.85rem;font-weight:800;
+  background:#fff;cursor:pointer;font-family:inherit;color:var(--text-main)}
+.preset:hover{background:#fffaf0}
+.preset[aria-pressed="true"]{background:var(--color-yellow)}
+.timer-btns{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
 /* ── 1日のスケジュール ── */
 .sched{display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:18px;align-items:start;margin-bottom:20px}
 @media(max-width:640px){.sched{grid-template-columns:1fr}.sched-pal{order:-1}}
@@ -363,6 +382,33 @@ footer button:hover{color:#e03131}
     <p class="site-desc">唯一の元手である「時間」を、人的資本・社会的資本・金融資本・知的資産に変えて、最後に時間を買い戻すためのゲーム。やったことに「何が残ったか」を記録していきます。</p>
   </header>
 
+  <section class="card" id="quest-card"></section>
+
+  <section class="card" id="timer-card">
+    <h2>タイマー <span>集中する時間を決めて始める</span></h2>
+    <div class="timer">
+      <div class="timer-face">
+        <div class="timer-time" id="timer-time">25:00</div>
+        <div class="timer-note" id="timer-note">25分</div>
+      </div>
+      <div class="timer-side">
+        <div class="timer-presets">
+          <button class="preset" data-min="5">5分</button>
+          <button class="preset" data-min="10">10分</button>
+          <button class="preset" data-min="15">15分</button>
+          <button class="preset" data-min="25" aria-pressed="true">25分</button>
+          <button class="preset" data-min="30">30分</button>
+          <button class="preset" data-min="45">45分</button>
+          <button class="preset" data-min="60">60分</button>
+        </div>
+        <div class="timer-btns">
+          <button class="btn" id="timer-toggle">スタート</button>
+          <button class="btn small" id="timer-reset">リセット</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="card" id="daily-card"></section>
 
   <section class="card">
@@ -380,8 +426,7 @@ footer button:hover{color:#e03131}
   </section>
 
   <div class="tabs" role="tablist">
-    <button class="tab" role="tab" data-tab="quest" aria-selected="true">クエスト</button>
-    <button class="tab" role="tab" data-tab="boss" aria-selected="false">ボス</button>
+    <button class="tab" role="tab" data-tab="boss" aria-selected="true">ボス</button>
     <button class="tab" role="tab" data-tab="notion" aria-selected="false">Notion</button>
     <button class="tab" role="tab" data-tab="history" aria-selected="false">履歴</button>
     <button class="tab" role="tab" data-tab="map" aria-selected="false">攻略法</button>
@@ -528,7 +573,7 @@ if (!Array.isArray(S.holdings)){
 
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} };
 
-let tab = "quest";
+let tab = "boss";
 const drafts = {daily:new Set(), quest:new Set(), boss:new Set()};
 
 /* ── 進行 ──────────────────────────────────────── */
@@ -677,6 +722,22 @@ function itemRow(x, kind, done){
   </div>`;
 }
 
+function renderQuest(){
+  const open = S.quests.filter(q => !q.done), done = S.quests.filter(q => q.done);
+  el("quest-card").innerHTML = `<h2>クエスト <span>一度きりのやること</span></h2>
+    <div class="items">${open.length
+      ? open.map(q => itemRow(q, "quest", false)).join("")
+      : `<p class="empty">やることを登録すると経験値と資本になります。</p>`}</div>
+    ${done.length ? `<h2 style="margin-top:20px">達成済み（${done.length}）</h2>
+      <div class="items">${done.map(q => itemRow(q, "quest", true)).join("")}</div>` : ""}
+    <div class="form">
+      <input type="text" id="q-name" placeholder="やること（例：取材記事を1本書いて公開する）" maxlength="40">
+      ${DIFF_SELECT("q-diff")}
+      <button class="btn" data-add="quest">追加</button>
+      ${flagRow("quest")}
+    </div>`;
+}
+
 function renderDaily(){
   const t = todayKey();
   const now = new Date();
@@ -699,23 +760,6 @@ function renderDaily(){
 
 function renderPanel(){
   const p = el("panel");
-
-  if (tab === "quest"){
-    const open = S.quests.filter(q => !q.done), done = S.quests.filter(q => q.done);
-    p.innerHTML = `<h2>クエスト <span style="color:var(--text-sub)">一度きりのやること</span></h2>
-      <div class="items">${open.length
-        ? open.map(q => itemRow(q, "quest", false)).join("")
-        : `<p class="empty">やることを登録すると経験値と資本になります。</p>`}</div>
-      ${done.length ? `<h2 style="margin-top:16px">達成済み（${done.length}）</h2>
-        <div class="items">${done.map(q => itemRow(q, "quest", true)).join("")}</div>` : ""}
-      <div class="form">
-        <input type="text" id="q-name" placeholder="やること（例：取材記事を1本書いて公開する）" maxlength="40">
-        ${DIFF_SELECT("q-diff")}
-        <button class="btn" data-add="quest">追加</button>
-        ${flagRow("quest")}
-      </div>`;
-    return;
-  }
 
   if (tab === "boss"){
     p.innerHTML = `<h2>ボス <span style="color:var(--text-sub)">回数で削る大きな目標</span></h2>
@@ -825,6 +869,70 @@ function renderMap(p){
     </ul>
   </div>`;
 }
+
+/* ── カウントダウンタイマー ─────────────────────── */
+let timerMin = 25, timerLeft = 25 * 60 * 1000, timerEnd = 0, timerTick = null;
+
+const fmt = ms => {
+  const t = Math.max(0, Math.ceil(ms / 1000));
+  return `${String(Math.floor(t / 60)).padStart(2,"0")}:${String(t % 60).padStart(2,"0")}`;
+};
+
+function timerPaint(){
+  const face = document.querySelector(".timer-face");
+  el("timer-time").textContent = fmt(timerLeft);
+  el("timer-toggle").textContent = timerTick ? "一時停止"
+    : (timerLeft > 0 && timerLeft < timerMin * 60000 ? "つづける" : "スタート");
+  face.classList.toggle("running", !!timerTick);
+  face.classList.toggle("done", timerLeft <= 0 && !timerTick);
+  el("timer-note").textContent = timerLeft <= 0 ? "時間になりました" : `${timerMin}分`;
+  document.title = timerTick ? `${fmt(timerLeft)} 人生クエスト` : "人生クエスト";
+}
+
+function timerStop(){
+  if (timerTick){ clearInterval(timerTick); timerTick = null; }
+}
+function timerStart(){
+  if (timerLeft <= 0) timerLeft = timerMin * 60000;
+  timerEnd = Date.now() + timerLeft;
+  timerTick = setInterval(() => {
+    timerLeft = timerEnd - Date.now();
+    if (timerLeft <= 0){
+      timerLeft = 0;
+      timerStop();
+      beep();
+      toast("<b>時間になりました</b><br>おつかれさま。記録に残そう。", "level");
+    }
+    timerPaint();
+  }, 250);
+  timerPaint();
+}
+function timerSet(min){
+  timerStop();
+  timerMin = min;
+  timerLeft = min * 60000;
+  document.querySelectorAll(".preset").forEach(b =>
+    b.setAttribute("aria-pressed", String(Number(b.dataset.min) === min)));
+  timerPaint();
+}
+
+/** 終了の合図（短いビープを3回） */
+function beep(){
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    [0, 0.4, 0.8].forEach(at => {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = "sine"; o.frequency.value = 880;
+      g.gain.setValueAtTime(0.001, ctx.currentTime + at);
+      g.gain.exponentialRampToValueAtTime(0.3, ctx.currentTime + at + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + at + 0.28);
+      o.connect(g).connect(ctx.destination);
+      o.start(ctx.currentTime + at); o.stop(ctx.currentTime + at + 0.3);
+    });
+    setTimeout(() => ctx.close(), 1500);
+  } catch(e){}
+}
+
 
 /* ── 1日のスケジュール（8:00〜24:00・30分きざみ） ───── */
 const SLOT_FROM = 8, SLOT_COUNT = 32;           // 8:00 から 32コマ＝16時間
@@ -1086,7 +1194,7 @@ function renderCapital(p, key){
       <span class="cap-lv" style="background:${c.color}"><small>Lv.</small><b>${lv}</b></span>
       <span class="pill">${page.hold} <b>${mine.length}</b></span>
       <span class="pill">クエストで得た資本 <b>${S.capitals[key]||0}</b></span>
-      <button class="btn small" data-tab="quest">← もどる</button>
+      <button class="btn small" data-tab="boss">← もどる</button>
     </div>
     <p class="cap-desc">${page.lead}</p>
     <p style="font-size:.85rem;color:var(--text-sub);margin:-10px 0 0">${
@@ -1273,7 +1381,7 @@ async function notionComplete(itemId){
     toast(errText(e) + (amb ? "<br>Notion側は更新済みかもしれません。「最新に更新」で確認してください。" : ""));
   }
   notion.busy = false;
-  renderStatus(); renderDaily(); renderPanel(); renderSide();
+  renderStatus(); renderQuest(); renderDaily(); renderPanel(); renderSide();
 }
 
 /** Notion項目の「残るもの」を手で直す */
@@ -1354,7 +1462,7 @@ function renderSide(){
     : `<li style="color:var(--text-sub)">まだ記録はありません。</li>`;
 }
 
-const render = () => { renderStatus(); renderDaily(); renderPanel(); renderSide(); };
+const render = () => { renderStatus(); renderQuest(); renderDaily(); renderPanel(); renderSide(); };
 
 /* ── 操作 ──────────────────────────────────────── */
 document.addEventListener("click", ev => {
@@ -1363,7 +1471,7 @@ document.addEventListener("click", ev => {
 
   if (t.dataset.tab){
     tab = t.dataset.tab;
-    if (t.classList.contains("btn")) document.querySelector('.tab[data-tab="quest"]')?.setAttribute("aria-selected","true");
+    if (t.classList.contains("btn")) document.querySelector('.tab[data-tab="boss"]')?.setAttribute("aria-selected","true");
     document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", String(b === t)));
     return renderPanel();
   }
@@ -1385,6 +1493,9 @@ document.addEventListener("click", ev => {
     }
     return renderPanel();
   }
+  if (t.dataset.min){ return timerSet(Number(t.dataset.min)); }
+  if (t.id === "timer-toggle"){ timerTick ? (timerStop(), timerPaint()) : timerStart(); return; }
+  if (t.id === "timer-reset"){ timerStop(); timerLeft = timerMin * 60000; timerPaint(); return; }
   if (t.dataset.rule){
     const n = t.dataset.rule;
     S.workRules[n] = !S.workRules[n];
@@ -1475,6 +1586,7 @@ document.addEventListener("keydown", ev => {
 });
 
 render();
+timerPaint();
 </script>
 </body>
 </html>
