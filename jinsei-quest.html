@@ -342,8 +342,9 @@ footer button:hover{color:#e03131}
     <h1>人生クエスト</h1>
     <p class="lead">Life Capital Quest</p>
     <p class="site-desc">唯一の元手である「時間」を、人的資本・社会的資本・金融資本・知的資産に変えて、最後に時間を買い戻すためのゲーム。やったことに「何が残ったか」を記録していきます。</p>
-    <div class="today" id="today"></div>
   </header>
+
+  <section class="card" id="daily-card"></section>
 
   <section class="card">
     <h2>ステータス <span id="cap-total"></span></h2>
@@ -360,8 +361,7 @@ footer button:hover{color:#e03131}
   </section>
 
   <div class="tabs" role="tablist">
-    <button class="tab" role="tab" data-tab="daily" aria-selected="true">日課</button>
-    <button class="tab" role="tab" data-tab="quest" aria-selected="false">クエスト</button>
+    <button class="tab" role="tab" data-tab="quest" aria-selected="true">クエスト</button>
     <button class="tab" role="tab" data-tab="boss" aria-selected="false">ボス</button>
     <button class="tab" role="tab" data-tab="notion" aria-selected="false">Notion</button>
     <button class="tab" role="tab" data-tab="history" aria-selected="false">履歴</button>
@@ -508,7 +508,7 @@ if (!Array.isArray(S.holdings)){
 
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} };
 
-let tab = "daily";
+let tab = "quest";
 const drafts = {daily:new Set(), quest:new Set(), boss:new Set()};
 
 /* ── 進行 ──────────────────────────────────────── */
@@ -621,9 +621,6 @@ function flagRow(kind){
 }
 
 function renderStatus(){
-  const now = new Date();
-  el("today").textContent = now.toLocaleDateString("ja-JP",{month:"long",day:"numeric"})
-    + "（" + now.toLocaleDateString("ja-JP",{weekday:"short"}) + "）";
   el("level").textContent = S.level;
   el("title-name").textContent = "「" + titleOf(S.level) + "」";
   const need = needExp(S.level);
@@ -660,12 +657,15 @@ function itemRow(x, kind, done){
   </div>`;
 }
 
-function renderPanel(){
-  const p = el("panel");
+function renderDaily(){
+  const t = todayKey();
+  const now = new Date();
+  const date = now.toLocaleDateString("ja-JP",{month:"long",day:"numeric"})
+    + "（" + now.toLocaleDateString("ja-JP",{weekday:"short"}) + "）";
 
-  if (tab === "daily"){
-    const t = todayKey();
-    p.innerHTML = scheduleHtml() + `<h2>日課 <span style="color:var(--text-sub)">毎日リセット・連続でボーナス</span></h2>
+  el("daily-card").innerHTML = `<h2>${date} <span>8:00〜24:00・30分ごと</span></h2>`
+    + scheduleHtml()
+    + `<h2 style="margin-top:26px">日課 <span>毎日リセット・連続でボーナス</span></h2>
       <div class="items">${S.dailies.length
         ? S.dailies.map(d => itemRow(d, "daily", d.last === t)).join("")
         : `<p class="empty">毎日くり返したいことを登録しよう。</p>`}</div>
@@ -675,8 +675,10 @@ function renderPanel(){
         <button class="btn" data-add="daily">追加</button>
         ${flagRow("daily")}
       </div>`;
-    return;
-  }
+}
+
+function renderPanel(){
+  const p = el("panel");
 
   if (tab === "quest"){
     const open = S.quests.filter(q => !q.done), done = S.quests.filter(q => q.done);
@@ -834,8 +836,7 @@ function scheduleHtml(){
     + `<button data-pal="" aria-pressed="${palPick === ""}"
         style="${palPick === "" ? "background:#e9ecef" : ""}">消す</button>`;
 
-  return `<h2>今日の時間割 <span style="color:var(--text-sub)">8:00〜24:00・30分ごと</span></h2>
-    <div class="sched">
+  return `<div class="sched">
       <div class="sched-grid" id="sched">${rows}</div>
       <div class="sched-pal">
         <h3>何に使う？</h3>
@@ -995,7 +996,7 @@ function renderCapital(p, key){
       <span class="cap-lv" style="background:${c.color}"><small>Lv.</small><b>${lv}</b></span>
       <span class="pill">${page.hold} <b>${mine.length}</b></span>
       <span class="pill">クエストで得た資本 <b>${S.capitals[key]||0}</b></span>
-      <button class="btn small" data-tab="daily">← もどる</button>
+      <button class="btn small" data-tab="quest">← もどる</button>
     </div>
     <p class="cap-desc">${page.lead}</p>
     <p style="font-size:.85rem;color:var(--text-sub);margin:-10px 0 0">${
@@ -1181,7 +1182,7 @@ async function notionComplete(itemId){
     toast(errText(e) + (amb ? "<br>Notion側は更新済みかもしれません。「最新に更新」で確認してください。" : ""));
   }
   notion.busy = false;
-  renderStatus(); renderPanel(); renderSide();
+  renderStatus(); renderDaily(); renderPanel(); renderSide();
 }
 
 /** Notion項目の「残るもの」を手で直す */
@@ -1262,7 +1263,7 @@ function renderSide(){
     : `<li style="color:var(--text-sub)">まだ記録はありません。</li>`;
 }
 
-const render = () => { renderStatus(); renderPanel(); renderSide(); };
+const render = () => { renderStatus(); renderDaily(); renderPanel(); renderSide(); };
 
 /* ── 操作 ──────────────────────────────────────── */
 document.addEventListener("click", ev => {
@@ -1271,7 +1272,7 @@ document.addEventListener("click", ev => {
 
   if (t.dataset.tab){
     tab = t.dataset.tab;
-    if (t.classList.contains("btn")) document.querySelector('.tab[data-tab="daily"]')?.setAttribute("aria-selected","true");
+    if (t.classList.contains("btn")) document.querySelector('.tab[data-tab="quest"]')?.setAttribute("aria-selected","true");
     document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", String(b === t)));
     return renderPanel();
   }
@@ -1293,7 +1294,7 @@ document.addEventListener("click", ev => {
     }
     return renderPanel();
   }
-  if (t.dataset.pal !== undefined){ palPick = t.dataset.pal; return renderPanel(); }
+  if (t.dataset.pal !== undefined){ palPick = t.dataset.pal; return renderDaily(); }
   if (t.dataset.cap){ tab = "cap:" + t.dataset.cap; document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected","false")); return renderPanel(); }
   if (t.dataset.birth === "set"){
     const y = parseInt(el("birth-year")?.value, 10);
