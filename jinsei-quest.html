@@ -225,25 +225,23 @@ figcaption{font-size:.85rem;color:var(--text-sub);margin-top:12px;text-align:cen
 .axis b{margin-left:auto;font-weight:900;font-variant-numeric:tabular-nums;white-space:nowrap}
 
 /* ── スキル ── */
-.sk-group{margin-bottom:20px}
-.sk-head{display:inline-block;background:var(--border-main);color:#fff;font-weight:800;font-size:.85rem;
-  padding:2px 12px;border-radius:6px;margin-bottom:10px}
-.sk-list{display:flex;flex-direction:column;gap:8px}
-.sk{display:flex;align-items:center;gap:12px;border:2px solid var(--border-main);border-radius:12px;
-  padding:10px 14px;background:#fff;box-shadow:2px 2px 0 var(--border-main);flex-wrap:wrap}
-.sk-name{flex:1;min-width:120px;font-weight:800;font-size:1rem}
+.sk-mine{margin-bottom:6px}
+.chip{display:inline-flex;align-items:center;gap:7px;border:2px solid var(--border-main);border-radius:30px;
+  padding:6px 8px 6px 15px;font-size:.88rem;font-weight:800;background:#fff}
+.chip-x{background:none;border:none;color:#adb5bd;cursor:pointer;font-size:.8rem;font-weight:900;
+  padding:0 3px;line-height:1;font-family:inherit}
+.chip-x:hover{color:#e03131}
 .sk-sug{margin-top:22px;border-top:3px dashed var(--border-main);padding-top:18px}
 .sk-sug h3{font-size:1rem;font-weight:900;margin:0 0 4px}
 .sk-sug p{font-size:.85rem;color:var(--text-sub);margin:0 0 14px}
 .sug-group{margin-bottom:12px}
-.sug-cat{font-size:.78rem;font-weight:800;color:var(--text-sub);margin-bottom:5px}
+.sug-cat{font-size:.78rem;font-weight:800;color:var(--text-sub);margin-bottom:6px}
 .sug-chips{display:flex;flex-wrap:wrap;gap:7px}
-.sug{border:2px solid var(--border-main);border-radius:30px;padding:5px 13px;font-size:.82rem;font-weight:800;
-  background:#fff;cursor:pointer;font-family:inherit;color:var(--text-main);box-shadow:2px 2px 0 var(--border-main)}
-.sug:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--border-main)}
-.sug.added{background:#f1f3f5;color:#adb5bd;border-color:#ced4da;box-shadow:none;cursor:default;transform:none}
-.sk-lv{border:2px solid var(--border-main);border-radius:30px;padding:2px 12px;font-size:.78rem;font-weight:800;
-  cursor:pointer;font-family:inherit;color:var(--text-main)}
+.sug{border:2px solid var(--border-main);border-radius:30px;padding:6px 15px;font-size:.85rem;font-weight:800;
+  background:#fff;cursor:pointer;font-family:inherit;color:var(--text-main)}
+.sug:hover{background:var(--color-yellow)}
+.sug.added{background:#f1f3f5;color:#adb5bd;border-color:#dee2e6}
+.sug.added:hover{background:#e9ecef}
 
 /* ── 履歴（年表） ── */
 .tl-setup{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:20px}
@@ -408,12 +406,12 @@ function seed(){
     spent:0,
     birthYear:null, timeline:{},
     skills:[
-      {id:uid(), name:"英語",     cat:"lang", level:0},
-      {id:uid(), name:"スペイン語", cat:"lang", level:0},
-      {id:uid(), name:"写真撮影",  cat:"shoot", level:0},
-      {id:uid(), name:"動画撮影",  cat:"shoot", level:0},
-      {id:uid(), name:"画像編集",  cat:"edit", level:0},
-      {id:uid(), name:"動画編集",  cat:"edit", level:0},
+      {id:uid(), name:"英語",     cat:"lang"},
+      {id:uid(), name:"スペイン語", cat:"lang"},
+      {id:uid(), name:"写真撮影",  cat:"shoot"},
+      {id:uid(), name:"動画撮影",  cat:"shoot"},
+      {id:uid(), name:"画像編集",  cat:"edit"},
+      {id:uid(), name:"動画編集",  cat:"edit"},
     ],
     dailies:[
       {id:uid(), name:"30分うごく（散歩・筋トレ）", diff:"mid",  res:["ability"], last:"", streak:0},
@@ -786,53 +784,43 @@ const SKILL_SUGGESTIONS = {
   life  :["料理","車の運転","収納・整理","子育て","体力づくり","DIY"],
   other :["Excel・スプレッドシート","Notion","AIの使いこなし","タイピング","車の整備","ラジオ・話す"],
 };
-const SKILL_LEVELS = ["かじった", "できる", "人に教えられる"];
 
 function renderSkills(p){
-  const cats = Object.entries(SKILL_CATS)
+  const groups = Object.entries(SKILL_CATS)
     .map(([k,c]) => [k, c, S.skills.filter(x => x.cat === k)])
-    .filter(([,,list]) => list.length);
-
-  const groups = cats.map(([k,c,list]) => `
-    <div class="sk-group">
-      <div class="sk-head" style="background:${c.color};color:var(--text-main)">${c.name}（${list.length}）</div>
-      <div class="sk-list">${list.map(x => `
-        <div class="sk" style="border-left:10px solid ${c.color}">
-          <span class="sk-name">${esc(x.name)}</span>
-          <button class="sk-lv" data-sklv="${x.id}" title="押すと段階が変わります"
-            style="background:${["#f1f3f5", c.color, "var(--text-main)"][x.level]};color:${x.level === 2 ? "#fff" : "var(--text-main)"}">${SKILL_LEVELS[x.level]}</button>
-          <select data-skcat="${x.id}" aria-label="${esc(x.name)}の分類">${
-            Object.entries(SKILL_CATS).map(([ck,cc]) =>
-              `<option value="${ck}"${ck === x.cat ? " selected" : ""}>${cc.name}</option>`).join("")}</select>
-          <button class="del" data-del="skills:${x.id}" aria-label="削除">✕</button>
-        </div>`).join("")}</div>
-    </div>`).join("");
+    .filter(([,,list]) => list.length)
+    .map(([k,c,list]) => `
+      <div class="sug-group">
+        <div class="sug-cat">${c.name}</div>
+        <div class="sug-chips">${list.map(x => `
+          <span class="chip">${esc(x.name)}<button class="chip-x" data-del="skills:${x.id}"
+            aria-label="${esc(x.name)}を削除">✕</button></span>`).join("")}</div>
+      </div>`).join("");
 
   p.innerHTML = `<h2>スキル <span>持っているものを並べて分類する</span></h2>
-    ${S.skills.length ? groups : `<p class="empty">スキルを登録すると、分類ごとに並びます。</p>`}
+    ${S.skills.length ? `<div class="sk-mine">${groups}</div>`
+      : `<p class="empty">下から選ぶか、自分で入力して登録してください。</p>`}
+
     <div class="form">
-      <input type="text" id="sk-name" placeholder="スキル（例：スペイン語）" maxlength="30">
+      <input type="text" id="sk-name" placeholder="スキル（例：バリスタ）" maxlength="30">
       <select id="sk-cat" aria-label="分類">${
         Object.entries(SKILL_CATS).map(([k,c]) => `<option value="${k}">${c.name}</option>`).join("")}</select>
       <button class="btn yellow" data-add="skill">追加</button>
-      <div class="form-label">段階のボタンを押すと「かじった → できる → 人に教えられる」と変わります。</div>
     </div>
 
     <div class="sk-sug">
       <h3>よくあるスキルから選ぶ</h3>
-      <p>押すとその分類で追加されます。あとから分類も段階も変えられます。</p>
+      <p>押すと登録されます。もう一度押すと外れます。</p>
       ${Object.entries(SKILL_SUGGESTIONS).map(([k, names]) => `
         <div class="sug-group">
           <div class="sug-cat">${SKILL_CATS[k].name}</div>
           <div class="sug-chips">${names.map(n => {
             const added = S.skills.some(x => x.name === n);
-            return `<button class="sug ${added ? "added" : ""}" ${added ? "disabled" : `data-sug="${k}:${n}"`}
-              style="${added ? "" : `border-left:8px solid ${SKILL_CATS[k].color}`}">${added ? "✓ " : "＋ "}${n}</button>`;
+            return `<button class="sug ${added ? "added" : ""}" data-sug="${k}:${n}">${added ? "✓ " : "＋ "}${n}</button>`;
           }).join("")}</div>
         </div>`).join("")}
     </div>`;
 }
-
 
 /* ── 履歴（0才〜30才のひと言年表） ───────────────── */
 /** 西暦から和暦へ。境界の年は「その年の大半を占める元号」で表す */
@@ -1100,16 +1088,11 @@ document.addEventListener("click", ev => {
   if (t.dataset.sug){
     const i = t.dataset.sug.indexOf(":");
     const cat = t.dataset.sug.slice(0, i), name = t.dataset.sug.slice(i + 1);
-    if (!S.skills.some(x => x.name === name)){
-      S.skills.push({id:uid(), name, cat, level:0});
-      save(); toast(`スキル「${esc(name)}」を追加しました`);
-    }
+    const found = S.skills.find(x => x.name === name);
+    if (found) S.skills = S.skills.filter(x => x !== found);
+    else S.skills.push({id:uid(), name, cat});
+    save();
     return renderPanel();
-  }
-  if (t.dataset.sklv){
-    const sk = S.skills.find(x => x.id === t.dataset.sklv);
-    if (sk){ sk.level = (sk.level + 1) % SKILL_LEVELS.length; save(); renderPanel(); }
-    return;
   }
   if (t.dataset.birth === "set"){
     const y = parseInt(el("birth-year")?.value, 10);
@@ -1153,7 +1136,7 @@ document.addEventListener("click", ev => {
     }
     if (kind === "skill"){
       const name = val("sk-name"); if (!name) return;
-      S.skills.push({id:uid(), name, cat:el("sk-cat").value, level:0});
+      S.skills.push({id:uid(), name, cat:el("sk-cat").value});
       el("sk-name").value = "";
     }
     if (kind === "reward"){
@@ -1167,13 +1150,6 @@ document.addEventListener("click", ev => {
   if (t.id === "reset" && confirm("記録をすべて消して最初からはじめますか？")){
     S = seed(); save(); render();
   }
-});
-
-document.addEventListener("change", ev => {
-  const id = ev.target.dataset && ev.target.dataset.skcat;
-  if (!id) return;
-  const sk = S.skills.find(x => x.id === id);
-  if (sk){ sk.cat = ev.target.value; save(); renderPanel(); }
 });
 
 document.addEventListener("input", ev => {
