@@ -83,7 +83,10 @@ header h1{font-size:2.4rem;margin:0;font-weight:900;letter-spacing:.02em}
 
 .caps{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:20px}
 @media(max-width:640px){.caps{grid-template-columns:repeat(2,1fr)}}
-.cap{border:2px solid var(--border-main);border-radius:14px;padding:10px 12px;background:#fafafa}
+.cap{border:2px solid var(--border-main);border-radius:14px;padding:10px 12px;background:#fafafa;
+  text-align:left;font-family:inherit;cursor:pointer;box-shadow:2px 2px 0 var(--border-main);width:100%}
+.cap:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--border-main);background:#fff}
+.cap-more{display:block;font-size:.68rem;font-weight:800;color:var(--text-sub);margin-top:6px}
 .cap-name{font-size:.85rem;font-weight:800;display:flex;align-items:center;gap:6px}
 .cap-name .dot{width:12px;height:12px;border-radius:50%;border:2px solid var(--border-main);flex:none}
 .cap-val{font-size:1.5rem;font-weight:900;font-variant-numeric:tabular-nums;line-height:1.2}
@@ -243,6 +246,15 @@ figcaption{font-size:.85rem;color:var(--text-sub);margin-top:12px;text-align:cen
 .sug.added{background:#f1f3f5;color:#adb5bd;border-color:#dee2e6}
 .sug.added:hover{background:#e9ecef}
 
+.cap-page-top{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+.cap-lv{border:3px solid var(--border-main);border-radius:16px;padding:6px 16px;font-weight:900;
+  box-shadow:3px 3px 0 var(--border-main);display:flex;align-items:baseline;gap:6px}
+.cap-lv b{font-size:1.6rem;line-height:1;font-variant-numeric:tabular-nums}
+.cap-desc{font-size:.95rem;margin:0 0 18px;font-weight:700}
+.cap-sec{border-top:3px dashed var(--border-main);padding-top:16px;margin-top:18px}
+.cap-sec h3{font-size:1rem;font-weight:900;margin:0 0 4px}
+.cap-sec p{font-size:.85rem;color:var(--text-sub);margin:0 0 12px}
+
 /* ── 履歴（年表） ── */
 .tl-setup{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:20px}
 .tl{position:relative;padding-left:22px}
@@ -323,7 +335,6 @@ footer button:hover{color:#e03131}
     <button class="tab" role="tab" data-tab="quest" aria-selected="false">クエスト</button>
     <button class="tab" role="tab" data-tab="boss" aria-selected="false">ボス</button>
     <button class="tab" role="tab" data-tab="notion" aria-selected="false">Notion</button>
-    <button class="tab" role="tab" data-tab="skill" aria-selected="false">スキル</button>
     <button class="tab" role="tab" data-tab="history" aria-selected="false">履歴</button>
     <button class="tab" role="tab" data-tab="map" aria-selected="false">攻略法</button>
   </div>
@@ -460,6 +471,10 @@ S.capitals = {...seed().capitals, ...(S.capitals||{})};
 S.counts   = {...seed().counts,   ...(S.counts||{})};
 S.timeline = {...(S.timeline||{})};
 if (!Array.isArray(S.skills)) S.skills = seed().skills;
+// 旧データ（スキルのみ）を資本ごとの持ちものへ移す
+if (!Array.isArray(S.holdings)){
+  S.holdings = S.skills.map(x => ({id:x.id, name:x.name, cap:"human", cat:x.cat || "other"}));
+}
 
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} };
 
@@ -590,11 +605,12 @@ function renderStatus(){
   const vals = Object.values(S.capitals);
   el("cap-total").textContent = "資本の合計 " + vals.reduce((a,b) => a+b, 0);
   el("caps").innerHTML = Object.entries(CAPITALS).map(([k,c]) => `
-    <div class="cap">
+    <button class="cap" data-cap="${k}" aria-label="${c.name}のページを開く">
       <div class="cap-name"><span class="dot" style="background:${c.color}"></span>${c.name}</div>
       <div class="cap-val">${S.capitals[k]||0}</div>
       <small>${c.note}</small>
-    </div>`).join("");
+      <span class="cap-more">ひらく →</span>
+    </button>`).join("");
 }
 
 const DIFF_SELECT = id => `<select id="${id}" aria-label="難易度">${
@@ -672,7 +688,7 @@ function renderPanel(){
   }
 
   if (tab === "notion") return renderNotion(p);
-  if (tab === "skill") return renderSkills(p);
+  if (tab.startsWith("cap:")) return renderCapital(p, tab.slice(4));
   if (tab === "history") return renderHistory(p);
   if (tab === "map") return renderMap(p);
 }
@@ -785,40 +801,108 @@ const SKILL_SUGGESTIONS = {
   other :["Excel・スプレッドシート","Notion","AIの使いこなし","タイピング","車の整備","ラジオ・話す"],
 };
 
-function renderSkills(p){
-  const groups = Object.entries(SKILL_CATS)
-    .map(([k,c]) => [k, c, S.skills.filter(x => x.cat === k)])
-    .filter(([,,list]) => list.length)
-    .map(([k,c,list]) => `
-      <div class="sug-group">
-        <div class="sug-cat">${c.name}</div>
-        <div class="sug-chips">${list.map(x => `
-          <span class="chip">${esc(x.name)}<button class="chip-x" data-del="skills:${x.id}"
-            aria-label="${esc(x.name)}を削除">✕</button></span>`).join("")}</div>
-      </div>`).join("");
+/** 資本ごとの説明と、持ちものの呼び名・候補 */
+const CAP_PAGES = {
+  human:{
+    lead:"自分に貯まり、くり返し使える力。学習と訓練で増え、掛け合わせるほど希少になる。",
+    hold:"持っているスキル", want:"これから身につけたいスキル", grouped:true,
+  },
+  social:{
+    lead:"人からの信頼と、つながり。強くなると「仕事を探す」から「仕事が来る」に変わる。",
+    hold:"持っているつながり", want:"これから育てたいつながり",
+    sug:["紹介できる人","仕事仲間","所属コミュニティ","SNSのフォロワー","常連のお客さん","取引先",
+         "メディア関係者","海外の知人","地元の仲間","相談できる先輩"],
+  },
+  money:{
+    lead:"お金と、お金を生む資産。時間を買い戻すための原資になる。",
+    hold:"持っている収入源・資産", want:"これからつくりたい収入源",
+    sug:["給料","事業の売上","ネットショップ","店頭・委託販売","イベント売上","投資（株・投信）",
+         "不動産","著作権・ライセンス","広告収入","生活防衛資金"],
+  },
+  asset:{
+    lead:"一度つくれば働き続ける作品や権利。過去の時間が未来にも効いてくる場所。",
+    hold:"つくった作品・資産", want:"これからつくりたいもの",
+    sug:["ZINE・冊子","記事","動画","写真のストック","LINEスタンプ","テンプレート",
+         "ノウハウのまとめ","商品の型・レシピ","ロゴ・ブランド","メルマガ・読者リスト"],
+  },
+  time:{
+    lead:"外注・自動化・仕組み化で取り戻した時間。このゲームの目的地。",
+    hold:"手に入れた時間", want:"これから減らしたい時間",
+    sug:["家事代行","発送の外注","経理を任せる","予約・受付の自動化","定型作業のテンプレ化",
+         "AIに任せる作業","移動の少ない住まい","まとめ買い","任せられる仲間","仕組みで回る仕事"],
+  },
+};
 
-  p.innerHTML = `<h2>スキル <span>持っているものを並べて分類する</span></h2>
-    ${S.skills.length ? `<div class="sk-mine">${groups}</div>`
-      : `<p class="empty">下から選ぶか、自分で入力して登録してください。</p>`}
+/** 持ちものの数で決まるレベル（1個から Lv.1、以降 3・6・10・15 個で上がる） */
+const CAP_STEPS = [1, 3, 6, 10, 15];
+function capLevel(n){
+  let lv = 0;
+  CAP_STEPS.forEach(need => { if (n >= need) lv++; });
+  const next = CAP_STEPS[lv];
+  return {lv, next, remain: next ? next - n : 0};
+}
 
-    <div class="form">
-      <input type="text" id="sk-name" placeholder="スキル（例：バリスタ）" maxlength="30">
-      <select id="sk-cat" aria-label="分類">${
-        Object.entries(SKILL_CATS).map(([k,c]) => `<option value="${k}">${c.name}</option>`).join("")}</select>
-      <button class="btn yellow" data-add="skill">追加</button>
+function chipRow(list){
+  return `<div class="sug-chips">${list.map(x => `
+    <span class="chip">${esc(x.name)}<button class="chip-x" data-del="holdings:${x.id}"
+      aria-label="${esc(x.name)}を外す">✕</button></span>`).join("")}</div>`;
+}
+
+function renderCapital(p, key){
+  const c = CAPITALS[key], page = CAP_PAGES[key];
+  if (!c || !page){ tab = "daily"; return renderPanel(); }
+
+  const mine = S.holdings.filter(x => x.cap === key);
+  const {lv, next, remain} = capLevel(mine.length);
+
+  // 獲得済み（人的資本だけ分類ごとに、ほかは一列）
+  const have = mine.length
+    ? (page.grouped
+        ? Object.entries(SKILL_CATS)
+            .map(([ck,cc]) => [cc, mine.filter(x => x.cat === ck)])
+            .filter(([,list]) => list.length)
+            .map(([cc,list]) => `<div class="sug-group"><div class="sug-cat">${cc.name}</div>${chipRow(list)}</div>`).join("")
+        : chipRow(mine))
+    : `<p class="empty">まだありません。下から選んで登録できます。</p>`;
+
+  // これから（候補のうち、まだ持っていないもの）
+  const want = page.grouped
+    ? Object.entries(SKILL_SUGGESTIONS).map(([ck, names]) => {
+        const rest = names.filter(n => !mine.some(x => x.name === n));
+        return rest.length ? `<div class="sug-group"><div class="sug-cat">${SKILL_CATS[ck].name}</div>
+          <div class="sug-chips">${rest.map(n =>
+            `<button class="sug" data-hold="${key}:${ck}:${n}">＋ ${n}</button>`).join("")}</div></div>` : "";
+      }).join("")
+    : `<div class="sug-chips">${page.sug.filter(n => !mine.some(x => x.name === n))
+        .map(n => `<button class="sug" data-hold="${key}:other:${n}">＋ ${n}</button>`).join("")}</div>`;
+
+  p.innerHTML = `<h2>${c.name} <span>${c.note}</span></h2>
+    <div class="cap-page-top">
+      <span class="cap-lv" style="background:${c.color}"><small>Lv.</small><b>${lv}</b></span>
+      <span class="pill">${page.hold} <b>${mine.length}</b></span>
+      <span class="pill">クエストで得た資本 <b>${S.capitals[key]||0}</b></span>
+      <button class="btn small" data-tab="daily">← もどる</button>
+    </div>
+    <p class="cap-desc">${page.lead}</p>
+    <p style="font-size:.85rem;color:var(--text-sub);margin:-10px 0 0">${
+      next ? `あと ${remain} つ登録すると Lv.${lv + 1}` : "最高レベルです"}</p>
+
+    <div class="cap-sec">
+      <h3>${page.hold}（${mine.length}）</h3>
+      <p>✕ を押すと外せます。</p>
+      ${have}
+      <div class="form" style="border-top:none;padding-top:6px">
+        <input type="text" id="hold-name" placeholder="自分で書く（例：${page.sug ? page.sug[0] : "バリスタ"}）" maxlength="30">
+        ${page.grouped ? `<select id="hold-cat" aria-label="分類">${
+          Object.entries(SKILL_CATS).map(([k2,c2]) => `<option value="${k2}">${c2.name}</option>`).join("")}</select>` : ""}
+        <button class="btn yellow" data-add="hold:${key}">追加</button>
+      </div>
     </div>
 
-    <div class="sk-sug">
-      <h3>よくあるスキルから選ぶ</h3>
-      <p>押すと登録されます。もう一度押すと外れます。</p>
-      ${Object.entries(SKILL_SUGGESTIONS).map(([k, names]) => `
-        <div class="sug-group">
-          <div class="sug-cat">${SKILL_CATS[k].name}</div>
-          <div class="sug-chips">${names.map(n => {
-            const added = S.skills.some(x => x.name === n);
-            return `<button class="sug ${added ? "added" : ""}" data-sug="${k}:${n}">${added ? "✓ " : "＋ "}${n}</button>`;
-          }).join("")}</div>
-        </div>`).join("")}
+    <div class="cap-sec">
+      <h3>${page.want}</h3>
+      <p>押すと「${page.hold}」に入ります。</p>
+      ${want}
     </div>`;
 }
 
@@ -1073,6 +1157,7 @@ document.addEventListener("click", ev => {
 
   if (t.dataset.tab){
     tab = t.dataset.tab;
+    if (t.classList.contains("btn")) document.querySelector('.tab[data-tab="daily"]')?.setAttribute("aria-selected","true");
     document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", String(b === t)));
     return renderPanel();
   }
@@ -1085,15 +1170,16 @@ document.addEventListener("click", ev => {
     const [id, key] = t.dataset.nres.split(":");
     return toggleNotionRes(id, key);
   }
-  if (t.dataset.sug){
-    const i = t.dataset.sug.indexOf(":");
-    const cat = t.dataset.sug.slice(0, i), name = t.dataset.sug.slice(i + 1);
-    const found = S.skills.find(x => x.name === name);
-    if (found) S.skills = S.skills.filter(x => x !== found);
-    else S.skills.push({id:uid(), name, cat});
-    save();
+  if (t.dataset.hold){
+    const [cap, cat, ...rest] = t.dataset.hold.split(":");
+    const name = rest.join(":");
+    if (!S.holdings.some(x => x.cap === cap && x.name === name)){
+      S.holdings.push({id:uid(), name, cap, cat});
+      save(); toast(`「${esc(name)}」を ${CAPITALS[cap].name} に登録しました`);
+    }
     return renderPanel();
   }
+  if (t.dataset.cap){ tab = "cap:" + t.dataset.cap; document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected","false")); return renderPanel(); }
   if (t.dataset.birth === "set"){
     const y = parseInt(el("birth-year")?.value, 10);
     if (!y || y < 1900 || y > 2100){ toast("生まれた年を西暦4桁で入れてください（例：1990）"); return; }
@@ -1134,10 +1220,13 @@ document.addEventListener("click", ev => {
       S.bosses.push({id:uid(), name, res:[...drafts.boss], max, hp:max, slain:false});
       drafts.boss.clear();
     }
-    if (kind === "skill"){
-      const name = val("sk-name"); if (!name) return;
-      S.skills.push({id:uid(), name, cat:el("sk-cat").value});
-      el("sk-name").value = "";
+    if (kind.startsWith("hold:")){
+      const cap = kind.slice(5);
+      const name = val("hold-name"); if (!name) return;
+      if (!S.holdings.some(x => x.cap === cap && x.name === name)){
+        S.holdings.push({id:uid(), name, cap, cat:el("hold-cat") ? el("hold-cat").value : "other"});
+      }
+      el("hold-name").value = "";
     }
     if (kind === "reward"){
       const name = val("r-name"); if (!name) return;
@@ -1164,7 +1253,7 @@ document.addEventListener("input", ev => {
 
 document.addEventListener("keydown", ev => {
   if (ev.key !== "Enter" || ev.target.tagName !== "INPUT" || ev.target.dataset.year !== undefined) return;
-  const map = {"d-name":"daily","q-name":"quest","b-name":"boss","b-max":"boss","r-name":"reward","r-cost":"reward","sk-name":"skill"};
+  const map = {"d-name":"daily","q-name":"quest","b-name":"boss","b-max":"boss","r-name":"reward","r-cost":"reward"};
   const kind = map[ev.target.id];
   if (kind) document.querySelector(`[data-add="${kind}"]`)?.click();
 });
