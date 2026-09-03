@@ -232,6 +232,16 @@ figcaption{font-size:.85rem;color:var(--text-sub);margin-top:12px;text-align:cen
 .sk{display:flex;align-items:center;gap:12px;border:2px solid var(--border-main);border-radius:12px;
   padding:10px 14px;background:#fff;box-shadow:2px 2px 0 var(--border-main);flex-wrap:wrap}
 .sk-name{flex:1;min-width:120px;font-weight:800;font-size:1rem}
+.sk-sug{margin-top:22px;border-top:3px dashed var(--border-main);padding-top:18px}
+.sk-sug h3{font-size:1rem;font-weight:900;margin:0 0 4px}
+.sk-sug p{font-size:.85rem;color:var(--text-sub);margin:0 0 14px}
+.sug-group{margin-bottom:12px}
+.sug-cat{font-size:.78rem;font-weight:800;color:var(--text-sub);margin-bottom:5px}
+.sug-chips{display:flex;flex-wrap:wrap;gap:7px}
+.sug{border:2px solid var(--border-main);border-radius:30px;padding:5px 13px;font-size:.82rem;font-weight:800;
+  background:#fff;cursor:pointer;font-family:inherit;color:var(--text-main);box-shadow:2px 2px 0 var(--border-main)}
+.sug:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--border-main)}
+.sug.added{background:#f1f3f5;color:#adb5bd;border-color:#ced4da;box-shadow:none;cursor:default;transform:none}
 .sk-lv{border:2px solid var(--border-main);border-radius:30px;padding:2px 12px;font-size:.78rem;font-weight:800;
   cursor:pointer;font-family:inherit;color:var(--text-main)}
 
@@ -751,11 +761,30 @@ function renderMap(p){
 
 /* ── スキル（持っているものを分類する） ─────────── */
 const SKILL_CATS = {
-  lang :{name:"語学",   color:"var(--color-blue)"},
-  shoot:{name:"撮影",   color:"var(--color-pink)"},
-  edit :{name:"編集",   color:"var(--color-purple)"},
-  work :{name:"仕事",   color:"var(--color-green)"},
-  other:{name:"その他", color:"var(--color-yellow)"},
+  lang  :{name:"語学",     color:"#4dabf7"},
+  shoot :{name:"撮影",     color:"#ff6b8b"},
+  edit  :{name:"編集",     color:"#b197fc"},
+  design:{name:"デザイン",  color:"#ff922b"},
+  post  :{name:"発信",     color:"#fcc419"},
+  sell  :{name:"販売",     color:"#40c057"},
+  buy   :{name:"仕入れ",    color:"#66d9e8"},
+  work  :{name:"仕事",     color:"#94d82d"},
+  life  :{name:"くらし",    color:"#ffc078"},
+  other :{name:"その他",    color:"#dee2e6"},
+};
+
+/** よくあるスキルの候補。押すとその分類で追加される */
+const SKILL_SUGGESTIONS = {
+  lang  :["英語","スペイン語","中国語","韓国語","フランス語","翻訳・通訳"],
+  shoot :["写真撮影","動画撮影","スマホ撮影","照明・ライティング","構図","ドローン撮影"],
+  edit  :["画像編集","動画編集","Lightroom","Canva","サムネイル制作","音声編集"],
+  design:["グラフィックデザイン","レイアウト","配色","ロゴ制作","印刷入稿","ZINE・冊子制作"],
+  post  :["SNS運用","Instagram","Threads・X","記事を書く","台本づくり","ライブ配信"],
+  sell  :["ネットショップ運営","商品ページ作成","値づけ","梱包・発送","接客・顧客対応","イベント出店"],
+  buy   :["目利き","仕入れ交渉","展示会まわり","輸入手続き","海外メーカーとの取引","市場リサーチ"],
+  work  :["営業","商談・交渉","見積・原価計算","在庫管理","経理・簿記","資料作成","段取り・進行管理","人に教える"],
+  life  :["料理","車の運転","収納・整理","子育て","体力づくり","DIY"],
+  other :["Excel・スプレッドシート","Notion","AIの使いこなし","タイピング","車の整備","ラジオ・話す"],
 };
 const SKILL_LEVELS = ["かじった", "できる", "人に教えられる"];
 
@@ -787,6 +816,20 @@ function renderSkills(p){
         Object.entries(SKILL_CATS).map(([k,c]) => `<option value="${k}">${c.name}</option>`).join("")}</select>
       <button class="btn yellow" data-add="skill">追加</button>
       <div class="form-label">段階のボタンを押すと「かじった → できる → 人に教えられる」と変わります。</div>
+    </div>
+
+    <div class="sk-sug">
+      <h3>よくあるスキルから選ぶ</h3>
+      <p>押すとその分類で追加されます。あとから分類も段階も変えられます。</p>
+      ${Object.entries(SKILL_SUGGESTIONS).map(([k, names]) => `
+        <div class="sug-group">
+          <div class="sug-cat">${SKILL_CATS[k].name}</div>
+          <div class="sug-chips">${names.map(n => {
+            const added = S.skills.some(x => x.name === n);
+            return `<button class="sug ${added ? "added" : ""}" ${added ? "disabled" : `data-sug="${k}:${n}"`}
+              style="${added ? "" : `border-left:8px solid ${SKILL_CATS[k].color}`}">${added ? "✓ " : "＋ "}${n}</button>`;
+          }).join("")}</div>
+        </div>`).join("")}
     </div>`;
 }
 
@@ -1053,6 +1096,15 @@ document.addEventListener("click", ev => {
   if (t.dataset.nres){
     const [id, key] = t.dataset.nres.split(":");
     return toggleNotionRes(id, key);
+  }
+  if (t.dataset.sug){
+    const i = t.dataset.sug.indexOf(":");
+    const cat = t.dataset.sug.slice(0, i), name = t.dataset.sug.slice(i + 1);
+    if (!S.skills.some(x => x.name === name)){
+      S.skills.push({id:uid(), name, cat, level:0});
+      save(); toast(`スキル「${esc(name)}」を追加しました`);
+    }
+    return renderPanel();
   }
   if (t.dataset.sklv){
     const sk = S.skills.find(x => x.id === t.dataset.sklv);
