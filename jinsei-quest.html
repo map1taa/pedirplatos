@@ -4,249 +4,305 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>人生クエスト</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Antique&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=DotGothic16&display=swap">
 <style>
 :root{
-  --bg:#f5f2e8; --bg-2:#fffdf6; --panel:#fffefa;
-  --edge:#ddd6c2; --ink:#25302c; --muted:#77837b; --on-accent:#fffdf6;
-  --amber:#b87a1c; --leaf:#4a8a3d; --rust:#bd4a2c;
-  --human:#2a6ba8; --social:#b87a1c; --money:#4a8a3d; --asset:#6a55a3; --time:#c25f26;
-  --well:#efeadb;
-  --disp:"Zen Antique","Hiragino Mincho ProN",serif;
-  --body:"Zen Kaku Gothic New","Hiragino Sans",sans-serif;
-  --dot:"DotGothic16",monospace;
+  --bg-color:#fffae6;      /* 温かみのあるポップなイエローベージュ */
+  --card-bg:#ffffff;
+  --text-main:#1a1a1a;
+  --text-sub:#4a4a4a;
+  --border-main:#1a1a1a;   /* ポップさを際立たせる太めの黒線 */
+
+  --color-pink:#ff6b8b;
+  --color-blue:#4dabf7;
+  --color-orange:#ff922b;
+  --color-yellow:#fcc419;
+  --color-green:#40c057;
+  --color-purple:#b197fc;
+
+  /* 資本の色 */
+  --human:#4dabf7; --social:#fcc419; --money:#40c057; --asset:#ff6b8b; --time:#ff922b;
 }
 *{box-sizing:border-box}
-html,body{margin:0}
+html{scroll-behavior:smooth}
 body{
-  background:
-    radial-gradient(ellipse at 12% 0%, #fffdf4 0%, transparent 55%),
-    radial-gradient(ellipse at 88% 100%, #eef2e6 0%, transparent 55%),
-    var(--bg);
-  color:var(--ink); font-family:var(--body); line-height:1.6;
-  padding:26px 16px 60px; min-height:100vh;
+  font-family:"Helvetica Neue", Arial, "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+  background-color:var(--bg-color);
+  color:var(--text-main);
+  margin:0; padding:0; line-height:1.6; font-weight:700;
 }
-.wrap{max-width:1180px;margin:0 auto}
-h1,h2,h3{margin:0}
-button{font-family:inherit}
+.container{max-width:900px;margin:0 auto;padding:40px 20px 60px}
 
-.top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px;
-  border-bottom:1px solid var(--edge);padding-bottom:14px}
-.brand h1{font-family:var(--disp);font-size:clamp(1.7rem,4vw,2.4rem);letter-spacing:.16em}
-.brand p{margin:4px 0 0;color:var(--muted);font-size:.85rem;max-width:44em}
-.today{font-family:var(--dot);font-size:.78rem;letter-spacing:.16em;color:var(--amber);text-align:right}
-
-.grid{display:grid;grid-template-columns:274px minmax(0,1fr) 288px;gap:18px;align-items:start}
-@media(max-width:1040px){
-  .grid{grid-template-columns:1fr}
-  /* 1カラムのときは、まずクエストを見せる */
-  main{order:-1}
+/* ── カード共通 ── */
+.card{
+  background:var(--card-bg); border:3px solid var(--border-main); border-radius:24px;
+  padding:26px; box-shadow:8px 8px 0 var(--border-main); margin-bottom:34px;
 }
+.card > h2{
+  font-size:1.3rem; font-weight:900; margin:0 0 18px;
+  display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+  border-bottom:3px dashed var(--border-main); padding-bottom:12px;
+}
+.card > h2 span{font-size:.9rem;font-weight:700;color:var(--text-sub)}
 
-.card{background:var(--panel);border:1px solid var(--edge);border-radius:4px;padding:14px 15px;
-  box-shadow:0 1px 2px rgba(60,50,30,.05)}
-.card + .card{margin-top:16px}
-.card h2{font-family:var(--dot);font-size:.72rem;letter-spacing:.26em;color:var(--amber);font-weight:400;
-  margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:8px}
-.card h2 span{letter-spacing:normal;font-family:var(--body)}
-.side{position:static}
-/* 3カラムが並び、縦にも余裕があるときだけ左右を追従させる
-   （狭い画面で貼りつくと、下のクエスト一覧を覆ってしまうため） */
-@media (min-width:1041px) and (min-height:860px){
-  .side{position:sticky;top:16px}
+/* ── ヘッダー ── */
+header{text-align:center}
+header h1{font-size:2.4rem;margin:0;font-weight:900;letter-spacing:.02em}
+.lead{
+  font-size:1.05rem;font-weight:700;color:var(--text-main);margin:10px 0 0;display:inline-block;
+  background:var(--color-yellow);padding:2px 14px;border-radius:8px;border:2px solid var(--border-main);
+}
+.site-desc{font-size:.95rem;color:var(--text-sub);margin:15px auto 0;max-width:600px;font-weight:700}
+.today{
+  display:inline-block;margin-top:14px;font-size:.85rem;font-weight:800;
+  background:var(--card-bg);border:2px solid var(--border-main);border-radius:30px;padding:3px 16px;
+  box-shadow:2px 2px 0 var(--border-main);
 }
 
-.lv{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
-.lv small{font-family:var(--dot);font-size:.7rem;letter-spacing:.2em;color:var(--muted)}
-.lv b{font-family:var(--dot);font-size:2.6rem;line-height:1;color:var(--amber);font-variant-numeric:tabular-nums}
-.bar{height:9px;background:var(--well);border:1px solid var(--edge);border-radius:99px;overflow:hidden}
-.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--leaf),var(--amber));transition:width .5s ease}
-.bar-note{display:flex;justify-content:space-between;font-family:var(--dot);font-size:.68rem;color:var(--muted);
-  margin-top:5px;font-variant-numeric:tabular-nums}
-.gold{margin-top:12px;display:flex;justify-content:space-between;align-items:baseline;
-  border-top:1px dotted var(--edge);padding-top:10px;font-size:.85rem}
-.gold b{font-family:var(--dot);font-size:1.3rem;color:var(--amber);font-variant-numeric:tabular-nums}
+/* ── ステータス ── */
+.status-top{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:16px}
+.lv-badge{
+  background:var(--color-yellow);border:3px solid var(--border-main);border-radius:16px;
+  padding:8px 18px;box-shadow:4px 4px 0 var(--border-main);display:flex;align-items:baseline;gap:8px;
+}
+.lv-badge small{font-size:.8rem;font-weight:800}
+.lv-badge b{font-size:2rem;font-weight:900;line-height:1;font-variant-numeric:tabular-nums}
+.lv-title{font-weight:900;font-size:1.1rem}
+.pill{
+  border:2px solid var(--border-main);border-radius:30px;padding:4px 14px;font-weight:800;font-size:.9rem;
+  box-shadow:2px 2px 0 var(--border-main);background:var(--card-bg);white-space:nowrap;
+}
+.pill b{font-variant-numeric:tabular-nums;font-weight:900}
+.pill.gold{background:var(--color-orange)}
+.pill.done{background:var(--color-blue)}
+.bar{
+  height:16px;background:#f1f3f5;border:3px solid var(--border-main);border-radius:30px;overflow:hidden;
+}
+.bar i{display:block;height:100%;background:var(--color-green);transition:width .4s ease}
+.bar-note{display:flex;justify-content:space-between;font-size:.8rem;font-weight:800;margin-top:6px;
+  font-variant-numeric:tabular-nums;color:var(--text-sub)}
 
-.caps{display:flex;flex-direction:column;gap:10px}
-.cap{font-size:.8rem}
-.cap-top{display:flex;justify-content:space-between;align-items:baseline;gap:6px}
-.cap-top b{font-family:var(--dot);font-size:.9rem;color:var(--ink);font-variant-numeric:tabular-nums}
-.cap .sbar{height:7px;background:var(--well);border-radius:99px;overflow:hidden;margin-top:4px}
-.cap .sbar i{display:block;height:100%;transition:width .4s ease}
-.cap small{color:var(--muted);font-size:.68rem}
+.caps{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:20px}
+@media(max-width:640px){.caps{grid-template-columns:repeat(2,1fr)}}
+.cap{border:2px solid var(--border-main);border-radius:14px;padding:10px 12px;background:#fafafa}
+.cap-name{font-size:.85rem;font-weight:800;display:flex;align-items:center;gap:6px}
+.cap-name .dot{width:12px;height:12px;border-radius:50%;border:2px solid var(--border-main);flex:none}
+.cap-val{font-size:1.5rem;font-weight:900;font-variant-numeric:tabular-nums;line-height:1.2}
+.cap small{display:block;font-size:.7rem;color:var(--text-sub);font-weight:700;line-height:1.35}
 
-.tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
-.tab{background:transparent;border:1px solid var(--edge);color:var(--muted);
-  padding:7px 14px;border-radius:99px;font-size:.82rem;cursor:pointer}
-.tab:hover{color:var(--ink);border-color:var(--amber)}
-.tab[aria-selected="true"]{background:var(--amber);border-color:var(--amber);color:var(--on-accent);font-weight:700}
-.tab:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+/* ── タブ ── */
+.tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:26px}
+.tab{
+  background:var(--card-bg);border:3px solid var(--border-main);border-radius:12px;
+  padding:8px 18px;font-weight:800;font-size:.95rem;cursor:pointer;color:var(--text-main);
+  box-shadow:3px 3px 0 var(--border-main);transition:transform .1s ease, box-shadow .1s ease;
+}
+.tab:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--border-main)}
+.tab[aria-selected="true"]{background:var(--color-yellow)}
+.tab:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{
+  outline:3px solid var(--color-blue);outline-offset:2px}
 
-.items{display:flex;flex-direction:column;gap:8px}
-.item{display:flex;align-items:center;gap:11px;background:var(--bg-2);border:1px solid var(--edge);
-  border-left:4px solid var(--edge);border-radius:3px;padding:10px 12px}
-.item.done{opacity:.5}
-.item.done .t{text-decoration:line-through;color:var(--muted)}
-.item .name{font-size:.94rem;flex:1;min-width:0}
-.item .meta{font-size:.68rem;color:var(--muted);display:flex;gap:6px;flex-wrap:wrap;margin-top:3px;align-items:center}
-.tag{border:1px solid var(--edge);border-radius:99px;padding:1px 8px;font-family:var(--dot);letter-spacing:.06em}
-.res{border-radius:99px;padding:1px 8px;font-size:.68rem;border:1px solid}
-.streak{color:var(--rust);font-family:var(--dot)}
-.check{width:30px;height:30px;flex:none;border-radius:50%;border:2px solid var(--leaf);
-  background:transparent;color:var(--leaf);font-size:1rem;cursor:pointer;line-height:1}
-.check:hover{background:rgba(74,138,61,.14)}
-.item.done .check{border-color:var(--muted);color:var(--muted)}
-.del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;padding:2px 4px;line-height:1}
-.del:hover{color:var(--rust)}
-.empty{color:var(--muted);font-size:.85rem;padding:14px 2px;text-align:center;border:1px dashed var(--edge);border-radius:3px}
+/* ── 項目 ── */
+.items{display:flex;flex-direction:column;gap:14px}
+.item{
+  display:flex;align-items:center;gap:14px;background:var(--card-bg);
+  border:2px solid var(--border-main);border-left-width:10px;border-radius:14px;padding:12px 14px;
+  box-shadow:3px 3px 0 var(--border-main);
+}
+.item.done{background:#f1f3f5;opacity:.75}
+.item.done .t{text-decoration:line-through;color:var(--text-sub)}
+.item .name{flex:1;min-width:0;font-size:1rem;font-weight:800}
+.item .meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:6px}
+.tag{border:2px solid var(--border-main);border-radius:30px;padding:0 10px;font-size:.72rem;font-weight:800;
+  background:#f8f9fa;font-variant-numeric:tabular-nums}
+.res{border:2px solid var(--border-main);border-radius:30px;padding:1px 10px;font-size:.72rem;font-weight:800;
+  color:var(--text-main);background:var(--card-bg);display:inline-block}
+.streak{font-size:.72rem;font-weight:800;color:#e8590c}
+.check{
+  width:38px;height:38px;flex:none;border-radius:12px;border:3px solid var(--border-main);
+  background:var(--color-green);color:#fff;font-size:1.1rem;font-weight:900;cursor:pointer;
+  box-shadow:2px 2px 0 var(--border-main);line-height:1;
+}
+.check:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--border-main)}
+.item.done .check{background:#ced4da;color:var(--text-sub)}
+.del{background:none;border:none;color:var(--text-sub);cursor:pointer;font-size:1.1rem;font-weight:900;padding:2px 4px}
+.del:hover{color:#e03131}
+.empty{
+  border:3px dashed var(--border-main);border-radius:14px;padding:18px;text-align:center;
+  font-weight:700;color:var(--text-sub);background:#fafafa;
+}
 
-.boss{background:var(--bg-2);border:1px solid var(--edge);border-radius:3px;padding:13px 14px}
-.boss + .boss{margin-top:10px}
-.boss-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
-.boss-name{font-family:var(--disp);font-size:1.12rem;letter-spacing:.06em}
-.boss-hp{height:12px;background:var(--well);border:1px solid var(--edge);border-radius:2px;overflow:hidden;margin:9px 0 6px}
-.boss-hp i{display:block;height:100%;background:linear-gradient(90deg,var(--rust),#e8875f);transition:width .45s ease}
+/* ── ボス ── */
+.boss{background:#fff;border:3px solid var(--border-main);border-radius:16px;padding:16px;
+  box-shadow:4px 4px 0 var(--border-main)}
+.boss + .boss{margin-top:14px}
+.boss-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.boss-name{font-size:1.25rem;font-weight:900}
+.boss-hp{height:18px;background:#f1f3f5;border:3px solid var(--border-main);border-radius:30px;
+  overflow:hidden;margin:10px 0 8px}
+.boss-hp i{display:block;height:100%;background:var(--color-pink);transition:width .4s ease}
 .boss-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-.boss-num{font-family:var(--dot);font-size:.72rem;color:var(--muted);font-variant-numeric:tabular-nums}
-.boss.slain{opacity:.55}
-.boss.slain .boss-name::after{content:" 討伐済";font-family:var(--dot);font-size:.66rem;color:var(--leaf);letter-spacing:.1em}
+.boss-num{font-size:.78rem;font-weight:800;color:var(--text-sub);font-variant-numeric:tabular-nums}
+.boss.slain{background:#f1f3f5;opacity:.85}
+.boss.slain .boss-name::after{content:" 討伐済";font-size:.75rem;color:var(--color-green)}
 
-.form{margin-top:14px;border-top:1px dotted var(--edge);padding-top:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.form input[type=text]{flex:1 1 200px;min-width:0}
-.form-label{width:100%;font-family:var(--dot);font-size:.68rem;letter-spacing:.2em;color:var(--muted);margin-bottom:-2px}
-input,select{background:#fffdf6;border:1px solid var(--edge);color:var(--ink);
-  border-radius:3px;padding:8px 10px;font-size:.86rem;font-family:inherit}
-input[type=number]{width:82px;font-family:var(--dot)}
-.btn{background:var(--amber);border:1px solid var(--amber);color:var(--on-accent);font-weight:700;
-  border-radius:3px;padding:8px 15px;font-size:.86rem;cursor:pointer}
-.btn:hover{background:#cf8c26}
-.btn.ghost{background:transparent;color:var(--amber);font-weight:500}
-.btn.ghost:hover{background:rgba(184,122,28,.12)}
-.btn.small{padding:5px 11px;font-size:.78rem}
-.btn.danger{background:transparent;border-color:var(--rust);color:var(--rust)}
-.btn.danger:hover{background:rgba(189,74,44,.12)}
+/* ── フォーム ── */
+.form{margin-top:20px;border-top:3px dashed var(--border-main);padding-top:18px;
+  display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.form input[type=text]{flex:1 1 220px;min-width:0}
+.form-label{width:100%;font-size:.8rem;font-weight:800;color:var(--text-sub);margin-bottom:-2px}
+input,select{
+  background:#fff;border:2px solid var(--border-main);color:var(--text-main);border-radius:10px;
+  padding:10px 12px;font-size:.9rem;font-family:inherit;font-weight:700;
+}
+input[type=number]{width:90px;font-variant-numeric:tabular-nums}
+.btn{
+  background:var(--color-blue);color:var(--text-main);border:3px solid var(--border-main);border-radius:12px;
+  padding:10px 24px;font-weight:800;font-size:.95rem;cursor:pointer;
+  box-shadow:4px 4px 0 var(--border-main);transition:transform .1s ease, box-shadow .1s ease;
+}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--border-main);background:#339af0}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--border-main)}
+.btn:disabled{background:#e9ecef;color:#adb5bd;box-shadow:2px 2px 0 #adb5bd;border-color:#adb5bd;
+  cursor:default;transform:none}
+.btn.yellow{background:var(--color-yellow)}
+.btn.yellow:hover{background:#ffd43b}
+.btn.small{padding:6px 16px;font-size:.82rem;border-width:2px;box-shadow:2px 2px 0 var(--border-main)}
+.btn.danger{background:#fff;color:#e03131}
+.btn.danger:hover{background:#ffe3e3}
 
-/* 残るもの（6項目）のトグル */
-.flags{display:flex;flex-wrap:wrap;gap:6px}
-.flag{background:transparent;border:1px solid var(--edge);color:var(--muted);border-radius:99px;
-  padding:4px 11px;font-size:.78rem;cursor:pointer;display:inline-flex;align-items:center;gap:5px}
-.flag:hover{color:var(--ink)}
-.flag[aria-pressed="true"]{color:var(--on-accent);font-weight:700}
-.flag .dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+/* 6項目トグル */
+.flags{display:flex;flex-wrap:wrap;gap:8px}
+.flag{
+  background:#fff;border:2px solid var(--border-main);border-radius:30px;padding:6px 14px;
+  font-weight:800;font-size:.82rem;cursor:pointer;color:var(--text-main);
+  box-shadow:2px 2px 0 var(--border-main);
+}
+.flag:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--border-main)}
 
-.notice{background:#fbf7ea;border:1px solid var(--edge);border-left:4px solid var(--amber);
-  border-radius:3px;padding:12px 14px;font-size:.85rem;color:#4d5a53}
-.notice b{color:var(--ink)}
-.notice.bad{border-left-color:var(--rust)}
-.pagepick{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}
-.pagepick button{background:transparent;border:1px solid var(--edge);color:var(--muted);
-  border-radius:99px;padding:5px 12px;font-size:.8rem;cursor:pointer}
-.pagepick button:hover{border-color:var(--amber);color:var(--ink)}
-.pagepick button[aria-pressed="true"]{background:var(--amber);border-color:var(--amber);color:var(--on-accent);font-weight:700}
-.sect{font-family:var(--dot);font-size:.7rem;letter-spacing:.2em;color:var(--amber);margin:14px 0 7px}
+/* ── Notion ── */
+.notice{
+  background:#fff4e6;border:3px solid var(--border-main);border-radius:16px;padding:18px;
+  font-weight:700;font-size:.92rem;box-shadow:4px 4px 0 var(--border-main);
+}
+.notice.bad{background:#fff5f5}
+.pagepick{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.pagepick button{
+  background:#fff;border:2px solid var(--border-main);border-radius:10px;padding:7px 14px;
+  font-weight:800;font-size:.85rem;cursor:pointer;box-shadow:2px 2px 0 var(--border-main);color:var(--text-main);
+}
+.pagepick button[aria-pressed="true"]{background:var(--color-yellow)}
+.sect{
+  display:inline-block;background:var(--border-main);color:#fff;font-weight:800;font-size:.85rem;
+  padding:2px 12px;border-radius:6px;margin:22px 0 10px;
+}
 .sect:first-of-type{margin-top:4px}
-.src{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;
-  border-bottom:1px dotted var(--edge);padding-bottom:9px;margin-bottom:6px}
-.src .name a{color:var(--amber)}
+.src{
+  display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+  border-bottom:3px dashed var(--border-main);padding-bottom:14px;margin-bottom:6px;font-weight:800;
+}
+.src a{color:var(--text-main);text-decoration:underline;text-underline-offset:3px}
+.src a:hover{color:#1c7ed6}
 .busy{opacity:.5;pointer-events:none}
 
-/* 攻略法タブ */
-figure{margin:0 0 16px}
-figure svg{width:100%;height:auto;color:var(--ink)}
-figcaption{font-size:.78rem;color:var(--muted);margin-top:8px;text-align:center}
-.route{border-top:1px dotted var(--edge);padding-top:12px;margin-top:6px}
-.route h3{font-family:var(--disp);font-size:1rem;letter-spacing:.08em;margin-bottom:6px}
-.route p{font-size:.86rem;margin:0 0 8px;color:#4d5a53}
-.route ul{margin:0 0 10px;padding-left:1.2em;font-size:.84rem;color:#4d5a53}
-.route li{margin-bottom:3px}
-.axes{display:flex;flex-direction:column;gap:7px;margin-top:6px}
-.axis{display:flex;align-items:center;gap:9px;font-size:.85rem;background:var(--bg-2);
-  border:1px solid var(--edge);border-left:4px solid var(--edge);border-radius:3px;padding:8px 11px}
-.axis b{font-family:var(--dot);font-size:.8rem;font-variant-numeric:tabular-nums;margin-left:auto;color:var(--muted)}
+/* ── 攻略法 ── */
+figure{margin:0 0 22px}
+figure svg{width:100%;height:auto;color:var(--text-main)}
+figcaption{font-size:.85rem;color:var(--text-sub);margin-top:12px;text-align:center;font-weight:700}
+.route{border-top:3px dashed var(--border-main);padding-top:18px;margin-top:18px}
+.route h3{font-size:1.15rem;font-weight:900;margin:0 0 10px}
+.route p{font-size:.92rem;margin:0 0 12px}
+.route ul{margin:0;padding-left:22px;font-size:.9rem}
+.route li{margin-bottom:8px}
+.axes{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.axis{
+  display:flex;align-items:center;gap:12px;font-size:.92rem;background:#fafafa;
+  border:2px solid var(--border-main);border-radius:12px;padding:10px 14px;
+}
+.axis .num{
+  width:30px;height:30px;flex:none;border:2px solid var(--border-main);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.85rem;
+}
+.axis b{margin-left:auto;font-weight:900;font-variant-numeric:tabular-nums;white-space:nowrap}
 
-.reward{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dotted var(--edge)}
+/* ── ごほうび・記録 ── */
+.reward{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:2px dashed #ced4da;flex-wrap:wrap}
 .reward:last-of-type{border-bottom:none}
-.reward .name{flex:1;font-size:.88rem}
-.reward .cost{font-family:var(--dot);font-size:.8rem;color:var(--amber);font-variant-numeric:tabular-nums}
-.log{max-height:250px;overflow-y:auto}
-.log ul{margin:0;padding:0}
-.log li{list-style:none;font-size:.78rem;color:#4d5a53;padding:5px 0;border-bottom:1px dotted var(--edge);display:flex;gap:8px}
+.reward .name{flex:1;min-width:120px;font-weight:800}
+.reward .cost{font-weight:900;background:var(--color-yellow);border:2px solid var(--border-main);
+  border-radius:30px;padding:1px 12px;font-size:.82rem;font-variant-numeric:tabular-nums}
+.log{max-height:260px;overflow-y:auto}
+.log ul{margin:0;padding:0;list-style:none}
+.log li{font-size:.85rem;padding:8px 0;border-bottom:2px dashed #dee2e6;display:flex;gap:12px}
 .log li:last-child{border-bottom:none}
-.log time{font-family:var(--dot);font-size:.68rem;color:var(--muted);flex:none}
+.log time{font-size:.78rem;color:var(--text-sub);flex:none;font-family:monospace;padding-top:2px}
+.log::-webkit-scrollbar{width:6px}
+.log::-webkit-scrollbar-thumb{background:#ccc;border-radius:4px}
 
-.toasts{position:fixed;right:16px;bottom:16px;display:flex;flex-direction:column;gap:8px;z-index:40;max-width:320px}
-.toast{background:var(--panel);border:1px solid var(--amber);border-left:5px solid var(--amber);
-  padding:11px 15px;border-radius:3px;font-size:.86rem;box-shadow:0 8px 22px rgba(60,50,30,.18);animation:rise .3s ease}
-.toast.level{border-color:var(--leaf);border-left-color:var(--leaf)}
-.toast b{font-family:var(--disp);letter-spacing:.08em}
-@keyframes rise{from{opacity:0;transform:translateY(10px)}}
+/* ── トースト ── */
+.toasts{position:fixed;right:20px;bottom:20px;display:flex;flex-direction:column;gap:12px;z-index:40;max-width:330px}
+.toast{
+  background:var(--card-bg);border:3px solid var(--border-main);border-radius:16px;padding:14px 18px;
+  font-size:.9rem;font-weight:800;box-shadow:5px 5px 0 var(--border-main);animation:rise .25s ease;
+}
+.toast.level{background:var(--color-yellow)}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-footer{margin-top:26px;text-align:center;color:var(--muted);font-size:.74rem;font-family:var(--dot);letter-spacing:.14em}
-footer button{background:none;border:none;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:.74rem}
-footer button:hover{color:var(--rust)}
+
+footer{text-align:center;margin-top:20px;font-size:.9rem;font-weight:700;color:var(--text-sub)}
+footer button{background:none;border:none;color:var(--text-sub);text-decoration:underline;
+  text-underline-offset:4px;cursor:pointer;font-size:.9rem;font-weight:700;font-family:inherit}
+footer button:hover{color:#e03131}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="top">
-    <div class="brand">
-      <h1>人生クエスト</h1>
-      <p>唯一の元手である「時間」を、人的資本・社会的資本・金融資本・知的資産に変えて、最後に時間を買い戻すためのゲーム。やったことに「何が残ったか」を記録していきます。</p>
-    </div>
+<div class="container">
+  <header class="card">
+    <h1>人生クエスト</h1>
+    <p class="lead">Life Capital Quest</p>
+    <p class="site-desc">唯一の元手である「時間」を、人的資本・社会的資本・金融資本・知的資産に変えて、最後に時間を買い戻すためのゲーム。やったことに「何が残ったか」を記録していきます。</p>
     <div class="today" id="today"></div>
+  </header>
+
+  <section class="card">
+    <h2>ステータス <span id="cap-total"></span></h2>
+    <div class="status-top">
+      <div class="lv-badge"><small>Lv.</small><b id="level">1</b></div>
+      <div class="lv-title" id="title-name"></div>
+      <div class="pill gold">ゴールド <b id="gold">0</b></div>
+      <div class="pill done">今日の達成 <b id="today-done">0</b></div>
+    </div>
+    <div class="bar"><i id="exp-bar" style="width:0%"></i></div>
+    <div class="bar-note"><span>EXP</span><span id="exp-note">0 / 80</span></div>
+    <div class="caps" id="caps"></div>
+  </section>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" data-tab="daily" aria-selected="true">日課</button>
+    <button class="tab" role="tab" data-tab="quest" aria-selected="false">クエスト</button>
+    <button class="tab" role="tab" data-tab="boss" aria-selected="false">ボス</button>
+    <button class="tab" role="tab" data-tab="notion" aria-selected="false">Notion</button>
+    <button class="tab" role="tab" data-tab="map" aria-selected="false">攻略法</button>
   </div>
 
-  <div class="grid">
-    <aside class="side">
-      <section class="card">
-        <h2>status</h2>
-        <div class="lv"><small>Lv.</small><b id="level">1</b><small id="title-name"></small></div>
-        <div class="bar"><i id="exp-bar" style="width:0%"></i></div>
-        <div class="bar-note"><span>EXP</span><span id="exp-note">0 / 80</span></div>
-        <div class="gold"><span>ゴールド</span><b id="gold">0</b></div>
-        <div class="gold" style="border-top:none;padding-top:2px"><span>今日の達成</span><b id="today-done">0</b></div>
-      </section>
+  <section class="card" id="panel"></section>
 
-      <section class="card">
-        <h2>資本 <span id="cap-total"></span></h2>
-        <div class="caps" id="caps"></div>
-      </section>
-    </aside>
+  <section class="card">
+    <h2>ごほうび交換所 <span>ゴールドで自分にごほうびを</span></h2>
+    <div id="rewards"></div>
+    <div class="form">
+      <input type="text" id="r-name" placeholder="ごほうび（例：映画を観る）" maxlength="40">
+      <input type="number" id="r-cost" value="50" min="1" max="9999" aria-label="必要ゴールド">
+      <button class="btn yellow" data-add="reward">追加</button>
+    </div>
+  </section>
 
-    <main>
-      <div class="tabs" role="tablist">
-        <button class="tab" role="tab" data-tab="daily" aria-selected="true">日課</button>
-        <button class="tab" role="tab" data-tab="quest" aria-selected="false">クエスト</button>
-        <button class="tab" role="tab" data-tab="boss" aria-selected="false">ボス</button>
-        <button class="tab" role="tab" data-tab="notion" aria-selected="false">Notion</button>
-        <button class="tab" role="tab" data-tab="map" aria-selected="false">攻略法</button>
-      </div>
-      <section class="card" id="panel"></section>
-    </main>
-
-    <aside class="side">
-      <section class="card">
-        <h2>ごほうび交換所</h2>
-        <div id="rewards"></div>
-        <div class="form">
-          <input type="text" id="r-name" placeholder="ごほうび（例：映画を観る）" maxlength="40">
-          <input type="number" id="r-cost" value="50" min="1" max="9999" aria-label="必要ゴールド">
-          <button class="btn small" data-add="reward">追加</button>
-        </div>
-      </section>
-
-      <section class="card">
-        <h2>冒険の記録</h2>
-        <div class="log"><ul id="log"></ul></div>
-      </section>
-    </aside>
-  </div>
+  <section class="card">
+    <h2>冒険の記録</h2>
+    <div class="log"><ul id="log"></ul></div>
+  </section>
 
   <footer>
-    データはブラウザに自動保存 ·
-    <button id="reset">すべて消してはじめから</button>
+    <p>データはブラウザに自動保存 · <button id="reset">すべて消してはじめから</button></p>
   </footer>
 </div>
 <div class="toasts" id="toasts"></div>
@@ -451,17 +507,16 @@ function buy(id){
 /* ── 描画 ──────────────────────────────────────── */
 const el = id => document.getElementById(id);
 const resChips = res => (res && res.length
-  ? res.map(k => `<span class="res" style="color:${resColor(k)};border-color:${resColor(k)}">${RES[k].name}</span>`).join("")
-  : `<span class="res" style="color:var(--muted);border-color:var(--edge)">消費</span>`);
+  ? res.map(k => `<span class="res" style="background:${resColor(k)}">${RES[k].name}</span>`).join("")
+  : `<span class="res" style="background:#e9ecef;color:var(--text-sub)">消費</span>`);
 
 function flagRow(kind){
   return `<div class="form-label">この行動で残るもの（選ぶほどEXPと資本が増える）</div>
     <div class="flags">${RESIDUES.map(r => {
       const on = drafts[kind].has(r.key);
       return `<button class="flag" data-flag="${kind}:${r.key}" aria-pressed="${on}"
-        style="${on ? `background:${CAPITALS[r.caps[0]].color};border-color:${CAPITALS[r.caps[0]].color}` : ""}"
-        title="${r.full} → ${r.caps.map(c => CAPITALS[c].name).join("・")}">
-        <span class="dot" style="background:${on ? "var(--on-accent)" : CAPITALS[r.caps[0]].color}"></span>${r.n}. ${r.name}</button>`;
+        style="${on ? `background:${CAPITALS[r.caps[0]].color}` : ""}"
+        title="${r.full} → ${r.caps.map(c => CAPITALS[c].name).join("・")}">${on ? "✓ " : ""}${r.n}. ${r.name}</button>`;
     }).join("")}</div>`;
 }
 
@@ -477,12 +532,12 @@ function renderStatus(){
   el("gold").textContent = S.gold.toLocaleString("ja-JP");
   el("today-done").textContent = S.dailies.filter(d => d.last === todayKey()).length + " / " + S.dailies.length;
 
-  const vals = Object.values(S.capitals), max = Math.max(8, ...vals);
-  el("cap-total").textContent = "合計 " + vals.reduce((a,b) => a+b, 0);
+  const vals = Object.values(S.capitals);
+  el("cap-total").textContent = "資本の合計 " + vals.reduce((a,b) => a+b, 0);
   el("caps").innerHTML = Object.entries(CAPITALS).map(([k,c]) => `
     <div class="cap">
-      <div class="cap-top"><span>${c.name}</span><b>${S.capitals[k]||0}</b></div>
-      <div class="sbar"><i style="width:${(S.capitals[k]||0)/max*100}%;background:${c.color}"></i></div>
+      <div class="cap-name"><span class="dot" style="background:${c.color}"></span>${c.name}</div>
+      <div class="cap-val">${S.capitals[k]||0}</div>
       <small>${c.note}</small>
     </div>`).join("");
 }
@@ -492,7 +547,7 @@ const DIFF_SELECT = id => `<select id="${id}" aria-label="難易度">${
 
 function itemRow(x, kind, done){
   const p = payout(x.diff, x.res);
-  return `<div class="item ${done?"done":""}" style="border-left-color:${x.res && x.res.length ? resColor(x.res[0]) : "var(--edge)"}">
+  return `<div class="item ${done?"done":""}" style="border-left-color:${x.res && x.res.length ? resColor(x.res[0]) : "var(--border-main)"}">
     <button class="check" data-${kind}="${x.id}" aria-label="${esc(x.name)}を達成">${done?"✓":""}</button>
     <div class="name"><span class="t">${esc(x.name)}</span>
       <div class="meta">${resChips(x.res)}
@@ -508,7 +563,7 @@ function renderPanel(){
 
   if (tab === "daily"){
     const t = todayKey();
-    p.innerHTML = `<h2>日課 <span style="color:var(--muted)">毎日リセット・連続でボーナス</span></h2>
+    p.innerHTML = `<h2>日課 <span style="color:var(--text-sub)">毎日リセット・連続でボーナス</span></h2>
       <div class="items">${S.dailies.length
         ? S.dailies.map(d => itemRow(d, "daily", d.last === t)).join("")
         : `<p class="empty">毎日くり返したいことを登録しよう。</p>`}</div>
@@ -523,7 +578,7 @@ function renderPanel(){
 
   if (tab === "quest"){
     const open = S.quests.filter(q => !q.done), done = S.quests.filter(q => q.done);
-    p.innerHTML = `<h2>クエスト <span style="color:var(--muted)">一度きりのやること</span></h2>
+    p.innerHTML = `<h2>クエスト <span style="color:var(--text-sub)">一度きりのやること</span></h2>
       <div class="items">${open.length
         ? open.map(q => itemRow(q, "quest", false)).join("")
         : `<p class="empty">やることを登録すると経験値と資本になります。</p>`}</div>
@@ -539,7 +594,7 @@ function renderPanel(){
   }
 
   if (tab === "boss"){
-    p.innerHTML = `<h2>ボス <span style="color:var(--muted)">回数で削る大きな目標</span></h2>
+    p.innerHTML = `<h2>ボス <span style="color:var(--text-sub)">回数で削る大きな目標</span></h2>
       <div>${S.bosses.length ? S.bosses.map(b => `
         <div class="boss ${b.slain?"slain":""}">
           <div class="boss-head"><span class="boss-name">${esc(b.name)}</span>
@@ -567,19 +622,20 @@ function renderPanel(){
 
 /* ── 攻略法タブ ─────────────────────────────────── */
 const box = (x,y,w,h,label,note,val,color) => `
-  <rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="none" stroke="${color||"currentColor"}" stroke-width="1.5"/>
-  <text x="${x+w/2}" y="${y+26}" text-anchor="middle" font-size="19" fill="currentColor">${label}</text>
-  <text x="${x+w/2}" y="${y+47}" text-anchor="middle" font-size="13" fill="currentColor" opacity=".65">${note}</text>
-  ${val !== null ? `<text x="${x+w/2}" y="${y+h-10}" text-anchor="middle" font-size="15" fill="${color||"currentColor"}">${val}</text>` : ""}`;
+  <rect x="${x+5}" y="${y+5}" width="${w}" height="${h}" rx="14" fill="currentColor"/>
+  <rect x="${x}" y="${y}" width="${w}" height="${h}" rx="14" fill="${color||"#ffffff"}" stroke="currentColor" stroke-width="3"/>
+  <text x="${x+w/2}" y="${y+27}" text-anchor="middle" font-size="19" font-weight="900" fill="currentColor">${label}</text>
+  <text x="${x+w/2}" y="${y+48}" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor" opacity=".75">${note}</text>
+  ${val !== null ? `<text x="${x+w/2}" y="${y+h-11}" text-anchor="middle" font-size="16" font-weight="900" fill="currentColor">${val}</text>` : ""}`;
 
 const arrow = (x1,y1,x2,y2,label,lx,ly,color) => `
-  <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${color||"currentColor"}" stroke-width="1.5"
-    opacity="${color?1:.5}" marker-end="url(#ah)"/>
-  ${label ? `<text x="${lx}" y="${ly}" text-anchor="middle" font-size="13" fill="currentColor" opacity=".8">${label}</text>` : ""}`;
+  <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${color||"currentColor"}" stroke-width="${color?4:2}"
+    marker-end="url(#ah)"/>
+  ${label ? `<text x="${lx}" y="${ly}" text-anchor="middle" font-size="13" font-weight="800" fill="currentColor">${label}</text>` : ""}`;
 
 function renderMap(p){
   const c = S.capitals;
-  p.innerHTML = `<h2>攻略法 <span style="color:var(--muted)">時間を資本に変えて、時間を買い戻す</span></h2>
+  p.innerHTML = `<h2>攻略法 <span style="color:var(--text-sub)">時間を資本に変えて、時間を買い戻す</span></h2>
   <figure>
     <svg viewBox="0 0 900 470" role="img" aria-label="時間が学習・労働・社会活動を通じて人的資本・金融資本・社会的資本に変わり、資本どうしが互いを強め、最後に金融資本が時間を買い戻す循環図">
       <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
@@ -604,11 +660,11 @@ function renderMap(p){
       ${arrow(700,275,540,360,"発信・認知",640,340)}
       ${arrow(640,212,530,220,"販売・権利収入",590,198)}
 
-      <path d="M300,395 C240,420 200,400 175,350" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".5" marker-end="url(#ah)"/>
-      <text x="215" y="418" text-anchor="middle" font-size="13" fill="currentColor" opacity=".8">学習速度が上がる</text>
+      <path d="M300,395 C240,420 200,400 175,350" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#ah)"/>
+      <text x="215" y="418" text-anchor="middle" font-size="13" font-weight="800" fill="currentColor">学習速度が上がる</text>
 
-      <path d="M300,250 C230,262 200,270 178,272" fill="none" stroke="var(--amber)" stroke-width="2.5" marker-end="url(#ah)"/>
-      <text x="240" y="302" text-anchor="middle" font-size="14" fill="var(--amber)">時間を買い戻す</text>
+      <path d="M300,250 C230,262 200,270 178,272" fill="none" stroke="var(--color-pink)" stroke-width="5" marker-end="url(#ah)"/>
+      <text x="240" y="302" text-anchor="middle" font-size="14" font-weight="900" fill="currentColor">時間を買い戻す</text>
     </svg>
     <figcaption>太い線（外注・自動化・資産運用）がこのゲームの目的地。資本を増やすこと自体ではなく、望まないことに時間を使わなくてよい状態をつくること。</figcaption>
   </figure>
@@ -617,14 +673,14 @@ function renderMap(p){
     <h3>行動を測る6項目</h3>
     <p>クエストを登録するとき、この6つのうち何が残るかを選びます。多いほどEXPと資本が増え、ひとつも残らない行動は「消費」として半分になります。</p>
     <div class="axes">${RESIDUES.map(r => `
-      <div class="axis" style="border-left-color:${CAPITALS[r.caps[0]].color}">
-        <span class="res" style="color:${CAPITALS[r.caps[0]].color};border-color:${CAPITALS[r.caps[0]].color}">${r.n}</span>
-        <span>${r.full}<br><small style="color:var(--muted)">→ ${r.caps.map(k => CAPITALS[k].name).join("・")}</small></span>
+      <div class="axis" style="border-left:10px solid ${CAPITALS[r.caps[0]].color}">
+        <span class="num" style="background:${CAPITALS[r.caps[0]].color}">${r.n}</span>
+        <span>${r.full}<br><small style="color:var(--text-sub);font-weight:700">→ ${r.caps.map(k => CAPITALS[k].name).join("・")}</small></span>
         <b>${S.counts[r.key]||0} 回</b>
       </div>`).join("")}
-      <div class="axis" style="border-left-color:var(--edge)">
-        <span class="res" style="color:var(--muted);border-color:var(--edge)">―</span>
-        <span>何も残らなかった行動<br><small style="color:var(--muted)">→ 消費した時間</small></span>
+      <div class="axis" style="border-left:10px solid #ced4da">
+        <span class="num" style="background:#e9ecef">―</span>
+        <span>何も残らなかった行動<br><small style="color:var(--text-sub);font-weight:700">→ 消費した時間</small></span>
         <b>${S.spent} 回</b>
       </div>
     </div>
@@ -752,7 +808,7 @@ function toggleNotionRes(itemId, key){
 
 function renderNotion(p){
   const N = notion;
-  const head = `<h2>Notion <span style="color:var(--muted)">やることページをクエストに</span></h2>`;
+  const head = `<h2>Notion <span style="color:var(--text-sub)">やることページをクエストに</span></h2>`;
 
   if (N.status === "unavailable"){
     p.innerHTML = head + `<div class="notice"><b>この画面ではNotionに接続できません。</b><br>
@@ -782,15 +838,14 @@ function renderNotion(p){
       <div class="sect">${esc(sec)}</div>
       <div class="items">${open.filter(i => i.section === sec).map(i => {
         const pay = payout(i.diff, i.res);
-        return `<div class="item" style="border-left-color:${i.res.length ? resColor(i.res[0]) : "var(--edge)"}">
+        return `<div class="item" style="border-left-color:${i.res.length ? resColor(i.res[0]) : "var(--border-main)"}">
           <button class="check" data-ntodo="${i.id}" aria-label="${esc(i.text)}を達成">✓</button>
           <div class="name"><span class="t">${esc(i.text)}</span>
             <div class="meta">${RESIDUES.map(r => {
               const on = i.res.includes(r.key);
               return `<button class="res" data-nres="${i.id}:${r.key}" aria-pressed="${on}"
-                style="cursor:pointer;background:${on ? CAPITALS[r.caps[0]].color : "transparent"};
-                color:${on ? "var(--on-accent)" : "var(--muted)"};border-color:${on ? CAPITALS[r.caps[0]].color : "var(--edge)"}"
-                title="${r.full}">${r.name}</button>`;
+                style="cursor:pointer;font-family:inherit;background:${on ? CAPITALS[r.caps[0]].color : "#fff"};
+                color:${on ? "var(--text-main)" : "#adb5bd"}" title="${r.full}">${r.name}</button>`;
             }).join("")}<span class="tag">${pay.exp}EXP / ${pay.gold}G</span></div>
           </div>
         </div>`;
@@ -800,10 +855,10 @@ function renderNotion(p){
   p.innerHTML = head + picker + `
     <div class="src">
       <span class="name">📄 <a href="${esc(N.pageUrl)}" target="_blank" rel="noopener">${esc(N.pageTitle)}</a>
-        <span style="color:var(--muted)">　未完了 ${open.length} / ${N.items.length}</span></span>
-      <button class="btn small ghost" data-notion="reload">最新に更新</button>
+        <span style="color:var(--text-sub)">　未完了 ${open.length} / ${N.items.length}</span></span>
+      <button class="btn small" data-notion="reload">最新に更新</button>
     </div>
-    <p style="font-size:.78rem;color:var(--muted);margin:0 0 8px">タグを押すと「何が残るか」を直せます。多いほどEXPと資本が増えます。</p>
+    <p style="font-size:.78rem;color:var(--text-sub);margin:0 0 8px">タグを押すと「何が残るか」を直せます。多いほどEXPと資本が増えます。</p>
     <div class="${N.busy ? "busy" : ""}">${body}</div>`;
 }
 
@@ -812,13 +867,13 @@ function renderSide(){
     <div class="reward">
       <span class="name">${esc(r.name)}</span>
       <span class="cost">${r.cost} G</span>
-      <button class="btn small ghost" data-buy="${r.id}" ${S.gold < r.cost ? "disabled" : ""}>交換</button>
+      <button class="btn small yellow" data-buy="${r.id}" ${S.gold < r.cost ? "disabled" : ""}>交換</button>
       <button class="del" data-del="rewards:${r.id}" aria-label="削除">✕</button>
     </div>`).join("") : `<p class="empty">自分へのごほうびを決めよう。</p>`;
 
   el("log").innerHTML = S.log.length
     ? S.log.map(l => `<li><time>${l.t}</time><span>${esc(l.text)}</span></li>`).join("")
-    : `<li style="color:var(--muted)">まだ記録はありません。</li>`;
+    : `<li style="color:var(--text-sub)">まだ記録はありません。</li>`;
 }
 
 const render = () => { renderStatus(); renderPanel(); renderSide(); };
